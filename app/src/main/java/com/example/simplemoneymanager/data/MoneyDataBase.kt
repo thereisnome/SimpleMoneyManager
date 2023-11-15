@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.domain.transaction.Transaction
 
+@TypeConverters(value = [MyTypeConverters::class])
 @Database(
     entities = [Transaction::class, Category::class, Account::class],
     version = 1,
