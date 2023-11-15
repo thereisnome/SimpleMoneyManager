@@ -38,7 +38,7 @@ interface MoneyDao {
     @Query("SELECT * FROM account_list WHERE id = :accountId")
     fun getAccountById(accountId: Int): Single<Account>
 
-    @Query("SELECT * FROM account_list WHERE id = :transactionId")
+    @Query("SELECT * FROM transaction_list WHERE id = :transactionId")
     fun getTransactionById(transactionId: Int): Single<Transaction>
 
     @Query("DELETE FROM category_list WHERE id = :categoryId")
