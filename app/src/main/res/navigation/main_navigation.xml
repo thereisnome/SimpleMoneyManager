@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/historyFragment">
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.example.simplemoneymanager.presentation.fragments.HistoryFragment"
+        android:label="fragment_history"
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_historyFragment_to_addTransactionFragment"
+            app:destination="@id/addTransactionFragment"
+            app:popExitAnim="@anim/nav_default_enter_anim"
+            app:popEnterAnim="@anim/nav_default_enter_anim"/>
+    </fragment>
+    <fragment
+        android:id="@+id/addTransactionFragment"
+        android:name="com.example.simplemoneymanager.presentation.fragments.AddTransactionFragment"
+        android:label="fragment_add_transaction"
+        tools:layout="@layout/fragment_add_transaction" >
+        <action
+            android:id="@+id/action_addTransactionFragment_to_categoryBottomSheetDialogFragment"
+            app:destination="@id/categoryBottomSheetDialogFragment" />
+        <argument
+            android:name="category"
+            app:argType="com.example.simplemoneymanager.domain.category.Category" />
+    </fragment>
+    <dialog
+        android:id="@+id/categoryBottomSheetDialogFragment"
+        android:name="com.example.simplemoneymanager.presentation.fragments.CategoryBottomSheetDialogFragment"
+        android:label="CategoryBottomSheetDialogFragment" >
+        <action
+            android:id="@+id/action_categoryBottomSheetDialogFragment_to_addTransactionFragment"
+            app:destination="@id/addTransactionFragment" />
+    </dialog>
+</navigation>
