@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="bottom_sheet_surface">#1b1c1e</color>
+    <color name="bottom_sheet_text">#e1e2e4</color>
 </resources>

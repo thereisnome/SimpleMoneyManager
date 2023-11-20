@@ -1,11 +1,19 @@
 package com.example.simplemoneymanager.domain.category
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "category_list")
 data class Category(
+    val categoryType: Int,
     val name: String,
-    @PrimaryKey(autoGenerate = true)
-    val id: Int
-    )
+    @PrimaryKey(autoGenerate = true) val id: Int
+) : Parcelable {
+    companion object{
+        const val INCOME = 0
+        const val EXPENSE = 1
+    }
+}

@@ -2,9 +2,13 @@
     <string name="app_name">Simple Money Manager</string>
     <string name="foodstuffs">Foodstuffs</string>
     <string name="income">Income</string>
-    <string name="outcome">Outcome</string>
+    <string name="expense">Expense</string>
     <string name="rest">Rest</string>
     <string name="amount">Amount</string>
     <string name="save">Save</string>
-    <string name="outcome_rub">-%d ₽</string>
+    <string name="expense_rub">-%d ₽</string>
+    <string name="positive_rub">%d ₽</string>
+    <string name="category">Category</string>
+    <string name="name">Name</string>
+    <string name="add_new_transaction">Add new transaction</string>
 </resources>
