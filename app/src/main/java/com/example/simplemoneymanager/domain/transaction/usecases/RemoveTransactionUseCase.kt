@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.core.Completable
 
 class RemoveTransactionUseCase(private val transactionRepository: TransactionRepository) {
 
-    fun invoke(transactionId: Int): Completable {
+    fun invoke(transactionId: Long): Completable {
         return transactionRepository.removeTransaction(transactionId)
     }
 }

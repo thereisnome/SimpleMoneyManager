@@ -11,4 +11,7 @@
     <string name="category">Category</string>
     <string name="name">Name</string>
     <string name="add_new_transaction">Add new transaction</string>
+    <string name="delete">Delete</string>
+    <string name="input_error">Field is empty</string>
+    <string name="empty_transaction_list">Transaction list is empty</string>
 </resources>

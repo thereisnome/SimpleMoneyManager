@@ -11,6 +11,7 @@ import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionByIdUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionListUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveAllTransactionsUseCase
+import com.example.simplemoneymanager.domain.transaction.usecases.RemoveTransactionUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -22,12 +23,13 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     private val getTransactionListUseCase = GetTransactionListUseCase(transactionRepositoryImpl)
     private val removeAllTransactionsUseCase =
         RemoveAllTransactionsUseCase(transactionRepositoryImpl)
+    private val removeTransactionUseCase = RemoveTransactionUseCase(transactionRepositoryImpl)
     private val getTransactionByIdUseCase = GetTransactionByIdUseCase(transactionRepositoryImpl)
 
     private val compositeDisposable = CompositeDisposable()
 
-        fun getTransactionList(): LiveData<List<Transaction>> {
-            return getTransactionListUseCase()
+    fun getTransactionList(): LiveData<List<Transaction>> {
+        return getTransactionListUseCase()
     }
 
     fun removeAllTransactions() {
@@ -42,6 +44,19 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
                 it.message?.let { it1 -> Log.d("VM remove all transactions", it1) }
             })
 
+        compositeDisposable.add(disposable)
+    }
+
+    fun removeTransaction(transactionId: Long) {
+        val disposable = removeTransactionUseCase.invoke(transactionId).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).subscribe({
+                Toast.makeText(getApplication(), "Transaction removed", Toast.LENGTH_SHORT).show()
+            }, {
+                Toast.makeText(
+                    getApplication(), "Cannot remove transaction, try again", Toast.LENGTH_LONG
+                ).show()
+                it.message?.let { it1 -> Log.d("VM remove transaction", it1) }
+            })
         compositeDisposable.add(disposable)
     }
 

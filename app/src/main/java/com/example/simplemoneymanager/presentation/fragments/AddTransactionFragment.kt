@@ -7,13 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.FragmentAddTransactionBinding
 import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.presentation.viewModels.AddTransactionViewModel
 
 class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.DataPassListener {
-    private lateinit var onEditingFinishListener: OnEditingFinishListener
+    private lateinit var onAddingFinishListener: OnAddingFinishListener
 
     private val addTransactionViewModel by lazy {
         ViewModelProvider(this)[AddTransactionViewModel::class.java]
@@ -36,15 +37,13 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnEditingFinishListener) {
-            onEditingFinishListener = context
+        if (context is OnAddingFinishListener) {
+            onAddingFinishListener = context
         } else throw RuntimeException("Activity must implement OnEditingFinishListener")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.toggleButtonTransactionType.check(binding.buttonIncome.id)
 
         binding.buttonIncome.setOnClickListener {
             categoryType = Category.INCOME
@@ -65,27 +64,38 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
         }
 
         addTransactionViewModel.finishActivity.observe(viewLifecycleOwner) {
-            onEditingFinishListener.onEditingFinished()
+            onAddingFinishListener.onAddingFinished()
         }
     }
 
-    private fun showCategoryBottomSheetDialog(){
+    private fun showCategoryBottomSheetDialog() {
         val bottomSheetDialogFragment = CategoryBottomSheetDialogFragment.newInstance(categoryType)
         bottomSheetDialogFragment.setDataPassListener(this)
         bottomSheetDialogFragment.show(childFragmentManager, "TEST")
     }
 
     private fun addTransaction() {
-        val type = if (categoryType == Category.INCOME) {
-            Transaction.INCOME
-        } else Transaction.EXPENSE
-        val name = binding.etName.text.toString()
-        val amount = binding.etAmount.text.toString().toInt()
-        addTransactionViewModel.addTransaction(type, name, category?: Category(0, "No category", -1), amount)
+        if (checkInput()) {
+            val type = if (categoryType == Category.INCOME) {
+                Transaction.INCOME
+            } else Transaction.EXPENSE
+            val name = binding.etName.text.toString()
+            val amount = binding.etAmount.text.toString().toInt()
+            addTransactionViewModel.addTransaction(
+                type, name, category ?: Category(0, "No category", -1), amount
+            )
+        } else {
+            binding.tilName.error = requireContext().getString(R.string.input_error)
+            binding.tilAmount.error = requireContext().getString(R.string.input_error)
+        }
     }
 
-    interface OnEditingFinishListener {
-        fun onEditingFinished()
+    interface OnAddingFinishListener {
+        fun onAddingFinished()
+    }
+
+    private fun checkInput(): Boolean {
+        return (binding.etName.text.toString() != "") && (binding.etAmount.text.toString() != "")
     }
 
     override fun onDataPassed(category: Category) {

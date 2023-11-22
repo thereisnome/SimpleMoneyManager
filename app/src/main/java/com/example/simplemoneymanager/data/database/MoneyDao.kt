@@ -50,7 +50,7 @@ interface MoneyDao {
     fun removeAccount(accountId: Int): Completable
 
     @Query("DELETE FROM transaction_list WHERE transactionId = :transactionId")
-    fun removeTransaction(transactionId: Int): Completable
+    fun removeTransaction(transactionId: Long): Completable
 
     @Query("DELETE FROM transaction_list")
     fun removeAllTransactions(): Completable
