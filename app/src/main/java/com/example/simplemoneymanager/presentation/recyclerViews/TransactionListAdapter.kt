@@ -53,7 +53,7 @@ class TransactionListAdapter(private val itemClickListener: PopupMenuItemClickLi
         holder.binding.tvCategory.text = transaction.category.name
         holder.binding.tvName.text = transaction.transactionName
 
-        holder.itemView.setOnClickListener {
+        holder.itemView.setOnLongClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView)
             popupMenu.inflate(R.menu.context_menu)
 
@@ -63,6 +63,7 @@ class TransactionListAdapter(private val itemClickListener: PopupMenuItemClickLi
                 true
             }
             popupMenu.show()
+            true
         }
     }
 
