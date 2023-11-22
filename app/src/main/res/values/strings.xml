@@ -14,4 +14,5 @@
     <string name="delete">Delete</string>
     <string name="input_error">Field is empty</string>
     <string name="empty_transaction_list">Transaction list is empty</string>
+    <string name="edit">Edit</string>
 </resources>
