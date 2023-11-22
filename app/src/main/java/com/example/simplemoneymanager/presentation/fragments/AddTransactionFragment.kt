@@ -1,12 +1,12 @@
 package com.example.simplemoneymanager.presentation.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.FragmentAddTransactionBinding
 import com.example.simplemoneymanager.domain.category.Category
@@ -14,7 +14,6 @@ import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.presentation.viewModels.AddTransactionViewModel
 
 class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.DataPassListener {
-    private lateinit var onAddingFinishListener: OnAddingFinishListener
 
     private val addTransactionViewModel by lazy {
         ViewModelProvider(this)[AddTransactionViewModel::class.java]
@@ -33,13 +32,6 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
     ): View {
         _binding = FragmentAddTransactionBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnAddingFinishListener) {
-            onAddingFinishListener = context
-        } else throw RuntimeException("Activity must implement OnEditingFinishListener")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,10 +53,6 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
         binding.buttonSave.setOnClickListener {
             addTransaction()
-        }
-
-        addTransactionViewModel.finishActivity.observe(viewLifecycleOwner) {
-            onAddingFinishListener.onAddingFinished()
         }
     }
 
@@ -88,10 +76,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             binding.tilName.error = requireContext().getString(R.string.input_error)
             binding.tilAmount.error = requireContext().getString(R.string.input_error)
         }
-    }
-
-    interface OnAddingFinishListener {
-        fun onAddingFinished()
+        findNavController().navigateUp()
     }
 
     private fun checkInput(): Boolean {

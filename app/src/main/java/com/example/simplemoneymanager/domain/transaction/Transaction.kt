@@ -16,12 +16,11 @@ data class Transaction(
     @Embedded
     val category: Category,
     val amount: Int,
-//    val account: Account,
+//  val account: Account,
     val date: LocalDate,
     @PrimaryKey(autoGenerate = true)
     var transactionId: Long = 0
 ) : Parcelable {
-
     companion object{
         const val INCOME = 0
         const val EXPENSE = 1
