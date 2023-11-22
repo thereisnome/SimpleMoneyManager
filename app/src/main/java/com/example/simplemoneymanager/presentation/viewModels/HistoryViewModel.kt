@@ -50,13 +50,13 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     fun removeTransaction(transactionId: Long) {
         val disposable = removeTransactionUseCase.invoke(transactionId).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
-            Toast.makeText(getApplication(), "Transaction removed", Toast.LENGTH_SHORT).show()
-        }, {
-            Toast.makeText(
-                getApplication(), "Cannot remove transaction, try again", Toast.LENGTH_LONG
-            ).show()
-            it.message?.let { it1 -> Log.d("VM remove transaction", it1) }
-        })
+                Toast.makeText(getApplication(), "Transaction removed", Toast.LENGTH_SHORT).show()
+            }, {
+                Toast.makeText(
+                    getApplication(), "Cannot remove transaction, try again", Toast.LENGTH_LONG
+                ).show()
+                it.message?.let { it1 -> Log.d("VM remove transaction", it1) }
+            })
         compositeDisposable.add(disposable)
     }
 

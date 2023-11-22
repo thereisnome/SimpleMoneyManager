@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.simplemoneymanager.databinding.CategoryItemBinding
 import com.example.simplemoneymanager.domain.category.Category
 
-class CategoryListAdapter(): ListAdapter<Category, CategoryViewHolder>(CategoryListDiffCallback()) {
+class CategoryListAdapter: ListAdapter<Category, CategoryViewHolder>(CategoryListDiffCallback()) {
 
     var onItemClickListener: ((Category) -> Unit)? = null
 

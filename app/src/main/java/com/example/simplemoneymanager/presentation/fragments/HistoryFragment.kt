@@ -47,7 +47,15 @@ class HistoryFragment : Fragment() {
     private fun setupRecyclerView() {
         binding.rvTransactions.adapter = adapter
         viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
-            adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
+            adapter.submitList(transactionList.sortedByDescending { it.transactionId }) {
+                val position = binding.rvTransactions.layoutManager?.let {
+                    val viewAtPosition = it.findViewByPosition(0)
+                    viewAtPosition?.let { view -> binding.rvTransactions.getChildAdapterPosition(view) }
+                }
+                if (position != null) {
+                    adapter.notifyItemChanged(position)
+                }
+            }
         }
     }
 
@@ -58,5 +66,6 @@ class HistoryFragment : Fragment() {
 
     private fun launchAddTransactionFragment() {
         findNavController().navigate(R.id.action_historyFragment_to_addTransactionFragment)
+
     }
 }

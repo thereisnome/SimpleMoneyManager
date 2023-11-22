@@ -3,20 +3,15 @@ package com.example.simplemoneymanager.presentation.recyclerViews
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import com.example.simplemoneymanager.databinding.TransactionItemBinding
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class TransactionListAdapter() : RecyclerView.Adapter<TransactionViewHolder>() {
+class TransactionListAdapter: ListAdapter<Transaction, TransactionViewHolder>(TransactionListDiffCallback()) {
     private var shouldDisplayDate = false
-    var transactionList = listOf<Transaction>()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val binding =
@@ -24,16 +19,12 @@ class TransactionListAdapter() : RecyclerView.Adapter<TransactionViewHolder>() {
         return TransactionViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-        return transactionList.size
-    }
-
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        val transaction = transactionList[position]
+        val transaction = getItem(position)
         val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         val dateString = transaction.date.format(dateTimeFormatter)
 
-        shouldDisplayDate = position == 0 || transaction.date != transactionList[position-1].date
+        shouldDisplayDate = position == 0 || transaction.date != getItem(position-1).date
 
         if (shouldDisplayDate) {
             holder.binding.tvDate.text = dateString
