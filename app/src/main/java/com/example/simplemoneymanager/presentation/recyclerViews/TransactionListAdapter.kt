@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.TransactionItemBinding
@@ -18,11 +17,8 @@ class TransactionListAdapter(private val itemClickListener: PopupMenuItemClickLi
 
     var transactionList = listOf<Transaction>()
         set(value) {
-            val callback = TransactionListDiffCallback(transactionList, value)
-            val diffResult = DiffUtil.calculateDiff(callback)
-            diffResult.dispatchUpdatesTo(this)
             field = value
-//            notifyDataSetChanged()
+            notifyDataSetChanged()
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
