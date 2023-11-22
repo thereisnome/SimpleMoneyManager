@@ -4,7 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.TransactionItemBinding
 import com.example.simplemoneymanager.domain.transaction.Transaction
@@ -13,7 +14,16 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class TransactionListAdapter(private val itemClickListener: PopupMenuItemClickListener) :
-    ListAdapter<Transaction, TransactionViewHolder>(TransactionListDiffCallback()) {
+    RecyclerView.Adapter<TransactionViewHolder>() {
+
+    var transactionList = listOf<Transaction>()
+        set(value) {
+            val callback = TransactionListDiffCallback(transactionList, value)
+            val diffResult = DiffUtil.calculateDiff(callback)
+            diffResult.dispatchUpdatesTo(this)
+            field = value
+//            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val binding =
@@ -21,12 +31,16 @@ class TransactionListAdapter(private val itemClickListener: PopupMenuItemClickLi
         return TransactionViewHolder(binding)
     }
 
+    override fun getItemCount(): Int {
+        return transactionList.size
+    }
+
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        val transaction = getItem(position)
+        val transaction = transactionList[position]
         val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         val dateString = transaction.date.format(dateTimeFormatter)
 
-        val shouldDisplayDate = position == 0 || transaction.date != getItem(position - 1).date
+        val shouldDisplayDate = position == 0 || transaction.date != transactionList[position-1].date
 
         if (shouldDisplayDate) {
             holder.binding.tvDate.text = dateString
@@ -49,7 +63,7 @@ class TransactionListAdapter(private val itemClickListener: PopupMenuItemClickLi
 
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 val itemPosition = holder.adapterPosition
-                itemClickListener.onMenuItemClick(menuItem.itemId, itemPosition, getItem(itemPosition))
+                itemClickListener.onMenuItemClick(menuItem.itemId, itemPosition, transactionList[position])
                 true
             }
             popupMenu.show()

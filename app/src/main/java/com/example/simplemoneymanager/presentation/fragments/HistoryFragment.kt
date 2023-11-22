@@ -29,12 +29,12 @@ class HistoryFragment : Fragment(), TransactionListAdapter.PopupMenuItemClickLis
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        setupRecyclerView()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
         binding.fabAddTransaction.setOnClickListener {
             launchAddTransactionFragment()
         }
@@ -47,8 +47,7 @@ class HistoryFragment : Fragment(), TransactionListAdapter.PopupMenuItemClickLis
     private fun setupRecyclerView() {
         binding.rvTransactions.adapter = adapter
         viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
-            adapter.submitList(transactionList.sortedByDescending { it.transactionId }) {
-            }
+            adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
         }
     }
 
