@@ -20,7 +20,7 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
         return getTransactionById(transactionId)
     }
 
-    override fun removeTransaction(transactionId: Int): Completable {
+    override fun removeTransaction(transactionId: Long): Completable {
         return moneyDao.removeTransaction(transactionId)
     }
 

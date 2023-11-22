@@ -19,7 +19,7 @@ data class Transaction(
 //    val account: Account,
     val date: LocalDate,
     @PrimaryKey(autoGenerate = true)
-    var transactionId: Int = 0
+    var transactionId: Long = 0
 ) : Parcelable {
 
     companion object{

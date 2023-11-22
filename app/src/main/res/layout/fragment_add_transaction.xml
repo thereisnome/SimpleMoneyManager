@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        app:checkedButton="@id/button_income"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -40,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="@string/amount"
+        app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@+id/toggle_button_transaction_type">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -57,6 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="@string/name"
+        app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@+id/til_amount">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -74,6 +77,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="@string/category"
+        app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@+id/til_name">
 
         <com.google.android.material.textfield.TextInputEditText

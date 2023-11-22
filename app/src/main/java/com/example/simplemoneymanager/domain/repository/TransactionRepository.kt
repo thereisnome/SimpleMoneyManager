@@ -12,7 +12,7 @@ interface TransactionRepository {
 
     fun getTransactionById(transactionId: Int): LiveData<Transaction>
 
-    fun removeTransaction(transactionId: Int): Completable
+    fun removeTransaction(transactionId: Long): Completable
 
     fun removeAllTransactions(): Completable
 }

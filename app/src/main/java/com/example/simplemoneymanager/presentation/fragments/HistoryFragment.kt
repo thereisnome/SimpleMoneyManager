@@ -33,6 +33,7 @@ class HistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        registerForContextMenu(binding.rvTransactions)
         setupRecyclerView()
         binding.fabAddTransaction.setOnClickListener {
             launchAddTransactionFragment()
@@ -43,7 +44,7 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    private fun setupRecyclerView(){
+    private fun setupRecyclerView() {
         binding.rvTransactions.adapter = adapter
         viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
             adapter.transactionList = transactionList.sortedByDescending { it.transactionId }

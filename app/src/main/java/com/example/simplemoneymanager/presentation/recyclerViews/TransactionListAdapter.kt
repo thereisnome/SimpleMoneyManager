@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class TransactionListAdapter() : RecyclerView.Adapter<TransactionViewHolder>() {
-
     private var shouldDisplayDate = false
     var transactionList = listOf<Transaction>()
         set(value) {
