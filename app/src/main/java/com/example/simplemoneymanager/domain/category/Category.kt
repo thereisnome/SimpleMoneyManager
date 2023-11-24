@@ -16,5 +16,6 @@ data class Category(
     companion object{
         const val INCOME = 0
         const val EXPENSE = 1
+        val DEFAULT_CATEGORY = Category(INCOME, "No Category", -1)
     }
 }

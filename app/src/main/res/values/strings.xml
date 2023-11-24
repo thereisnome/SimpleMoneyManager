@@ -17,5 +17,6 @@
     <string name="edit">Edit</string>
     <string name="add_new_category_button">Add new category button</string>
     <string name="categories">Categories</string>
-    <string name="add_category">Add category</string>
+    <string name="add_new_category">Add new category</string>
+    <string name="no_category">No category</string>
 </resources>

@@ -15,7 +15,7 @@ import com.example.simplemoneymanager.presentation.viewModels.AddTransactionView
 
 class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.DataPassListener {
 
-    private val addTransactionViewModel by lazy {
+    private val viewModel by lazy {
         ViewModelProvider(this)[AddTransactionViewModel::class.java]
     }
 
@@ -51,8 +51,13 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             showCategoryBottomSheetDialog()
         }
 
-        binding.buttonSave.setOnClickListener {
-            addTransaction()
+        with(binding) {
+            transactionAddToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+            transactionAddToolbar.inflateMenu(R.menu.add_transaction_toolbar_menu)
+            transactionAddToolbar.setOnMenuItemClickListener {
+                addTransaction()
+                true
+            }
         }
     }
 
@@ -69,14 +74,14 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             } else Transaction.EXPENSE
             val name = binding.etName.text.toString()
             val amount = binding.etAmount.text.toString().toInt()
-            addTransactionViewModel.addTransaction(
-                type, name, category ?: Category(0, "No category", -1), amount
+            viewModel.addTransaction(
+                type, name, category?: Category.DEFAULT_CATEGORY, amount
             )
+            findNavController().navigateUp()
         } else {
             binding.tilName.error = requireContext().getString(R.string.input_error)
             binding.tilAmount.error = requireContext().getString(R.string.input_error)
         }
-        findNavController().navigateUp()
     }
 
     private fun checkInput(): Boolean {
