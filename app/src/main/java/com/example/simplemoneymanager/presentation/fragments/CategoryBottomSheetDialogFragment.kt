@@ -13,21 +13,19 @@ import com.example.simplemoneymanager.presentation.viewModels.CategoryBottomShee
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class CategoryBottomSheetDialogFragment private constructor(private val categoryType: Int) :
-    BottomSheetDialogFragment() {
+    BottomSheetDialogFragment(), CategoryListAdapter.CategoryPopupMenuItemClickListener {
 
     private var dataPassListener: DataPassListener? = null
 
-    private val adapter = CategoryListAdapter()
+    private val adapter = CategoryListAdapter(this)
 
-    private val categoryBottomSheetViewModel by lazy {
+    private val viewModel by lazy {
         ViewModelProvider(this)[CategoryBottomSheetViewModel::class.java]
     }
 
     private var _binding: FragmentCategoryBottomSheetBinding? = null
     private val binding: FragmentCategoryBottomSheetBinding
         get() = _binding ?: throw RuntimeException("FragmentHistoryBinding is null")
-
-    override fun getTheme() = R.style.AppBottomSheetDialogTheme
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -41,8 +39,12 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.buttonAddNewCategory.setOnClickListener {
+            showAddCategoryBottomSheet()
+        }
+
         if (categoryType == Category.EXPENSE) {
-            categoryBottomSheetViewModel.getExpenseCategoryList()
+            viewModel.getExpenseCategoryList()
                 .observe(viewLifecycleOwner) { categoryList ->
                     adapter.submitList(categoryList)
                     binding.rvCategories.adapter = adapter
@@ -52,7 +54,7 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
                     }
                 }
         } else {
-            categoryBottomSheetViewModel.getIncomeCategoryList()
+            viewModel.getIncomeCategoryList()
                 .observe(viewLifecycleOwner) { categoryList ->
                     adapter.submitList(categoryList)
                     binding.rvCategories.adapter = adapter
@@ -62,6 +64,11 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
                     }
                 }
         }
+    }
+
+    private fun showAddCategoryBottomSheet() {
+        val addCategoryDialogFragment = AddCategoryDialogFragment.newInstance(categoryType)
+        addCategoryDialogFragment.show(childFragmentManager, "TEST")
     }
 
     fun setDataPassListener(listener: DataPassListener) {
@@ -84,6 +91,12 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
     companion object {
         fun newInstance(categoryType: Int): CategoryBottomSheetDialogFragment {
             return CategoryBottomSheetDialogFragment(categoryType)
+        }
+    }
+
+    override fun onMenuItemClick(itemId: Int, position: Int, category: Category) {
+        when (itemId) {
+            R.id.category_menu_button_delete -> viewModel.removeCategory(category.id)
         }
     }
 }

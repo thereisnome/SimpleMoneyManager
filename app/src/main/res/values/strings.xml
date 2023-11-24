@@ -15,4 +15,7 @@
     <string name="input_error">Field is empty</string>
     <string name="empty_transaction_list">Transaction list is empty</string>
     <string name="edit">Edit</string>
+    <string name="add_new_category_button">Add new category button</string>
+    <string name="categories">Categories</string>
+    <string name="add_category">Add category</string>
 </resources>

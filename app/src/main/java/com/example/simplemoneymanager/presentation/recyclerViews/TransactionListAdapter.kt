@@ -12,7 +12,7 @@ import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class TransactionListAdapter(private val itemClickListener: PopupMenuItemClickListener) :
+class TransactionListAdapter(private val itemClickListener: TransactionsPopupMenuItemClickListener) :
     RecyclerView.Adapter<TransactionViewHolder>() {
 
     var transactionList = listOf<Transaction>()
@@ -50,12 +50,12 @@ class TransactionListAdapter(private val itemClickListener: PopupMenuItemClickLi
             Transaction.EXPENSE -> holder.binding.tilAmount.text = formatExpense(transaction.amount)
         }
 
-        holder.binding.tvCategory.text = transaction.category.name
+        holder.binding.tvCategory.text = transaction.category.categoryName
         holder.binding.tvName.text = transaction.transactionName
 
         holder.itemView.setOnLongClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView)
-            popupMenu.inflate(R.menu.context_menu)
+            popupMenu.inflate(R.menu.history_fragment_context_menu)
 
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 val itemPosition = holder.adapterPosition
@@ -77,7 +77,7 @@ class TransactionListAdapter(private val itemClickListener: PopupMenuItemClickLi
         return "-$formattedAmount".replace(" руб.", "₽")
     }
 
-    interface PopupMenuItemClickListener {
+    interface TransactionsPopupMenuItemClickListener {
         fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction)
     }
 }

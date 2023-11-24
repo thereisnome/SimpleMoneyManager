@@ -9,8 +9,9 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "category_list")
 data class Category(
     val categoryType: Int,
-    val name: String,
-    @PrimaryKey(autoGenerate = true) val id: Int
+    val categoryName: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0
 ) : Parcelable {
     companion object{
         const val INCOME = 0

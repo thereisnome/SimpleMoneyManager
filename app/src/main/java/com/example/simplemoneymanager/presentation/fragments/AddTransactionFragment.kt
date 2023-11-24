@@ -85,6 +85,6 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
     override fun onDataPassed(category: Category) {
         this.category = category
-        binding.etCategory.setText(category.name)
+        binding.etCategory.setText(category.categoryName)
     }
 }
