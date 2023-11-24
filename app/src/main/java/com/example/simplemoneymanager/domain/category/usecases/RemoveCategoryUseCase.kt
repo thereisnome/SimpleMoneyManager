@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.core.Completable
 
 class RemoveCategoryUseCase(private val categoryRepository: CategoryRepository) {
 
-    fun removeCategory(categoryId: Int): Completable{
+    operator fun invoke(categoryId: Int): Completable{
         return categoryRepository.removeCategory(categoryId)
     }
 }

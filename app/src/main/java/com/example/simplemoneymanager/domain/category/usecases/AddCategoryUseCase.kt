@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Completable
 
 class AddCategoryUseCase(private val categoryRepository: CategoryRepository) {
 
-    fun addCategory(category: Category): Completable {
+    operator fun invoke(category: Category): Completable {
         return categoryRepository.addCategory(category)
     }
 }

@@ -13,7 +13,7 @@ import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.presentation.recyclerViews.TransactionListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.HistoryViewModel
 
-class HistoryFragment : Fragment(), TransactionListAdapter.PopupMenuItemClickListener {
+class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuItemClickListener {
 
     private val adapter = TransactionListAdapter(this)
 
@@ -62,7 +62,7 @@ class HistoryFragment : Fragment(), TransactionListAdapter.PopupMenuItemClickLis
 
     override fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction) {
         when (itemId) {
-            R.id.menu_button_delete -> viewModel.removeTransaction(transaction.transactionId)
+            R.id.transaction_menu_button_delete -> viewModel.removeTransaction(transaction.transactionId)
         }
     }
 }
