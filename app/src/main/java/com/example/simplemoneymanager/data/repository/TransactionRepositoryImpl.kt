@@ -16,6 +16,14 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
         return moneyDao.getTransactionList()
     }
 
+    override fun getIncomeTransactionList(): LiveData<List<Transaction>> {
+        return moneyDao.getIncomeTransactionList()
+    }
+
+    override fun getExpenseTransactionList(): LiveData<List<Transaction>> {
+        return moneyDao.getExpenseTransactionList()
+    }
+
     override fun getTransactionById(transactionId: Int): LiveData<Transaction> {
         return getTransactionById(transactionId)
     }

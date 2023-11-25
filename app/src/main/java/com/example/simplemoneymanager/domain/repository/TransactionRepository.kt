@@ -10,6 +10,10 @@ interface TransactionRepository {
 
     fun getTransactionList(): LiveData<List<Transaction>>
 
+    fun getIncomeTransactionList(): LiveData<List<Transaction>>
+
+    fun getExpenseTransactionList(): LiveData<List<Transaction>>
+
     fun getTransactionById(transactionId: Int): LiveData<Transaction>
 
     fun removeTransaction(transactionId: Long): Completable

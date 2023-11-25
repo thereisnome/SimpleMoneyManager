@@ -3,7 +3,7 @@
     <string name="foodstuffs">Foodstuffs</string>
     <string name="income">Income</string>
     <string name="expense">Expense</string>
-    <string name="rest">Rest</string>
+    <string name="balance">Balance</string>
     <string name="amount">Amount</string>
     <string name="save">Save</string>
     <string name="expense_rub">-%d ₽</string>
@@ -19,4 +19,10 @@
     <string name="categories">Categories</string>
     <string name="add_new_category">Add new category</string>
     <string name="no_category">No category</string>
+    <string name="main_account_name">Main account</string>
+    <string name="accounts">Accounts</string>
+    <string name="account">Account</string>
+    <string name="delete_account_title">Delete account %s?</string>
+    <string name="delete_account_dialog_description">You will lose all transactions associated with this account. Cannot be undone.</string>
+    <string name="cancel">Cancel</string>
 </resources>

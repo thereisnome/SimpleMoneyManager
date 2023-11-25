@@ -1,12 +1,12 @@
 package com.example.simplemoneymanager.domain.account.usecases
 
 import androidx.lifecycle.LiveData
-import com.example.simplemoneymanager.data.database.MoneyDao
 import com.example.simplemoneymanager.domain.account.Account
+import com.example.simplemoneymanager.domain.repository.AccountRepository
 
-class GetAccountListUseCase(private val moneyDao: MoneyDao) {
+class GetAccountListUseCase(private val accountRepository: AccountRepository) {
 
-    fun getAccountList(): LiveData<List<Account>> {
-        return moneyDao.getAccountList()
+    operator fun invoke(): LiveData<List<Account>> {
+        return accountRepository.getAccountList()
     }
 }
