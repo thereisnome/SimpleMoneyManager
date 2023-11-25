@@ -8,9 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.TransactionItemBinding
 import com.example.simplemoneymanager.domain.transaction.Transaction
-import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 class TransactionListAdapter(private val itemClickListener: TransactionsPopupMenuItemClickListener) :
     RecyclerView.Adapter<TransactionViewHolder>() {
@@ -36,7 +34,9 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
         val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         val dateString = transaction.date.format(dateTimeFormatter)
 
-        val shouldDisplayDate = position == 0 || transaction.date != transactionList[position-1].date
+        val shouldDisplayDate =
+            position == 0 || transaction.date != transactionList[position - 1].date
+        val shouldDisplayName = transaction.transactionName.isNotBlank()
 
         if (shouldDisplayDate) {
             holder.binding.tvDate.text = dateString
@@ -46,12 +46,16 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
         }
 
         when (transaction.type) {
-            Transaction.INCOME -> holder.binding.tilAmount.text = formatIncome(transaction.amount)
-            Transaction.EXPENSE -> holder.binding.tilAmount.text = formatExpense(transaction.amount)
+            Transaction.INCOME -> holder.binding.tilAmount.text = Transaction.formatIncome(transaction.amount)
+            Transaction.EXPENSE -> holder.binding.tilAmount.text = Transaction.formatExpense(transaction.amount)
         }
 
+        if (shouldDisplayName) {
+            holder.binding.tvName.visibility = View.VISIBLE
+            holder.binding.tvName.text = transaction.transactionName
+        } else holder.binding.tvName.visibility = View.GONE
         holder.binding.tvCategory.text = transaction.category.categoryName
-        holder.binding.tvName.text = transaction.transactionName
+        holder.binding.tvAccount.text = transaction.account.accountName
 
         holder.itemView.setOnLongClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView)
@@ -59,22 +63,16 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
 
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 val itemPosition = holder.adapterPosition
-                itemClickListener.onMenuItemClick(menuItem.itemId, itemPosition, transactionList[position])
+                itemClickListener.onMenuItemClick(
+                    menuItem.itemId,
+                    itemPosition,
+                    transactionList[position]
+                )
                 true
             }
             popupMenu.show()
             true
         }
-    }
-
-    private fun formatIncome(value: Int): String {
-        val formattedAmount = NumberFormat.getCurrencyInstance(Locale("ru", "RU")).format(value)
-        return "+$formattedAmount".replace(" руб.", "₽")
-    }
-
-    private fun formatExpense(value: Int): String {
-        val formattedAmount = NumberFormat.getCurrencyInstance(Locale("ru", "RU")).format(value)
-        return "-$formattedAmount".replace(" руб.", "₽")
     }
 
     interface TransactionsPopupMenuItemClickListener {

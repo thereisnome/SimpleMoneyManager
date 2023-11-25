@@ -55,7 +55,7 @@
         tools:text="20 000,00 rub." />
 
     <TextView
-        android:id="@+id/tv_outcome_label"
+        android:id="@+id/tv_expense_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
@@ -66,31 +66,30 @@
         app:layout_constraintTop_toTopOf="@id/divider_top_vertical" />
 
     <TextView
-        android:id="@+id/tv_outcome_value"
+        android:id="@+id/tv_expense_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginVertical="8dp"
-        android:textColor="@color/design_default_color_primary"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@id/divider_mid_horizontal"
         app:layout_constraintTop_toBottomOf="@+id/tv_income_label"
         tools:text="8 000,00 rub." />
 
     <TextView
-        android:id="@+id/tv_rest_label"
+        android:id="@+id/tv_balance_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginVertical="8dp"
-        android:text="@string/rest"
+        android:text="@string/balance"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@id/divider_mid_horizontal"
         app:layout_constraintStart_toStartOf="@id/divider_mid_horizontal"
         app:layout_constraintTop_toTopOf="@id/divider_mid_horizontal" />
 
     <TextView
-        android:id="@+id/tv_rest_value"
+        android:id="@+id/tv_balance_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
@@ -99,7 +98,7 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@id/divider_mid_horizontal"
         app:layout_constraintStart_toStartOf="@id/divider_mid_horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/tv_rest_label"
+        app:layout_constraintTop_toBottomOf="@+id/tv_balance_label"
         tools:text="500,00 rub." />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -109,7 +108,7 @@
         android:layout_marginVertical="8dp"
         android:clickable="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/tv_rest_value"
+        app:layout_constraintTop_toBottomOf="@+id/tv_balance_value"
         tools:listitem="@layout/transaction_item" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

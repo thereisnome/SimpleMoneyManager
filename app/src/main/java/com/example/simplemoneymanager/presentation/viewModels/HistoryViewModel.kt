@@ -6,9 +6,12 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.example.simplemoneymanager.data.database.MoneyDataBase
+import com.example.simplemoneymanager.data.repository.AccountRepositoryImpl
 import com.example.simplemoneymanager.data.repository.TransactionRepositoryImpl
+import com.example.simplemoneymanager.domain.account.Account
+import com.example.simplemoneymanager.domain.account.usecases.ClearAccountBalanceUseCase
+import com.example.simplemoneymanager.domain.account.usecases.SubtractAccountBalanceUseCase
 import com.example.simplemoneymanager.domain.transaction.Transaction
-import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionByIdUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionListUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveAllTransactionsUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveTransactionUseCase
@@ -20,11 +23,13 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     private val db = MoneyDataBase.getInstance(application)
 
     private val transactionRepositoryImpl = TransactionRepositoryImpl(db.moneyDao())
+    private val accountRepositoryImpl = AccountRepositoryImpl(db.moneyDao())
     private val getTransactionListUseCase = GetTransactionListUseCase(transactionRepositoryImpl)
     private val removeAllTransactionsUseCase =
         RemoveAllTransactionsUseCase(transactionRepositoryImpl)
     private val removeTransactionUseCase = RemoveTransactionUseCase(transactionRepositoryImpl)
-    private val getTransactionByIdUseCase = GetTransactionByIdUseCase(transactionRepositoryImpl)
+    private val subtractAccountBalanceUseCase = SubtractAccountBalanceUseCase(accountRepositoryImpl)
+    private val clearAccountBalanceUseCase = ClearAccountBalanceUseCase(accountRepositoryImpl)
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -47,17 +52,43 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
         compositeDisposable.add(disposable)
     }
 
-    fun removeTransaction(transactionId: Long) {
-        val disposable = removeTransactionUseCase.invoke(transactionId).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                Toast.makeText(getApplication(), "Transaction removed", Toast.LENGTH_SHORT).show()
-            }, {
-                Toast.makeText(
-                    getApplication(), "Cannot remove transaction, try again", Toast.LENGTH_LONG
-                ).show()
-                it.message?.let { it1 -> Log.d("VM remove transaction", it1) }
-            })
+    fun removeTransaction(transaction: Transaction) {
+        val disposable =
+            removeTransactionUseCase.invoke(transaction.transactionId).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe({
+                    Toast.makeText(getApplication(), "Transaction removed", Toast.LENGTH_SHORT)
+                        .show()
+                }, {
+                    Toast.makeText(
+                        getApplication(), "Cannot remove transaction, try again", Toast.LENGTH_LONG
+                    ).show()
+                    it.message?.let { it1 -> Log.d("VM remove transaction", it1) }
+                })
         compositeDisposable.add(disposable)
+    }
+
+    fun clearAllAccountBalances() {
+        val disposable = clearAccountBalanceUseCase().subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).subscribe()
+        compositeDisposable.add(disposable)
+    }
+
+    fun subtractAccountBalance(account: Account, amount: Int) {
+        val disposable = subtractAccountBalanceUseCase(account, amount).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).subscribe({
+            Log.d("VM subtractAccountBalance", "ID: $account.accountId, amount: $amount")
+        }, {
+            Log.d("VM subtractAccountBalance", it.message.toString())
+        })
+        compositeDisposable.add(disposable)
+    }
+
+    fun getOverallBalance(transactionList: List<Transaction>): Int {
+        var result = 0
+        for (transaction in transactionList) {
+            result += transaction.amount
+        }
+        return result
     }
 
     override fun onCleared() {

@@ -76,11 +76,11 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
     }
 
     private fun passDataBack(category: Category) {
-        dataPassListener?.onDataPassed(category)
+        dataPassListener?.onCategoryPassed(category)
     }
 
     interface DataPassListener {
-        fun onDataPassed(category: Category)
+        fun onCategoryPassed(category: Category)
     }
 
     override fun onDestroyView() {

@@ -34,10 +34,16 @@ interface MoneyDao {
     @Query("SELECT * FROM transaction_list")
     fun getTransactionList(): LiveData<List<Transaction>>
 
+    @Query("SELECT * FROM transaction_list WHERE type = 0")
+    fun getIncomeTransactionList(): LiveData<List<Transaction>>
+
+    @Query("SELECT * FROM transaction_list WHERE type = 1")
+    fun getExpenseTransactionList(): LiveData<List<Transaction>>
+
     @Query("SELECT * FROM category_list WHERE id = :categoryId")
     fun getCategoryById(categoryId: Int): LiveData<Category>
 
-    @Query("SELECT * FROM account_list WHERE id = :accountId")
+    @Query("SELECT * FROM account_list WHERE accountId = :accountId")
     fun getAccountById(accountId: Int): LiveData<Account>
 
     @Query("SELECT * FROM transaction_list WHERE transactionId = :transactionId")
@@ -46,7 +52,7 @@ interface MoneyDao {
     @Query("DELETE FROM category_list WHERE id = :categoryId")
     fun removeCategory(categoryId: Int): Completable
 
-    @Query("DELETE FROM account_list WHERE id = :accountId")
+    @Query("DELETE FROM account_list WHERE accountId = :accountId")
     fun removeAccount(accountId: Int): Completable
 
     @Query("DELETE FROM transaction_list WHERE transactionId = :transactionId")
@@ -54,4 +60,19 @@ interface MoneyDao {
 
     @Query("DELETE FROM transaction_list")
     fun removeAllTransactions(): Completable
+
+    @Query("UPDATE account_list SET balance = :newBalance WHERE accountId = :accountId")
+    fun updateAccountBalance(accountId: Int, newBalance: Int): Completable
+
+    @Query("UPDATE account_list SET balance = balance - :amount WHERE accountId = :accountId")
+    fun subtractAccountBalance(accountId: Int, amount: Int): Completable
+
+    @Query("UPDATE account_list SET balance = balance + :amount WHERE accountId = :accountId")
+    fun addAccountBalance(accountId: Int, amount: Int): Completable
+
+    @Query("UPDATE account_list SET balance = 0 WHERE accountId = :accountId")
+    fun clearAccountBalance(accountId: Int): Completable
+
+    @Query("UPDATE account_list SET balance = 0")
+    fun clearAllAccountBalances(): Completable
 }
