@@ -4,9 +4,9 @@ import com.example.simplemoneymanager.domain.repository.TransactionRepository
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import io.reactivex.rxjava3.core.Completable
 
-class AddTransactionUseCase(private val transactionRepository: TransactionRepository) {
+class EditTransactionUseCase(private val transactionRepository: TransactionRepository) {
 
-    operator fun invoke(transaction: Transaction): Completable {
-        return transactionRepository.addTransaction(transaction)
-    }
+        operator fun invoke(transaction: Transaction): Completable {
+            return transactionRepository.editTransaction(transaction)
+        }
 }

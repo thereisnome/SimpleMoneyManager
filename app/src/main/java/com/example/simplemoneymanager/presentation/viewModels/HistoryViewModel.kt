@@ -82,22 +82,22 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     fun subtractAccountBalance(account: Account, amount: Int) {
         val disposable = subtractAccountBalanceUseCase(account, amount).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
-            Log.d("VM subtractAccountBalance", "ID: $account.accountId, amount: $amount")
-        }, {
-            Log.d("VM subtractAccountBalance", it.message.toString())
-        })
+                Log.d("VM subtractAccountBalance", "ID: $account.accountId, amount: $amount")
+            }, {
+                Log.d("VM subtractAccountBalance", it.message.toString())
+            })
         compositeDisposable.add(disposable)
     }
 
-    fun getOverallBalance(): LiveData<Int>{
+    fun getOverallBalance(): LiveData<Int> {
         return getOverallBalanceUseCase()
     }
 
-    fun getOverallIncome(): LiveData<Int>{
+    fun getOverallIncome(): LiveData<Int> {
         return getOverallIncomeUseCase()
     }
 
-    fun getOverallExpense(): LiveData<Int>{
+    fun getOverallExpense(): LiveData<Int> {
         return getOverallExpenseUseCase()
     }
 

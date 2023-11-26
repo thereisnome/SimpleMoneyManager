@@ -24,8 +24,8 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
         return moneyDao.getExpenseTransactionList()
     }
 
-    override fun getTransactionById(transactionId: Int): LiveData<Transaction> {
-        return getTransactionById(transactionId)
+    override fun getTransactionById(transactionId: Long): LiveData<Transaction> {
+        return moneyDao.getTransactionById(transactionId)
     }
 
     override fun removeTransaction(transactionId: Long): Completable {
@@ -42,5 +42,17 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
 
     override fun getOverallExpense(): LiveData<Int> {
         return moneyDao.getOverallExpense()
+    }
+
+    override fun editTransaction(transaction: Transaction): Completable {
+        return moneyDao.editTransactionById(
+            transaction.transactionId,
+            transaction.type,
+            transaction.transactionName,
+            transaction.category.id,
+            transaction.amount,
+            transaction.account.accountId,
+            transaction.date
+        )
     }
 }
