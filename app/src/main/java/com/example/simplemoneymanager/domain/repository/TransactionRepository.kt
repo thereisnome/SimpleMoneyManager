@@ -19,4 +19,8 @@ interface TransactionRepository {
     fun removeTransaction(transactionId: Long): Completable
 
     fun removeAllTransactions(): Completable
+
+    fun getOverallIncome(): LiveData<Int>
+
+    fun getOverallExpense(): LiveData<Int>
 }

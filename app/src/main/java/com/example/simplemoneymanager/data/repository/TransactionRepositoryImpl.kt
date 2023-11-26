@@ -35,4 +35,12 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
     override fun removeAllTransactions(): Completable {
         return moneyDao.removeAllTransactions()
     }
+
+    override fun getOverallIncome(): LiveData<Int> {
+        return moneyDao.getOverallIncome()
+    }
+
+    override fun getOverallExpense(): LiveData<Int> {
+        return moneyDao.getOverallExpense()
+    }
 }

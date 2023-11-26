@@ -75,4 +75,13 @@ interface MoneyDao {
 
     @Query("UPDATE account_list SET balance = 0")
     fun clearAllAccountBalances(): Completable
+
+    @Query("SELECT SUM(balance) FROM account_list")
+    fun getOverallBalance(): LiveData<Int>
+
+    @Query("SELECT SUM(amount) FROM transaction_list WHERE type = 0")
+    fun getOverallIncome(): LiveData<Int>
+
+    @Query("SELECT SUM(amount) FROM transaction_list WHERE type = 1")
+    fun getOverallExpense(): LiveData<Int>
 }

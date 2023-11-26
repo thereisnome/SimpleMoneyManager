@@ -19,11 +19,6 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
 
     private val viewModel: HistoryViewModel by viewModels()
 
-    private var overallExpense = 0
-    private var overallIncome = 0
-    private var overallBalance = 0
-    private lateinit var transactionList: List<Transaction>
-
     private var _binding: FragmentHistoryBinding? = null
     private val binding: FragmentHistoryBinding
         get() = _binding ?: throw RuntimeException("FragmentHistoryBinding is null")
@@ -32,16 +27,14 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
-        viewModel.getTransactionList().observe(viewLifecycleOwner) {
-            transactionList = it
-            setupRecyclerView()
-            setStatisticValues()
-        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+        setStatisticValues()
 
         binding.fabAddTransaction.setOnClickListener {
             launchAddTransactionFragment()
@@ -54,24 +47,26 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
     }
 
     private fun setStatisticValues() {
-        val incomeTransactionList = transactionList.filter { it.type == Transaction.INCOME }
-        overallIncome = viewModel.getOverallBalance(incomeTransactionList)
-        binding.tvIncomeValue.text = Transaction.formatIncome(overallIncome)
+        viewModel.getOverallIncome().observe(viewLifecycleOwner){
+            binding.tvIncomeValue.text = Transaction.formatIncome(it)
+        }
 
-        val expenseTransactionList = transactionList.filter { it.type == Transaction.EXPENSE }
-        overallExpense = viewModel.getOverallBalance(expenseTransactionList)
-        binding.tvExpenseValue.text = Transaction.formatExpense(overallExpense)
+        viewModel.getOverallExpense().observe(viewLifecycleOwner){
+            binding.tvExpenseValue.text = Transaction.formatExpense(it)
+        }
 
-        overallBalance = viewModel.getOverallBalance(transactionList)
-
-        if (overallBalance >= 0) {
-            binding.tvBalanceValue.text = Transaction.formatIncome(overallBalance)
-        } else binding.tvBalanceValue.text = Transaction.formatExpense(overallBalance)
+        viewModel.getOverallBalance().observe(viewLifecycleOwner){
+            if (it >= 0) {
+                binding.tvBalanceValue.text = Transaction.formatIncome(it)
+            } else binding.tvBalanceValue.text = Transaction.formatExpense(it)
+        }
     }
 
     private fun setupRecyclerView() {
-        binding.rvTransactions.adapter = adapter
-        adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
+        viewModel.getTransactionList().observe(viewLifecycleOwner){ transactionList ->
+            binding.rvTransactions.adapter = adapter
+            adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
+        }
     }
 
     override fun onDestroyView() {

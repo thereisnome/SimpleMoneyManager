@@ -42,4 +42,8 @@ class AccountRepositoryImpl(private val moneyDao: MoneyDao): AccountRepository {
     override fun clearAllAccountBalances(): Completable {
         return moneyDao.clearAllAccountBalances()
     }
+
+    override fun getOverallBalance(): LiveData<Int> {
+        return moneyDao.getOverallBalance()
+    }
 }

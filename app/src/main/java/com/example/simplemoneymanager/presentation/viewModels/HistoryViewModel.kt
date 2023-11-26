@@ -10,8 +10,11 @@ import com.example.simplemoneymanager.data.repository.AccountRepositoryImpl
 import com.example.simplemoneymanager.data.repository.TransactionRepositoryImpl
 import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.account.usecases.ClearAccountBalanceUseCase
+import com.example.simplemoneymanager.domain.account.usecases.GetOverallBalanceUseCase
 import com.example.simplemoneymanager.domain.account.usecases.SubtractAccountBalanceUseCase
 import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.transaction.usecases.GetOverallExpenseUseCase
+import com.example.simplemoneymanager.domain.transaction.usecases.GetOverallIncomeUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionListUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveAllTransactionsUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveTransactionUseCase
@@ -30,6 +33,9 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     private val removeTransactionUseCase = RemoveTransactionUseCase(transactionRepositoryImpl)
     private val subtractAccountBalanceUseCase = SubtractAccountBalanceUseCase(accountRepositoryImpl)
     private val clearAccountBalanceUseCase = ClearAccountBalanceUseCase(accountRepositoryImpl)
+    private val getOverallBalanceUseCase = GetOverallBalanceUseCase(accountRepositoryImpl)
+    private val getOverallIncomeUseCase = GetOverallIncomeUseCase(transactionRepositoryImpl)
+    private val getOverallExpenseUseCase = GetOverallExpenseUseCase(transactionRepositoryImpl)
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -83,12 +89,16 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
         compositeDisposable.add(disposable)
     }
 
-    fun getOverallBalance(transactionList: List<Transaction>): Int {
-        var result = 0
-        for (transaction in transactionList) {
-            result += transaction.amount
-        }
-        return result
+    fun getOverallBalance(): LiveData<Int>{
+        return getOverallBalanceUseCase()
+    }
+
+    fun getOverallIncome(): LiveData<Int>{
+        return getOverallIncomeUseCase()
+    }
+
+    fun getOverallExpense(): LiveData<Int>{
+        return getOverallExpenseUseCase()
     }
 
     override fun onCleared() {

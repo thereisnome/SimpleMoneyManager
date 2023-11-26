@@ -23,4 +23,6 @@ interface AccountRepository {
     fun clearAccountBalance(accountId: Int): Completable
 
     fun clearAllAccountBalances(): Completable
+
+    fun getOverallBalance(): LiveData<Int>
 }
