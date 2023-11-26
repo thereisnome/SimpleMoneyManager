@@ -37,13 +37,18 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
         setStatisticValues()
 
         binding.fabAddTransaction.setOnClickListener {
-            launchAddTransactionFragment()
+            launchAddTransactionFragmentAddMode()
         }
         binding.fabAddTransaction.setOnLongClickListener {
             viewModel.removeAllTransactions()
             viewModel.clearAllAccountBalances()
             true
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun setStatisticValues() {
@@ -69,13 +74,12 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun launchAddTransactionFragmentAddMode() {
+        findNavController().navigate(R.id.action_historyFragment_to_addTransactionFragment)
     }
 
-    private fun launchAddTransactionFragment() {
-        findNavController().navigate(R.id.action_historyFragment_to_addTransactionFragment)
+    private fun launchAddTransactionFragmentEditMode(transactionId: Long) {
+        findNavController().navigate(HistoryFragmentDirections.actionHistoryFragmentToAddTransactionFragment(transactionId))
     }
 
     override fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction) {
@@ -83,6 +87,9 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
             R.id.transaction_menu_button_delete -> {
                 viewModel.removeTransaction(transaction)
                 viewModel.subtractAccountBalance(transaction.account, transaction.amount)
+            }
+            R.id.transaction_menu_button_edit -> {
+                launchAddTransactionFragmentEditMode(transaction.transactionId)
             }
         }
     }

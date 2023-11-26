@@ -22,9 +22,14 @@
         <action
             android:id="@+id/action_addTransactionFragment_to_categoryBottomSheetDialogFragment"
             app:destination="@id/categoryBottomSheetDialogFragment" />
+        <argument
+            android:name="transactionId"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
     <dialog
         android:id="@+id/categoryBottomSheetDialogFragment"
         android:name="com.example.simplemoneymanager.presentation.fragments.CategoryBottomSheetDialogFragment"
-        android:label="CategoryBottomSheetDialogFragment" />
+        android:label="CategoryBottomSheetDialogFragment"
+        tools:layout="@layout/fragment_category_bottom_sheet"/>
 </navigation>

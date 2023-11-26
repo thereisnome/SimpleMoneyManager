@@ -14,7 +14,7 @@ interface TransactionRepository {
 
     fun getExpenseTransactionList(): LiveData<List<Transaction>>
 
-    fun getTransactionById(transactionId: Int): LiveData<Transaction>
+    fun getTransactionById(transactionId: Long): LiveData<Transaction>
 
     fun removeTransaction(transactionId: Long): Completable
 
@@ -23,4 +23,6 @@ interface TransactionRepository {
     fun getOverallIncome(): LiveData<Int>
 
     fun getOverallExpense(): LiveData<Int>
+
+    fun editTransaction(transaction: Transaction): Completable
 }

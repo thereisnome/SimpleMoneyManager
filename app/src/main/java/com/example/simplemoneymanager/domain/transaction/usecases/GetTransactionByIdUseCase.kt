@@ -6,7 +6,7 @@ import com.example.simplemoneymanager.domain.transaction.Transaction
 
 class GetTransactionByIdUseCase(private val transactionRepository: TransactionRepository) {
 
-    fun invoke(transactionId: Int): LiveData<Transaction> {
+    operator fun invoke(transactionId: Long): LiveData<Transaction> {
         return transactionRepository.getTransactionById(transactionId)
     }
 }
