@@ -31,6 +31,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = transactionList[position]
+        val balancePerDay = transactionList.filter { it.date == transaction.date }.sumOf { it.amount }
         val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         val dateString = transaction.date.format(dateTimeFormatter)
 
@@ -40,6 +41,11 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
 
         if (shouldDisplayDate) {
             holder.binding.tvDate.text = dateString
+            if (balancePerDay >= 0){
+                holder.binding.tvBalancePerDay.text = Transaction.formatIncome(balancePerDay)
+            } else {
+                holder.binding.tvBalancePerDay.text = Transaction.formatExpense(balancePerDay)
+            }
             holder.binding.llDate.visibility = View.VISIBLE
         } else {
             holder.binding.llDate.visibility = View.GONE

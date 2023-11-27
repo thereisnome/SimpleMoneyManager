@@ -5,9 +5,14 @@
     android:id="@+id/layout_expanded"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     tools:context=".presentation.fragments.CategoryBottomSheetDialogFragment">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,7 +29,8 @@
         style="?attr/materialIconButtonStyle"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_margin="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="@string/add_new_category_button"
         android:src="@drawable/ic_add"
         app:layout_constraintEnd_toEndOf="parent"

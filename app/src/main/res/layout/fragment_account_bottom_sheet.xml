@@ -4,12 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_expanded"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:layout_height="wrap_content"
     tools:context=".presentation.fragments.AccountBottomSheetDialogFragment">
 
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
+        android:id="@+id/tv_account_bottom_sheet_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/accounts"
@@ -17,14 +22,15 @@
         app:layout_constraintBottom_toBottomOf="@id/button_add_new_account"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/button_add_new_account" />
+        app:layout_constraintTop_toTopOf="@+id/button_add_new_account" />
 
     <ImageButton
         android:id="@+id/button_add_new_account"
         style="?attr/materialIconButtonStyle"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_margin="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="@string/add_new_category_button"
         android:src="@drawable/ic_add"
         app:layout_constraintEnd_toEndOf="parent"
