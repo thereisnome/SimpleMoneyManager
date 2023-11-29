@@ -23,7 +23,8 @@
             app:contentInsetStartWithNavigation="0dp"
             app:navigationIcon="@drawable/ic_close"
             app:title="@string/add_new_category"
-            app:titleCentered="true" />
+            app:titleCentered="true"
+            app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge.MyApp" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -41,14 +42,14 @@
 
         <Button
             android:id="@+id/button_income"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.App.Button.OutlinedButton.Income"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/income" />
 
         <Button
             android:id="@+id/button_expense"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.App.Button.OutlinedButton.Expense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/expense" />
@@ -63,6 +64,7 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="16dp"
         android:hint="@string/name"
+        app:boxStrokeColor="@color/text_input_layout_container_color_selector"
         app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@+id/toggle_button_category_type">
 

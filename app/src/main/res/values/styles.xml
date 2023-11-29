@@ -1,8 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="DialogTheme" parent="Base.Theme.SimpleMoneyManager">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsFloating">true</item>
+    </style>
+
+    <style name="TextAppearance.Material3.TitleLarge.MyApp" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@font/open_sans_semibold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="TextAppearance.Material3.TitleMedium.MyApp" parent="TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@font/open_sans_semibold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Widget.App.Button.TextButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleMedium.MyApp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.SmallComponent.MyApp</item>
+    </style>
+
+    <style name="Widget.App.Button.OutlinedButton.Income" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleMedium.MyApp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.SmallComponent.MyApp</item>
+        <item name="android:textColor">@color/income_text_foreground_color_selector</item>
+        <item name="backgroundTint">@color/income_button_background_color_selector</item>
+        <item name="strokeColor">@color/md_theme_dark_surfaceVariant</item>
+    </style>
+
+    <style name="Widget.App.Button.OutlinedButton.Expense" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleMedium.MyApp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.SmallComponent.MyApp</item>
+        <item name="android:textColor">@color/expense_text_foreground_color_selector</item>
+        <item name="backgroundTint">@color/expense_button_background_color_selector</item>
+        <item name="strokeColor">@color/md_theme_dark_surfaceVariant</item>
+    </style>
+
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleMedium.MyApp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.SmallComponent.MyApp</item>
+    </style>
+
+    <style name="ShapeAppearance.Material3.SmallComponent.MyApp" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">20dp</item>
     </style>
 </resources>

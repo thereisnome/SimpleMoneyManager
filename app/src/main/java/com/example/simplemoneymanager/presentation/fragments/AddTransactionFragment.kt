@@ -54,6 +54,9 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
     }
 
     private fun launchAddMode() {
+
+        binding.tilAmount.prefixText = "+"
+
         viewModel.getMainAccount().observe(viewLifecycleOwner) {
             account = it
         }
@@ -82,6 +85,10 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             category = it.category
             categoryType = it.type
             account = it.account
+
+            if(transaction.type==Transaction.INCOME){
+                binding.tilAmount.prefixText = "-"
+            } else binding.tilAmount.prefixText = "+"
 
             viewModel.subtractAccountBalance(account, transaction.amount)
 
@@ -123,6 +130,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
     private fun setCategoryButtonsClickListeners() {
         binding.buttonIncome.setOnClickListener {
             categoryType = Category.INCOME
+            binding.tilAmount.prefixText = "+"
             if (binding.etCategory.text.toString() != "No category") {
                 binding.etCategory.setText("")
             }
@@ -130,6 +138,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
         binding.buttonExpense.setOnClickListener {
             categoryType = Category.EXPENSE
+            binding.tilAmount.prefixText = "-"
             if (binding.etCategory.text.toString() != "No category") {
                 binding.etCategory.setText("")
             }

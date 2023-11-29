@@ -46,9 +46,9 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             } else {
                 holder.binding.tvBalancePerDay.text = Transaction.formatExpense(balancePerDay)
             }
-            holder.binding.llDate.visibility = View.VISIBLE
+            holder.binding.layoutDate.visibility = View.VISIBLE
         } else {
-            holder.binding.llDate.visibility = View.GONE
+            holder.binding.layoutDate.visibility = View.GONE
         }
 
         when (transaction.type) {

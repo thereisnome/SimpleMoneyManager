@@ -15,7 +15,6 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/transaction_add_toolbar"
-            style="@style/Widget.Material3.Toolbar.Surface"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:paddingStart="6dp"
@@ -23,7 +22,8 @@
             app:contentInsetStartWithNavigation="0dp"
             app:navigationIcon="@drawable/ic_close"
             app:title="@string/add_new_transaction"
-            app:titleCentered="true" />
+            app:titleCentered="true"
+            app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge.MyApp" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -41,14 +41,14 @@
 
         <Button
             android:id="@+id/button_income"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.App.Button.OutlinedButton.Income"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/income" />
 
         <Button
             android:id="@+id/button_expense"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.App.Button.OutlinedButton.Expense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/expense" />
@@ -63,8 +63,10 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="16dp"
         android:hint="@string/amount"
+        app:boxStrokeColor="@color/text_input_layout_container_color_selector"
         app:errorEnabled="true"
-        app:layout_constraintTop_toBottomOf="@+id/toggle_button_transaction_type">
+        app:layout_constraintTop_toBottomOf="@+id/toggle_button_transaction_type"
+        tools:layout_editor_absoluteX="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_amount"
@@ -81,6 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:hint="@string/name"
+        app:boxStrokeColor="@color/text_input_layout_container_color_selector"
         app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@+id/til_amount">
 
@@ -99,6 +102,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:hint="@string/category"
+        app:boxStrokeColor="@color/text_input_layout_container_color_selector"
         app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@+id/til_name">
 
@@ -120,6 +124,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:hint="@string/account"
+        app:boxStrokeColor="@color/text_input_layout_container_color_selector"
         app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@+id/til_category">
 

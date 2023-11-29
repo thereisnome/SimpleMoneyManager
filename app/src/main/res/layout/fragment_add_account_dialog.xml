@@ -21,8 +21,9 @@
             android:paddingEnd="16dp"
             app:contentInsetStartWithNavigation="0dp"
             app:navigationIcon="@drawable/ic_close"
-            app:title="@string/add_new_category"
-            app:titleCentered="true" />
+            app:title="@string/add_new_account"
+            app:titleCentered="true"
+            app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge.MyApp" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -34,6 +35,7 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="16dp"
         android:hint="@string/name"
+        app:boxStrokeColor="@color/text_input_layout_container_color_selector"
         app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@+id/account_add_appbar_layout">
 
@@ -53,6 +55,7 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="16dp"
         android:hint="@string/balance"
+        app:boxStrokeColor="@color/text_input_layout_container_color_selector"
         app:layout_constraintTop_toBottomOf="@+id/til_account_name">
 
         <com.google.android.material.textfield.TextInputEditText
