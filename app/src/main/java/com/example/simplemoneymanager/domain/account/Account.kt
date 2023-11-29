@@ -11,5 +11,6 @@ data class Account(
     val accountName: String,
     var balance: Int,
     @PrimaryKey(autoGenerate = true)
-    val accountId: Int = 0
+    val accountId: Int = 0,
+    val accountColor: String
 ) : Parcelable

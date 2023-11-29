@@ -1,9 +1,11 @@
 package com.example.simplemoneymanager.presentation.recyclerViews
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.TransactionItemBinding
@@ -46,14 +48,14 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             } else {
                 holder.binding.tvBalancePerDay.text = Transaction.formatExpense(balancePerDay)
             }
-            holder.binding.llDate.visibility = View.VISIBLE
+            holder.binding.layoutDate.visibility = View.VISIBLE
         } else {
-            holder.binding.llDate.visibility = View.GONE
+            holder.binding.layoutDate.visibility = View.GONE
         }
 
         when (transaction.type) {
-            Transaction.INCOME -> holder.binding.tilAmount.text = Transaction.formatIncome(transaction.amount)
-            Transaction.EXPENSE -> holder.binding.tilAmount.text = Transaction.formatExpense(transaction.amount)
+            Transaction.INCOME -> holder.binding.tvAmount.text = Transaction.formatIncome(transaction.amount)
+            Transaction.EXPENSE -> holder.binding.tvAmount.text = Transaction.formatExpense(transaction.amount)
         }
 
         if (shouldDisplayName) {
@@ -61,6 +63,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             holder.binding.tvName.text = transaction.transactionName
         } else holder.binding.tvName.visibility = View.GONE
         holder.binding.tvCategory.text = transaction.category.categoryName
+        holder.binding.tvCategory.backgroundTintList = ColorStateList.valueOf(transaction.category.categoryColor.toColorInt())
         holder.binding.tvAccount.text = transaction.account.accountName
 
         holder.itemView.setOnLongClickListener {

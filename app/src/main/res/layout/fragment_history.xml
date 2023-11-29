@@ -14,97 +14,100 @@
         android:paddingBottom="8dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.divider.MaterialDivider
-            android:id="@+id/divider_top_vertical"
-            android:layout_width="1dp"
-            android:layout_height="80dp"
-            android:layout_margin="8dp"
-            android:orientation="vertical"
-            app:dividerInsetEnd="16dp"
-            app:dividerInsetStart="16dp"
-            app:dividerThickness="1dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.divider.MaterialDivider
-            android:id="@+id/divider_mid_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:orientation="vertical"
-            app:dividerInsetEnd="16dp"
-            app:dividerInsetStart="16dp"
-            app:dividerThickness="1dp"
-            app:layout_constraintTop_toBottomOf="@id/divider_top_vertical" />
-
-        <TextView
-            android:id="@+id/tv_income_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
-            android:text="@string/income"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@id/divider_top_vertical"
-            app:layout_constraintTop_toTopOf="@id/divider_top_vertical" />
-
-        <TextView
-            android:id="@+id/tv_income_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toStartOf="@id/divider_top_vertical"
-            app:layout_constraintTop_toBottomOf="@+id/tv_income_label"
-            tools:text="20 000,00 rub." />
-
-        <TextView
-            android:id="@+id/tv_expense_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
-            android:text="@string/expense"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="@id/divider_mid_horizontal"
-            app:layout_constraintTop_toTopOf="@id/divider_top_vertical" />
-
-        <TextView
-            android:id="@+id/tv_expense_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="@id/divider_mid_horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/tv_income_label"
-            tools:text="8 000,00 rub." />
-
-        <TextView
-            android:id="@+id/tv_balance_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="8dp"
-            android:text="@string/balance"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="@id/divider_mid_horizontal"
-            app:layout_constraintStart_toStartOf="@id/divider_mid_horizontal"
-            app:layout_constraintTop_toTopOf="@id/divider_mid_horizontal" />
-
         <TextView
             android:id="@+id/tv_balance_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="8dp"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="@id/divider_mid_horizontal"
-            app:layout_constraintStart_toStartOf="@id/divider_mid_horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/tv_balance_label"
+            android:fontFamily="@font/open_sans_bold"
+            android:textSize="48sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="500,00 rub." />
+
+        <LinearLayout
+            android:id="@+id/layout_income"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/background_income_tile"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/layout_expense"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_balance_value">
+
+            <TextView
+                android:id="@+id/tv_income_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:text="@string/income"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_income_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
+                android:fontFamily="@font/open_sans_bold"
+                android:textSize="20sp"
+                tools:text="20 000,00 rub." />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_expense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/background_expense_tile"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/layout_income"
+            app:layout_constraintTop_toBottomOf="@id/tv_balance_value">
+
+            <TextView
+                android:id="@+id/tv_expense_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
+                android:fontFamily="@font/open_sans_semibold"
+                android:text="@string/expense"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_expense_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
+                android:fontFamily="@font/open_sans_bold"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                tools:text="8 000,00 rub." />
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="28dp"
+            app:dividerInsetEnd="16dp"
+            app:dividerInsetStart="16dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_expense" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -112,8 +115,8 @@
         android:id="@+id/rv_transactions"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/background_surface_radius"
         android:clickable="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"

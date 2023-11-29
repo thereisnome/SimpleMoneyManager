@@ -19,8 +19,8 @@ class AddAccountDialogViewModel(application: Application): AndroidViewModel(appl
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun addAccount(accountName: String, accountBalance: Int) {
-        val account = Account(accountName, accountBalance)
+    fun addAccount(accountName: String, accountBalance: Int, accountColor: String) {
+        val account = Account(accountName, accountBalance, accountColor=accountColor)
         val disposable = addAccountUseCase(account).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
             Toast.makeText(getApplication(), "Account added successfully", Toast.LENGTH_LONG)

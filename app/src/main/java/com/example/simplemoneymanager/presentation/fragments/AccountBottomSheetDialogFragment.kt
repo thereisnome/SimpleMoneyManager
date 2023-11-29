@@ -11,6 +11,10 @@ import com.example.simplemoneymanager.databinding.FragmentAccountBottomSheetBind
 import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.presentation.recyclerViews.AccountListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.AccountBottomSheetViewModel
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -42,6 +46,11 @@ class AccountBottomSheetDialogFragment :
         binding.buttonAddNewAccount.setOnClickListener {
             showAddAccountBottomSheet()
         }
+
+        val flexboxLayoutManager = FlexboxLayoutManager(requireContext(), FlexDirection.ROW)
+        flexboxLayoutManager.flexWrap = FlexWrap.WRAP
+        flexboxLayoutManager.justifyContent = JustifyContent.FLEX_START
+        binding.rvAccounts.layoutManager = flexboxLayoutManager
 
         viewModel.getAccountList()
             .observe(viewLifecycleOwner) { accountList ->
