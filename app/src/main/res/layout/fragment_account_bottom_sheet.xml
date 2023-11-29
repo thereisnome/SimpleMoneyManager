@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_expanded"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".presentation.fragments.AccountBottomSheetDialogFragment">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -14,7 +14,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_account_bottom_sheet_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/accounts"
@@ -41,8 +40,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_marginBottom="16dp"
         app:layout_constraintTop_toBottomOf="@id/button_add_new_account"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/account_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

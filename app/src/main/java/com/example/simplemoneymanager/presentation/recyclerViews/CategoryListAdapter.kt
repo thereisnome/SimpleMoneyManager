@@ -1,8 +1,12 @@
 package com.example.simplemoneymanager.presentation.recyclerViews
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.ListAdapter
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.CategoryItemBinding
@@ -21,7 +25,19 @@ class CategoryListAdapter(private val itemClickListener: CategoryPopupMenuItemCl
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = getItem(position)
+
+        val contrast = ColorUtils.calculateContrast(
+            holder.binding.tvCategoryName.currentHintTextColor,
+            category.categoryColor.toColorInt()
+        )
+
+        if (contrast < 1.5f){
+            holder.binding.tvCategoryName.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+        }
+
         holder.binding.tvCategoryName.text = category.categoryName
+        holder.binding.tvCategoryName.backgroundTintList =
+            ColorStateList.valueOf(category.categoryColor.toColorInt())
 
         holder.binding.tvCategoryName.setOnClickListener {
             onItemClickListener?.invoke(category)

@@ -19,8 +19,8 @@ class AddCategoryDialogViewModel(application: Application): AndroidViewModel(app
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun addCategory(categoryType: Int, categoryName: String) {
-        val category = Category(categoryType, categoryName)
+    fun addCategory(categoryType: Int, categoryName: String, categoryColor: String) {
+        val category = Category(categoryType, categoryName, categoryColor = categoryColor)
         val disposable = addCategoryUseCase(category).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
             Toast.makeText(getApplication(), "Category added successfully", Toast.LENGTH_LONG)

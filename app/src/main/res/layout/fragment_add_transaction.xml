@@ -56,7 +56,7 @@
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_amount"
+        android:id="@+id/tv_amount"
         style="@style/Widget.MyApp.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         app:errorEnabled="true"
-        app:layout_constraintTop_toBottomOf="@+id/til_amount">
+        app:layout_constraintTop_toBottomOf="@+id/tv_amount">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_name"
@@ -89,64 +89,28 @@
             android:layout_height="wrap_content"
             android:hint="@string/name"
             android:inputType="textCapSentences"
-            android:textSize="36sp" />
+            android:textSize="32sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_category"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:hint="@string/category"
-        android:visibility="gone"
-        app:boxStrokeColor="@color/text_input_layout_container_color_selector"
-        app:errorEnabled="true"
-        app:layout_constraintTop_toBottomOf="@+id/til_name">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="false"
-            android:inputType="none"
-            android:text="@string/no_category" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_category"
         style="@style/Category_account_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="No category"
+        android:text="@string/no_category"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_name" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_account"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
-        android:layout_width="match_parent"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_account"
+        style="@style/Category_account_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
-        android:hint="@string/account"
-        android:visibility="gone"
-        app:boxStrokeColor="@color/text_input_layout_container_color_selector"
-        app:errorEnabled="true"
-        app:layout_constraintTop_toBottomOf="@+id/til_category">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_account"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="false"
-            android:inputType="none"
-            android:text="@string/main_account_name" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_marginStart="16dp"
+        android:text="@string/main_account_name"
+        app:layout_constraintStart_toEndOf="@id/button_category"
+        app:layout_constraintTop_toBottomOf="@id/til_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

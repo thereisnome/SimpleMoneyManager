@@ -1,8 +1,12 @@
 package com.example.simplemoneymanager.presentation.recyclerViews
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.ListAdapter
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.AccountItemBinding
@@ -21,7 +25,19 @@ class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClic
 
     override fun onBindViewHolder(holder: AccountViewHolder, position: Int) {
         val account = getItem(position)
+
+        val contrast = ColorUtils.calculateContrast(
+            holder.binding.tvAccountName.currentHintTextColor,
+            account.accountColor.toColorInt()
+        )
+
+        if (contrast < 1.5f){
+            holder.binding.tvAccountName.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+        }
+
         holder.binding.tvAccountName.text = account.accountName
+        holder.binding.tvAccountName.backgroundTintList =
+            ColorStateList.valueOf(account.accountColor.toColorInt())
 
         holder.binding.tvAccountName.setOnClickListener {
             onItemClickListener?.invoke(account)

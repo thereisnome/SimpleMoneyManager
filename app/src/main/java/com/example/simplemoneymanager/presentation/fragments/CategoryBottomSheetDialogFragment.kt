@@ -4,12 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.FragmentCategoryBottomSheetBinding
 import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.presentation.recyclerViews.CategoryListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.CategoryBottomSheetViewModel
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class CategoryBottomSheetDialogFragment private constructor(private val categoryType: Int) :
@@ -19,9 +23,7 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
 
     private val adapter = CategoryListAdapter(this)
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[CategoryBottomSheetViewModel::class.java]
-    }
+    private val viewModel: CategoryBottomSheetViewModel by viewModels()
 
     private var _binding: FragmentCategoryBottomSheetBinding? = null
     private val binding: FragmentCategoryBottomSheetBinding
@@ -42,6 +44,11 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
         binding.buttonAddNewCategory.setOnClickListener {
             showAddCategoryBottomSheet()
         }
+
+        val flexboxLayoutManager = FlexboxLayoutManager(requireContext(), FlexDirection.ROW)
+        flexboxLayoutManager.flexWrap = FlexWrap.WRAP
+        flexboxLayoutManager.justifyContent = JustifyContent.FLEX_START
+        binding.rvCategories.layoutManager = flexboxLayoutManager
 
         if (categoryType == Category.EXPENSE) {
             viewModel.getExpenseCategoryList()
