@@ -17,11 +17,6 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="Widget.App.Button.TextButton" parent="Widget.Material3.Button.TextButton">
-        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleMedium.MyApp</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Material3.SmallComponent.MyApp</item>
-    </style>
-
     <style name="Widget.App.Button.OutlinedButton.Income" parent="Widget.Material3.Button.OutlinedButton">
         <item name="android:textAppearance">@style/TextAppearance.Material3.TitleMedium.MyApp</item>
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.SmallComponent.MyApp</item>
@@ -38,12 +33,25 @@
         <item name="strokeColor">@color/md_theme_dark_surfaceVariant</item>
     </style>
 
-    <style name="Widget.App.Button" parent="Widget.Material3.Button">
-        <item name="android:textAppearance">@style/TextAppearance.Material3.TitleMedium.MyApp</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Material3.SmallComponent.MyApp</item>
-    </style>
-
     <style name="ShapeAppearance.Material3.SmallComponent.MyApp" parent="ShapeAppearance.Material3.SmallComponent">
         <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="TextLabel" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">42sp</item>
+    </style>
+
+    <style name="Category_account_button" parent="Widget.Material3.Button.OutlinedButton.Icon">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="Widget.MyApp.TextInputLayout.FilledBox" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="android:textSize">42sp</item>
+        <item name="hintEnabled">false</item>
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+        <item name="errorEnabled">true</item>
+        <item name="prefixTextAppearance">@style/TextLabel</item>
     </style>
 </resources>

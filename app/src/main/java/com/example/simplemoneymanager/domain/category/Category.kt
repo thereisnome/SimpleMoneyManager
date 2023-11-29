@@ -11,7 +11,7 @@ data class Category(
     val categoryType: Int,
     val categoryName: String,
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0
+    val id: Int = 0,
 ) : Parcelable {
     companion object{
         const val INCOME = 0

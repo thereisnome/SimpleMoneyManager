@@ -1,9 +1,11 @@
 package com.example.simplemoneymanager.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,6 +18,7 @@ import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.presentation.viewModels.AddTransactionViewModel
 import kotlin.math.absoluteValue
+
 
 private const val UNDEFINED_TRANSACTION = -1L
 
@@ -51,6 +54,14 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             setOnBackPressed()
 
         } else launchAddMode()
+
+        setFocusOnAmountField()
+    }
+
+    private fun setFocusOnAmountField() {
+        binding.etAmount.requestFocus()
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.etAmount, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun launchAddMode() {
@@ -118,7 +129,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
     }
 
     private fun setBottomSheetClickListeners() {
-        binding.etCategory.setOnClickListener {
+        binding.buttonCategory.setOnClickListener {
             showCategoryBottomSheetDialog()
         }
 
@@ -131,17 +142,13 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
         binding.buttonIncome.setOnClickListener {
             categoryType = Category.INCOME
             binding.tilAmount.prefixText = "+"
-            if (binding.etCategory.text.toString() != "No category") {
-                binding.etCategory.setText("")
-            }
+            binding.buttonCategory.text = requireContext().getString(R.string.no_category)
         }
 
         binding.buttonExpense.setOnClickListener {
             categoryType = Category.EXPENSE
             binding.tilAmount.prefixText = "-"
-            if (binding.etCategory.text.toString() != "No category") {
-                binding.etCategory.setText("")
-            }
+            binding.buttonCategory.text = requireContext().getString(R.string.no_category)
         }
     }
 
@@ -197,7 +204,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
     override fun onCategoryPassed(category: Category) {
         this.category = category
-        binding.etCategory.setText(category.categoryName)
+        binding.buttonCategory.text = category.categoryName
     }
 
     override fun onAccountPassed(account: Account) {

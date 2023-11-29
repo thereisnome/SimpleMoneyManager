@@ -36,15 +36,15 @@
     <color name="md_theme_light_outlineVariant">#C9C5D0</color>
     <color name="md_theme_light_scrim">#000000</color>
 
-    <color name="md_theme_dark_primary">#C8BFFF</color>
-    <color name="md_theme_dark_onPrimary">#2C009D</color>
-    <color name="md_theme_dark_primaryContainer">#4100DB</color>
-    <color name="md_theme_dark_onPrimaryContainer">#E5DEFF</color>
-    <color name="md_theme_dark_onPrimaryContainer_gradient">#a4a1ad</color>
-    <color name="md_theme_dark_secondary">#57f89d</color>
-    <color name="md_theme_dark_onSecondary">#004223</color>
-    <color name="md_theme_dark_secondaryContainer">#10c79f</color>
-    <color name="md_theme_dark_onSecondaryContainer">#094538</color>
+    <color name="md_theme_dark_primary">#57f89d</color>
+    <color name="md_theme_dark_onPrimary">#004223</color>
+    <color name="md_theme_dark_primaryContainer">#10c79f</color>
+    <color name="md_theme_dark_onPrimaryContainer">#094538</color>
+    <color name="md_theme_dark_secondary">#C8BFFF</color>
+    <color name="md_theme_dark_onSecondary">#2C009D</color>
+    <color name="md_theme_dark_secondaryContainer">#4100DB</color>
+    <color name="md_theme_dark_onSecondaryContainer">#E5DEFF</color>
+    <color name="md_theme_dark_onSecondaryContainer_gradient">#a4a1ad</color>
     <color name="md_theme_dark_tertiary">#10c79f</color>
     <color name="md_theme_dark_tertiary_gradient">#069475</color>
     <color name="md_theme_dark_onTertiary">#003933</color>
