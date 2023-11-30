@@ -39,8 +39,8 @@ interface MoneyDao {
         type: Int,
         transactionName: String,
         categoryId: Int,
-        amount: Int,
-        accountId: Int,
+        amount: Double,
+        accountId: Long,
         date: LocalDate
     ): Completable
 
@@ -71,37 +71,40 @@ interface MoneyDao {
     fun getAccountList(): LiveData<List<Account>>
 
     @Query("SELECT * FROM account_list WHERE accountId = :accountId")
-    fun getAccountById(accountId: Int): LiveData<Account>
+    fun getAccountById(accountId: Long): LiveData<Account>
 
     @Query("DELETE FROM transaction_list")
     fun removeAllTransactions(): Completable
 
     @Query("DELETE FROM account_list WHERE accountId = :accountId")
-    fun removeAccount(accountId: Int): Completable
+    fun removeAccount(accountId: Long): Completable
 
     @Query("UPDATE account_list SET balance = :newBalance WHERE accountId = :accountId")
-    fun updateAccountBalance(accountId: Int, newBalance: Int): Completable
+    fun updateAccountBalance(accountId: Long, newBalance: Double): Completable
 
     @Query("UPDATE account_list SET balance = balance - :amount WHERE accountId = :accountId")
-    fun subtractAccountBalance(accountId: Int, amount: Int): Completable
+    fun subtractAccountBalance(accountId: Long, amount: Double): Completable
 
     @Query("UPDATE account_list SET balance = balance + :amount WHERE accountId = :accountId")
-    fun addAccountBalance(accountId: Int, amount: Int): Completable
+    fun addAccountBalance(accountId: Long, amount: Double): Completable
 
     @Query("UPDATE account_list SET balance = 0 WHERE accountId = :accountId")
-    fun clearAccountBalance(accountId: Int): Completable
+    fun clearAccountBalance(accountId: Long): Completable
 
     @Query("UPDATE account_list SET balance = 0")
     fun clearAllAccountBalances(): Completable
 
 //    Sums
 
+    @Query("SELECT SUM(amount) FROM transaction_list WHERE substr(date,6,2) = :month")
+    fun getCashFlowByMonth(month: String): LiveData<Double>
+
     @Query("SELECT SUM(balance) FROM account_list")
-    fun getOverallBalance(): LiveData<Int>
+    fun getOverallBalance(): LiveData<Double>
 
     @Query("SELECT SUM(amount) FROM transaction_list WHERE type = 0")
-    fun getOverallIncome(): LiveData<Int>
+    fun getOverallIncome(): LiveData<Double>
 
     @Query("SELECT SUM(amount) FROM transaction_list WHERE type = 1")
-    fun getOverallExpense(): LiveData<Int>
+    fun getOverallExpense(): LiveData<Double>
 }

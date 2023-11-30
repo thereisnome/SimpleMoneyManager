@@ -18,7 +18,7 @@ data class Transaction(
     val transactionName: String,
     @Embedded
     val category: Category,
-    val amount: Int,
+    val amount: Double,
     @Embedded
     val account: Account,
     val date: LocalDate,
@@ -29,12 +29,12 @@ data class Transaction(
         const val INCOME = 0
         const val EXPENSE = 1
 
-        fun formatIncome(value: Int): String {
+        fun formatIncome(value: Double): String {
             val formattedAmount = NumberFormat.getCurrencyInstance(Locale("ru", "RU")).format(value)
             return "+$formattedAmount".replace(" руб.", "₽")
         }
 
-        fun formatExpense(value: Int): String {
+        fun formatExpense(value: Double): String {
             val formattedAmount = NumberFormat.getCurrencyInstance(Locale("ru", "RU")).format(value)
             return formattedAmount.replace(" руб.", "₽")
         }

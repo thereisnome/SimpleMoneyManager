@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.core.Completable
 
 class RemoveAccountUseCase(private val accountRepository: AccountRepository) {
 
-    operator fun invoke(accountId: Int): Completable{
+    operator fun invoke(accountId: Long): Completable{
         return accountRepository.removeAccount(accountId)
     }
 }

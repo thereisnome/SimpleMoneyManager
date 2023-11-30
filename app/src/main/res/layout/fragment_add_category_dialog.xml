@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/name"
             android:inputType="textCapSentences"
-            android:textSize="32sp" />
+            android:textSize="24sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -82,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="@string/choose_color"
-        android:textSize="22sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_name" />
 

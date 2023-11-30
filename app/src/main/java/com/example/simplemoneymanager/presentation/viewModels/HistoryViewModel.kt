@@ -13,6 +13,7 @@ import com.example.simplemoneymanager.domain.account.usecases.ClearAccountBalanc
 import com.example.simplemoneymanager.domain.account.usecases.GetOverallBalanceUseCase
 import com.example.simplemoneymanager.domain.account.usecases.SubtractAccountBalanceUseCase
 import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.transaction.usecases.GetCashFlowByMonthUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetOverallExpenseUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetOverallIncomeUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionListUseCase
@@ -36,6 +37,7 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     private val getOverallBalanceUseCase = GetOverallBalanceUseCase(accountRepositoryImpl)
     private val getOverallIncomeUseCase = GetOverallIncomeUseCase(transactionRepositoryImpl)
     private val getOverallExpenseUseCase = GetOverallExpenseUseCase(transactionRepositoryImpl)
+    private val getCashFlowByMonthUseCase = GetCashFlowByMonthUseCase(transactionRepositoryImpl)
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -79,7 +81,7 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
         compositeDisposable.add(disposable)
     }
 
-    fun subtractAccountBalance(account: Account, amount: Int) {
+    fun subtractAccountBalance(account: Account, amount: Double) {
         val disposable = subtractAccountBalanceUseCase(account, amount).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 Log.d("VM subtractAccountBalance", "ID: $account.accountId, amount: $amount")
@@ -89,16 +91,20 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
         compositeDisposable.add(disposable)
     }
 
-    fun getOverallBalance(): LiveData<Int> {
+    fun getOverallBalance(): LiveData<Double> {
         return getOverallBalanceUseCase()
     }
 
-    fun getOverallIncome(): LiveData<Int> {
+    fun getOverallIncome(): LiveData<Double> {
         return getOverallIncomeUseCase()
     }
 
-    fun getOverallExpense(): LiveData<Int> {
+    fun getOverallExpense(): LiveData<Double> {
         return getOverallExpenseUseCase()
+    }
+
+    fun getCashFlowByMonth(month: String): LiveData<Double>{
+        return getCashFlowByMonthUseCase(month)
     }
 
     override fun onCleared() {

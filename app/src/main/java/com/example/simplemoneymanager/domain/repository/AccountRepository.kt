@@ -8,21 +8,21 @@ interface AccountRepository {
 
     fun addAccount(account: Account): Completable
 
-    fun getAccountById(accountId: Int): LiveData<Account>
+    fun getAccountById(accountId: Long): LiveData<Account>
 
     fun getAccountList(): LiveData<List<Account>>
 
-    fun removeAccount(accountId: Int): Completable
+    fun removeAccount(accountId: Long): Completable
 
-    fun updateAccountBalance(accountId: Int, newBalance: Int): Completable
+    fun updateAccountBalance(accountId: Long, newBalance: Double): Completable
 
-    fun subtractAccountBalance(accountId: Int, amount: Int): Completable
+    fun subtractAccountBalance(accountId: Long, amount: Double): Completable
 
-    fun addAccountBalance(accountId: Int, amount: Int): Completable
+    fun addAccountBalance(accountId: Long, amount: Double): Completable
 
-    fun clearAccountBalance(accountId: Int): Completable
+    fun clearAccountBalance(accountId: Long): Completable
 
     fun clearAllAccountBalances(): Completable
 
-    fun getOverallBalance(): LiveData<Int>
+    fun getOverallBalance(): LiveData<Double>
 }

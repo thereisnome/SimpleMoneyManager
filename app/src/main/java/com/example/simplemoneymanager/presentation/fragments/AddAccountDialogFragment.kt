@@ -51,8 +51,8 @@ class AddAccountDialogFragment : DialogFragment() {
                 if (etAccountName.text.toString() != "") {
                     val accountName = etAccountName.text.toString()
                     val accountBalance =
-                        if (etAccountBalance.text.toString() == "") 0 else etAccountBalance.text.toString()
-                            .toInt()
+                        if (etAccountBalance.text.toString() == "") 0.0 else etAccountBalance.text.toString()
+                            .toDouble()
                     viewModel.addAccount(accountName, accountBalance, color)
                     dismiss()
                 } else tilAccountName.error = requireContext().getString(R.string.input_error)

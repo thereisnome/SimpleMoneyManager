@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
@@ -53,6 +55,24 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             holder.binding.layoutDate.visibility = View.GONE
         }
 
+        val categoryContrast = ColorUtils.calculateContrast(
+            holder.binding.tvCategory.currentHintTextColor,
+            transaction.category.categoryColor.toColorInt()
+        )
+
+        if (categoryContrast < 1.5f){
+            holder.binding.tvCategory.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+        }
+
+        val contrast = ColorUtils.calculateContrast(
+            holder.binding.tvAccount.currentHintTextColor,
+            transaction.account.accountColor.toColorInt()
+        )
+
+        if (contrast < 1.5f){
+            holder.binding.tvAccount.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+        }
+
         when (transaction.type) {
             Transaction.INCOME -> holder.binding.tvAmount.text = Transaction.formatIncome(transaction.amount)
             Transaction.EXPENSE -> holder.binding.tvAmount.text = Transaction.formatExpense(transaction.amount)
@@ -65,6 +85,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
         holder.binding.tvCategory.text = transaction.category.categoryName
         holder.binding.tvCategory.backgroundTintList = ColorStateList.valueOf(transaction.category.categoryColor.toColorInt())
         holder.binding.tvAccount.text = transaction.account.accountName
+        holder.binding.tvAccount.backgroundTintList = ColorStateList.valueOf(transaction.account.accountColor.toColorInt())
 
         holder.itemView.setOnLongClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView)

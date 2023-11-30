@@ -12,6 +12,7 @@ import com.example.simplemoneymanager.databinding.FragmentHistoryBinding
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.presentation.recyclerViews.TransactionListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.HistoryViewModel
+import java.time.LocalDate
 
 class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuItemClickListener {
 
@@ -64,6 +65,12 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
             if (it >= 0) {
                 binding.tvBalanceValue.text = Transaction.formatIncome(it)
             } else binding.tvBalanceValue.text = Transaction.formatExpense(it)
+        }
+
+        viewModel.getCashFlowByMonth(LocalDate.now().monthValue.toString()).observe(viewLifecycleOwner){
+            if (it>=0){
+                binding.tvCashFlowBalance.text = Transaction.formatIncome(it)
+            } else binding.tvCashFlowBalance.text = Transaction.formatExpense(it)
         }
     }
 

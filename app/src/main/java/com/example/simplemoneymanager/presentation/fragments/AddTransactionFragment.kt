@@ -199,8 +199,8 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             } else Transaction.EXPENSE
             val name = binding.etName.text.toString()
             val amount = if (type == Transaction.INCOME) {
-                binding.etAmount.text.toString().toInt()
-            } else -binding.etAmount.text.toString().toInt()
+                binding.etAmount.text.toString().toDouble()
+            } else -binding.etAmount.text.toString().toDouble()
             viewModel.addTransaction(type, name, category, amount, account)
             viewModel.addAccountBalance(account, amount)
             findNavController().navigateUp()
@@ -216,8 +216,8 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             } else Transaction.EXPENSE
             val name = binding.etName.text.toString()
             val amount = if (type == Transaction.INCOME) {
-                binding.etAmount.text.toString().toInt()
-            } else -binding.etAmount.text.toString().toInt()
+                binding.etAmount.text.toString().toDouble()
+            } else -binding.etAmount.text.toString().toDouble()
             viewModel.editTransaction(args.transactionId, type, name, category, amount, account)
             viewModel.addAccountBalance(account, amount)
             findNavController().navigateUp()

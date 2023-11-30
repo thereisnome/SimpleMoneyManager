@@ -33,15 +33,15 @@ abstract class MoneyDataBase : RoomDatabase() {
                             db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (1, 'No category', 0, '#E5DEFF')")
                             db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (0, 'No category', 1, '#E5DEFF')")
 
-                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (1, 'Продукты', 2, '#ad3e1c')")
-                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (1, 'Транспорт', 3, '#1c75ad')")
-                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (1, 'Развлечения', 4, '#1cad73')")
+                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (1, 'Продукты', 2, '#F58163')")
+                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (1, 'Транспорт', 3, '#0078FF')")
+                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (1, 'Развлечения', 4, '#FF8A25')")
 
-                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (0, 'Зарплата №1', 5, '#1cad5b')")
-                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (0, 'Зарплата №2', 6, '#43ad1c')")
-                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (0, 'Возврат средств', 7, '#ad901c')")
+                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (0, 'Зарплата №1', 5, '#00AEAD')")
+                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (0, 'Зарплата №2', 6, '#019875')")
+                            db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (0, 'Возврат средств', 7, '#BFD834')")
 
-                            db.execSQL("INSERT INTO account_list (accountName, balance, accountId, accountColor) VALUES ('Main account', 0, 0, '#E73D5D')")
+                            db.execSQL("INSERT INTO account_list (accountName, balance, accountId, accountColor) VALUES ('Main account', 0.0, 0, '#E73D5D')")
                         }
                     }).build()
                 db = instance

@@ -11,7 +11,7 @@ class AccountRepositoryImpl(private val moneyDao: MoneyDao): AccountRepository {
         return moneyDao.addAccount(account)
     }
 
-    override fun getAccountById(accountId: Int): LiveData<Account> {
+    override fun getAccountById(accountId: Long): LiveData<Account> {
         return moneyDao.getAccountById(accountId)
     }
 
@@ -19,23 +19,23 @@ class AccountRepositoryImpl(private val moneyDao: MoneyDao): AccountRepository {
         return moneyDao.getAccountList()
     }
 
-    override fun removeAccount(accountId: Int): Completable {
+    override fun removeAccount(accountId: Long): Completable {
         return moneyDao.removeAccount(accountId)
     }
 
-    override fun updateAccountBalance(accountId: Int, newBalance: Int): Completable {
+    override fun updateAccountBalance(accountId: Long, newBalance: Double): Completable {
         return moneyDao.updateAccountBalance(accountId, newBalance)
     }
 
-    override fun subtractAccountBalance(accountId: Int, amount: Int): Completable {
+    override fun subtractAccountBalance(accountId: Long, amount: Double): Completable {
         return moneyDao.subtractAccountBalance(accountId, amount)
     }
 
-    override fun addAccountBalance(accountId: Int, amount: Int): Completable {
+    override fun addAccountBalance(accountId: Long, amount: Double): Completable {
         return moneyDao.addAccountBalance(accountId, amount)
     }
 
-    override fun clearAccountBalance(accountId: Int): Completable {
+    override fun clearAccountBalance(accountId: Long): Completable {
         return moneyDao.clearAccountBalance(accountId)
     }
 
@@ -43,7 +43,7 @@ class AccountRepositoryImpl(private val moneyDao: MoneyDao): AccountRepository {
         return moneyDao.clearAllAccountBalances()
     }
 
-    override fun getOverallBalance(): LiveData<Int> {
+    override fun getOverallBalance(): LiveData<Double> {
         return moneyDao.getOverallBalance()
     }
 }
