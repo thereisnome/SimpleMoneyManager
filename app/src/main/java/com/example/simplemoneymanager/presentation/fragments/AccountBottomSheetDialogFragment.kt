@@ -89,7 +89,7 @@ class AccountBottomSheetDialogFragment :
     override fun onMenuItemClick(itemId: Int, position: Int, account: Account) {
         when (itemId) {
             R.id.account_menu_button_delete -> {
-                if (account.accountId == 0) {
+                if (account.accountId == 0L) {
                     Toast.makeText(
                         requireContext(),
                         "You cannot delete Main account",

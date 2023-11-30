@@ -28,4 +28,6 @@
     <string name="delete_account_dialog_description">You will lose all transactions associated with this account. Cannot be undone.</string>
     <string name="cancel">Cancel</string>
     <string name="choose_color">Choose color</string>
+    <string name="current_balance">Current balance</string>
+    <string name="cash_flow">Cashflow:</string>
 </resources>

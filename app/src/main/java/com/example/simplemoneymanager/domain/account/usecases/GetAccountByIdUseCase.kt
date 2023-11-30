@@ -6,7 +6,7 @@ import com.example.simplemoneymanager.domain.repository.AccountRepository
 
 class GetAccountByIdUseCase(private val accountRepository: AccountRepository) {
 
-    operator fun invoke(accountId: Int): LiveData<Account> {
+    operator fun invoke(accountId: Long): LiveData<Account> {
         return accountRepository.getAccountById(accountId)
     }
 }

@@ -9,8 +9,8 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "account_list")
 data class Account(
     val accountName: String,
-    var balance: Int,
+    var balance: Double,
     @PrimaryKey(autoGenerate = true)
-    val accountId: Int = 0,
+    val accountId: Long = 0,
     val accountColor: String
 ) : Parcelable

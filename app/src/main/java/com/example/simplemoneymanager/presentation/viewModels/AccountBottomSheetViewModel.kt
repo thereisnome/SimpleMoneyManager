@@ -27,7 +27,7 @@ class AccountBottomSheetViewModel(application: Application) : AndroidViewModel(a
         return getAccountListUseCase()
     }
 
-    fun removeAccount(accountId: Int) {
+    fun removeAccount(accountId: Long) {
         val disposable = removeAccountUseCase(accountId).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 Toast.makeText(getApplication(), "Account removed", Toast.LENGTH_LONG).show()

@@ -36,11 +36,15 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
         return moneyDao.removeAllTransactions()
     }
 
-    override fun getOverallIncome(): LiveData<Int> {
+    override fun getCashFlowByMonth(month: String): LiveData<Double> {
+        return moneyDao.getCashFlowByMonth(month)
+    }
+
+    override fun getOverallIncome(): LiveData<Double> {
         return moneyDao.getOverallIncome()
     }
 
-    override fun getOverallExpense(): LiveData<Int> {
+    override fun getOverallExpense(): LiveData<Double> {
         return moneyDao.getOverallExpense()
     }
 

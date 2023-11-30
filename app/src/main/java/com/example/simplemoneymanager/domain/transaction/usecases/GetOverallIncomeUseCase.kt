@@ -5,7 +5,7 @@ import com.example.simplemoneymanager.domain.repository.TransactionRepository
 
 class GetOverallIncomeUseCase(private val transactionRepository: TransactionRepository) {
 
-    operator fun invoke(): LiveData<Int> {
+    operator fun invoke(): LiveData<Double> {
         return transactionRepository.getOverallIncome()
     }
 }

@@ -36,10 +36,11 @@
             android:layout_marginVertical="4dp"
             android:fontFamily="@font/open_sans_semibold"
             android:textSize="16sp"
+            android:textColor="@color/md_theme_dark_outline"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="+200" />
+            tools:text="-200" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -62,7 +63,7 @@
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
             android:fontFamily="@font/open_sans_semibold"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:background="@drawable/background_category_history_fragment"
             tools:backgroundTint="@color/md_theme_dark_primary"
             app:layout_constraintStart_toStartOf="parent"
@@ -76,7 +77,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="8dp"
             android:fontFamily="@font/open_sans_bold"
-            android:textSize="22sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_amount"
             tools:text="Хлеб" />
@@ -90,7 +91,7 @@
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
             android:fontFamily="@font/open_sans_semibold"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:background="@drawable/background_category_history_fragment"
             tools:backgroundTint="@color/md_theme_dark_onPrimary"
             app:layout_constraintStart_toEndOf="@id/tv_category"
@@ -104,7 +105,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="8dp"
             android:fontFamily="@font/open_sans_semibold"
-            android:textSize="28sp"
+            android:textSize="26sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_category"
             tools:text="-200 руб." />

@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/name"
             android:inputType="textCapSentences"
-            android:textSize="32sp" />
+            android:textSize="24sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,8 +62,9 @@
             android:layout_width="match_parent"
             android:hint="@string/balance"
             android:layout_height="wrap_content"
+            android:digits="0123456789."
             android:inputType="number"
-            android:textSize="32sp"/>
+            android:textSize="24sp"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,7 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="@string/choose_color"
-        android:textSize="22sp"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_account_balance" />
 

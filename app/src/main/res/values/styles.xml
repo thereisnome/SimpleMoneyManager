@@ -43,7 +43,7 @@
 
     <style name="Category_account_button" parent="Widget.Material3.Button.OutlinedButton.Icon">
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="strokeColor">@color/md_theme_dark_stroke</item>
         <item name="android:textAlignment">center</item>
     </style>
@@ -60,5 +60,9 @@
     <style name="Color_chip" parent="Widget.Material3.Chip.Filter">
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Large</item>
         <item name="chipIconEnabled">false</item>
+    </style>
+
+    <style name="Navigation_fab" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:foreground">@drawable/background_fab</item>
     </style>
 </resources>

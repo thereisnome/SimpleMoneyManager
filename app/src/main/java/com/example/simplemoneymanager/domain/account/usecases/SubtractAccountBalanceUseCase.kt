@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Completable
 
 class SubtractAccountBalanceUseCase(private val accountRepository: AccountRepository) {
 
-    operator fun invoke(account: Account, amount: Int): Completable{
+    operator fun invoke(account: Account, amount: Double): Completable{
         return accountRepository.subtractAccountBalance(account.accountId, amount)
     }
 }
