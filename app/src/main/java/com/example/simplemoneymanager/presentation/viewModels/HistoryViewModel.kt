@@ -9,13 +9,13 @@ import com.example.simplemoneymanager.data.database.MoneyDataBase
 import com.example.simplemoneymanager.data.repository.AccountRepositoryImpl
 import com.example.simplemoneymanager.data.repository.TransactionRepositoryImpl
 import com.example.simplemoneymanager.domain.account.Account
-import com.example.simplemoneymanager.domain.account.usecases.ClearAccountBalanceUseCase
 import com.example.simplemoneymanager.domain.account.usecases.GetOverallBalanceUseCase
 import com.example.simplemoneymanager.domain.account.usecases.SubtractAccountBalanceUseCase
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.domain.transaction.usecases.GetCashFlowByMonthUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetOverallExpenseUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetOverallIncomeUseCase
+import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionAccountMapUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionListUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveAllTransactionsUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveTransactionUseCase
@@ -33,16 +33,20 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
         RemoveAllTransactionsUseCase(transactionRepositoryImpl)
     private val removeTransactionUseCase = RemoveTransactionUseCase(transactionRepositoryImpl)
     private val subtractAccountBalanceUseCase = SubtractAccountBalanceUseCase(accountRepositoryImpl)
-    private val clearAccountBalanceUseCase = ClearAccountBalanceUseCase(accountRepositoryImpl)
     private val getOverallBalanceUseCase = GetOverallBalanceUseCase(accountRepositoryImpl)
     private val getOverallIncomeUseCase = GetOverallIncomeUseCase(transactionRepositoryImpl)
     private val getOverallExpenseUseCase = GetOverallExpenseUseCase(transactionRepositoryImpl)
     private val getCashFlowByMonthUseCase = GetCashFlowByMonthUseCase(transactionRepositoryImpl)
+    private val getTransactionAccountMapUseCase = GetTransactionAccountMapUseCase(transactionRepositoryImpl)
 
     private val compositeDisposable = CompositeDisposable()
 
     fun getTransactionList(): LiveData<List<Transaction>> {
         return getTransactionListUseCase()
+    }
+
+    fun getTransactionAccountMap(): LiveData<Map<Account, Transaction>>{
+        return getTransactionAccountMapUseCase()
     }
 
     fun removeAllTransactions() {
@@ -75,16 +79,10 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
         compositeDisposable.add(disposable)
     }
 
-    fun clearAllAccountBalances() {
-        val disposable = clearAccountBalanceUseCase().subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe()
-        compositeDisposable.add(disposable)
-    }
-
-    fun subtractAccountBalance(account: Account, amount: Double) {
-        val disposable = subtractAccountBalanceUseCase(account, amount).subscribeOn(Schedulers.io())
+    fun subtractAccountBalance(accountId: Long, amount: Double) {
+        val disposable = subtractAccountBalanceUseCase(accountId, amount).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                Log.d("VM subtractAccountBalance", "ID: $account.accountId, amount: $amount")
+                Log.d("VM subtractAccountBalance", "ID: $accountId.accountId, amount: $amount")
             }, {
                 Log.d("VM subtractAccountBalance", it.message.toString())
             })

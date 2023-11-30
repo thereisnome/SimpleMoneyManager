@@ -2,6 +2,7 @@ package com.example.simplemoneymanager.data.repository
 
 import androidx.lifecycle.LiveData
 import com.example.simplemoneymanager.data.database.MoneyDao
+import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.repository.TransactionRepository
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import io.reactivex.rxjava3.core.Completable
@@ -22,6 +23,22 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
 
     override fun getExpenseTransactionList(): LiveData<List<Transaction>> {
         return moneyDao.getExpenseTransactionList()
+    }
+
+    override fun getTransactionListByMonth(month: String): LiveData<List<Transaction>> {
+        return moneyDao.getTransactionListByMonth(month)
+    }
+
+    override fun getTransactionListWithAccountsByMonth(month: String): LiveData<Map<Account, List<Transaction>>> {
+        return moneyDao.getTransactionListWithAccountsByMonth(month)
+    }
+
+    override fun getTransactionWithAccountById(transactionId: Long): LiveData<Map<Account, Transaction>> {
+        return moneyDao.getTransactionWithAccountById(transactionId)
+    }
+
+    override fun getTransactionAccountMap(): LiveData<Map<Account, Transaction>> {
+        return moneyDao.getTransactionAccountMap()
     }
 
     override fun getTransactionById(transactionId: Long): LiveData<Transaction> {
@@ -55,7 +72,7 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
             transaction.transactionName,
             transaction.category.id,
             transaction.amount,
-            transaction.account.accountId,
+            transaction.transactionAccountId,
             transaction.date
         )
     }

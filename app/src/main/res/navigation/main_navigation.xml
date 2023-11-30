@@ -32,4 +32,9 @@
         android:name="com.example.simplemoneymanager.presentation.fragments.CategoryBottomSheetDialogFragment"
         android:label="CategoryBottomSheetDialogFragment"
         tools:layout="@layout/fragment_category_bottom_sheet"/>
+    <fragment
+        android:id="@+id/accountListFragment"
+        android:name="com.example.simplemoneymanager.presentation.fragments.AccountListFragment"
+        android:label="fragment_account_list"
+        tools:layout="@layout/fragment_account_list" />
 </navigation>

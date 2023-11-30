@@ -11,13 +11,14 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.TransactionItemBinding
+import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import java.time.format.DateTimeFormatter
 
 class TransactionListAdapter(private val itemClickListener: TransactionsPopupMenuItemClickListener) :
     RecyclerView.Adapter<TransactionViewHolder>() {
 
-    var transactionList = listOf<Transaction>()
+    var accountTransactionMap = mapOf<Account, Transaction>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -30,26 +31,25 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
     }
 
     override fun getItemCount(): Int {
-        return transactionList.size
+        return accountTransactionMap.values.toList().size
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        val transaction = transactionList[position]
-        val balancePerDay = transactionList.filter { it.date == transaction.date }.sumOf { it.amount }
+        val account = accountTransactionMap.keys.toList()[position]
+        val transaction = accountTransactionMap.getValue(account)
+        val balancePerDay =
+            accountTransactionMap.values.toList().filter { it.date == transaction.date }.sumOf { it.amount }
         val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         val dateString = transaction.date.format(dateTimeFormatter)
 
         val shouldDisplayDate =
-            position == 0 || transaction.date != transactionList[position - 1].date
+            position == 0 || transaction.date != accountTransactionMap.values.toList()[position - 1].date
         val shouldDisplayName = transaction.transactionName.isNotBlank()
 
         if (shouldDisplayDate) {
             holder.binding.tvDate.text = dateString
-            if (balancePerDay >= 0){
-                holder.binding.tvBalancePerDay.text = Transaction.formatIncome(balancePerDay)
-            } else {
-                holder.binding.tvBalancePerDay.text = Transaction.formatExpense(balancePerDay)
-            }
+            holder.binding.tvBalancePerDay.text = Transaction.formatCurrency(balancePerDay)
+
             holder.binding.layoutDate.visibility = View.VISIBLE
         } else {
             holder.binding.layoutDate.visibility = View.GONE
@@ -60,32 +60,41 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             transaction.category.categoryColor.toColorInt()
         )
 
-        if (categoryContrast < 1.5f){
-            holder.binding.tvCategory.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+        if (categoryContrast < 1.5f) {
+            holder.binding.tvCategory.setTextColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.black
+                )
+            )
         }
 
         val contrast = ColorUtils.calculateContrast(
             holder.binding.tvAccount.currentHintTextColor,
-            transaction.account.accountColor.toColorInt()
+            account.accountColor.toColorInt()
         )
 
-        if (contrast < 1.5f){
-            holder.binding.tvAccount.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+        if (contrast < 1.5f) {
+            holder.binding.tvAccount.setTextColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.black
+                )
+            )
         }
 
-        when (transaction.type) {
-            Transaction.INCOME -> holder.binding.tvAmount.text = Transaction.formatIncome(transaction.amount)
-            Transaction.EXPENSE -> holder.binding.tvAmount.text = Transaction.formatExpense(transaction.amount)
-        }
+        holder.binding.tvAmount.text = Transaction.formatCurrency(transaction.amount)
 
         if (shouldDisplayName) {
             holder.binding.tvName.visibility = View.VISIBLE
             holder.binding.tvName.text = transaction.transactionName
         } else holder.binding.tvName.visibility = View.GONE
         holder.binding.tvCategory.text = transaction.category.categoryName
-        holder.binding.tvCategory.backgroundTintList = ColorStateList.valueOf(transaction.category.categoryColor.toColorInt())
-        holder.binding.tvAccount.text = transaction.account.accountName
-        holder.binding.tvAccount.backgroundTintList = ColorStateList.valueOf(transaction.account.accountColor.toColorInt())
+        holder.binding.tvCategory.backgroundTintList =
+            ColorStateList.valueOf(transaction.category.categoryColor.toColorInt())
+        holder.binding.tvAccount.text = account.accountName
+        holder.binding.tvAccount.backgroundTintList =
+            ColorStateList.valueOf(account.accountColor.toColorInt())
 
         holder.itemView.setOnLongClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView)
@@ -96,7 +105,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
                 itemClickListener.onMenuItemClick(
                     menuItem.itemId,
                     itemPosition,
-                    transactionList[position]
+                    accountTransactionMap.values.toList()[position]
                 )
                 true
             }

@@ -56,7 +56,6 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
         if (args.transactionId != UNDEFINED_TRANSACTION) {
             launchEditMode()
             setOnBackPressed()
-
         } else launchAddMode()
 
         setFocusOnAmountField()
@@ -69,7 +68,6 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
     }
 
     private fun launchAddMode() {
-
         binding.tvAmount.prefixText = "+"
 
         viewModel.getMainAccount().observe(viewLifecycleOwner) {
@@ -99,11 +97,11 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
     private fun launchEditMode() {
         binding.transactionAddToolbar.setTitle(R.string.edit_transaction)
-        viewModel.getTransactionById(args.transactionId).observe(viewLifecycleOwner) {
-            transaction = it
-            category = it.category
-            categoryType = it.type
-            account = it.account
+        viewModel.getTransactionWithAccountById(args.transactionId).observe(viewLifecycleOwner) {accountTransactionMap ->
+            account = accountTransactionMap.keys.single()
+            transaction = accountTransactionMap.getValue(account)
+            category = transaction.category
+            categoryType = transaction.type
 
             if(transaction.type==Transaction.INCOME){
                 binding.tvAmount.prefixText = "-"
@@ -111,10 +109,12 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
             viewModel.subtractAccountBalance(account, transaction.amount)
 
-            binding.etAmount.setText(it.amount.absoluteValue.toString())
-            binding.etName.setText(it.transactionName)
-            binding.buttonCategory.text = it.category.categoryName
-            binding.buttonCategory.setBackgroundColor((it.category.categoryColor).toColorInt())
+            binding.etAmount.setText(transaction.amount.absoluteValue.toString())
+            binding.etName.setText(transaction.transactionName)
+            binding.buttonCategory.text = transaction.category.categoryName
+            binding.buttonCategory.setBackgroundColor((transaction.category.categoryColor).toColorInt())
+            binding.buttonAccount.text = account.accountName
+            binding.buttonAccount.setBackgroundColor((account.accountColor).toColorInt())
 
             val categoryContrast = ColorUtils.calculateContrast(
                 binding.buttonCategory.currentTextColor,
@@ -133,8 +133,6 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             if (accountContrast < 1.5f){
                 binding.buttonAccount.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             } else binding.buttonAccount.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-
-            binding.buttonAccount.text = it.account.accountName
 
             val checkedButtonId =
                 if (transaction.type == Transaction.INCOME) binding.buttonIncome.id else binding.buttonExpense.id
@@ -201,7 +199,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             val amount = if (type == Transaction.INCOME) {
                 binding.etAmount.text.toString().toDouble()
             } else -binding.etAmount.text.toString().toDouble()
-            viewModel.addTransaction(type, name, category, amount, account)
+            viewModel.addTransaction(type, name, category, amount, account.accountId)
             viewModel.addAccountBalance(account, amount)
             findNavController().navigateUp()
         } else {
@@ -218,7 +216,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             val amount = if (type == Transaction.INCOME) {
                 binding.etAmount.text.toString().toDouble()
             } else -binding.etAmount.text.toString().toDouble()
-            viewModel.editTransaction(args.transactionId, type, name, category, amount, account)
+            viewModel.editTransaction(args.transactionId, type, name, category, amount, account.accountId)
             viewModel.addAccountBalance(account, amount)
             findNavController().navigateUp()
         } else {

@@ -36,15 +36,6 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
 
         setupRecyclerView()
         setStatisticValues()
-
-        binding.fabAddTransaction.setOnClickListener {
-            launchAddTransactionFragmentAddMode()
-        }
-        binding.fabAddTransaction.setOnLongClickListener {
-            viewModel.removeAllTransactions()
-            viewModel.clearAllAccountBalances()
-            true
-        }
     }
 
     override fun onDestroyView() {
@@ -54,35 +45,27 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
 
     private fun setStatisticValues() {
         viewModel.getOverallIncome().observe(viewLifecycleOwner){
-            binding.tvIncomeValue.text = Transaction.formatIncome(it)
+            binding.tvIncomeValue.text = Transaction.formatCurrency(it)
         }
 
         viewModel.getOverallExpense().observe(viewLifecycleOwner){
-            binding.tvExpenseValue.text = Transaction.formatExpense(it)
+            binding.tvExpenseValue.text = Transaction.formatCurrency(it)
         }
 
         viewModel.getOverallBalance().observe(viewLifecycleOwner){
-            if (it >= 0) {
-                binding.tvBalanceValue.text = Transaction.formatIncome(it)
-            } else binding.tvBalanceValue.text = Transaction.formatExpense(it)
+            binding.tvBalanceValue.text = Transaction.formatCurrency(it)
         }
 
         viewModel.getCashFlowByMonth(LocalDate.now().monthValue.toString()).observe(viewLifecycleOwner){
-            if (it>=0){
-                binding.tvCashFlowBalance.text = Transaction.formatIncome(it)
-            } else binding.tvCashFlowBalance.text = Transaction.formatExpense(it)
+            binding.tvCashFlowBalance.text = Transaction.formatCurrency(it)
         }
     }
 
     private fun setupRecyclerView() {
-        viewModel.getTransactionList().observe(viewLifecycleOwner){ transactionList ->
+        viewModel.getTransactionAccountMap().observe(viewLifecycleOwner){ transactionAccountMap ->
             binding.rvTransactions.adapter = adapter
-            adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
+            adapter.accountTransactionMap = transactionAccountMap
         }
-    }
-
-    private fun launchAddTransactionFragmentAddMode() {
-        findNavController().navigate(R.id.action_historyFragment_to_addTransactionFragment)
     }
 
     private fun launchAddTransactionFragmentEditMode(transactionId: Long) {
@@ -93,7 +76,7 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
         when (itemId) {
             R.id.transaction_menu_button_delete -> {
                 viewModel.removeTransaction(transaction)
-                viewModel.subtractAccountBalance(transaction.account, transaction.amount)
+                viewModel.subtractAccountBalance(transaction.transactionAccountId, transaction.amount)
             }
             R.id.transaction_menu_button_edit -> {
                 launchAddTransactionFragmentEditMode(transaction.transactionId)

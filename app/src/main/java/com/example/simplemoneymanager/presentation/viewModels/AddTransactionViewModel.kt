@@ -17,7 +17,7 @@ import com.example.simplemoneymanager.domain.category.usecases.GetDefaultCategor
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.domain.transaction.usecases.AddTransactionUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.EditTransactionUseCase
-import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionByIdUseCase
+import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionWithAccountByIdUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -33,14 +33,14 @@ class AddTransactionViewModel(application: Application) : AndroidViewModel(appli
     private val addAccountBalanceUseCase = AddAccountBalanceUseCase(accountRepositoryImpl)
     private val getDefaultCategoryUseCase = GetDefaultCategoryUseCase(categoryRepositoryImpl)
     private val getMainAccountUseCase = GetMainAccountUseCase(accountRepositoryImpl)
-    private val getTransactionByIdUseCase = GetTransactionByIdUseCase(transactionRepositoryImpl)
     private val editTransactionUseCase = EditTransactionUseCase(transactionRepositoryImpl)
     private val subtractAccountBalanceUseCase = SubtractAccountBalanceUseCase(accountRepositoryImpl)
+    private val getTransactionWithAccountByIdUseCase = GetTransactionWithAccountByIdUseCase(transactionRepositoryImpl)
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun addTransaction(type: Int, name: String, category: Category, amount: Double, account: Account) {
-        val transaction = Transaction(type, name, category, amount, account, LocalDate.now())
+    fun addTransaction(type: Int, name: String, category: Category, amount: Double, accountId: Long) {
+        val transaction = Transaction(type, name, category, amount, accountId, LocalDate.now())
         val disposable = addTransactionUseCase(transaction).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
             }, {
@@ -68,7 +68,7 @@ class AddTransactionViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun subtractAccountBalance(account: Account, amount: Double){
-        val disposable = subtractAccountBalanceUseCase(account, amount).subscribeOn(Schedulers.io())
+        val disposable = subtractAccountBalanceUseCase(account.accountId, amount).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 Log.d("VM updateAccountBalance", "ID: $account.accountId, amount: $amount")
             }, {
@@ -77,12 +77,12 @@ class AddTransactionViewModel(application: Application) : AndroidViewModel(appli
         compositeDisposable.add(disposable)
     }
 
-    fun getTransactionById(transactionId: Long): LiveData<Transaction>{
-        return getTransactionByIdUseCase(transactionId)
+    fun getTransactionWithAccountById(transactionId: Long): LiveData<Map<Account, Transaction>>{
+        return getTransactionWithAccountByIdUseCase(transactionId)
     }
 
-    fun editTransaction(transactionId: Long, type: Int, name: String, category: Category, amount: Double, account: Account) {
-        val transaction = Transaction(type, name, category, amount, account, LocalDate.now(), transactionId)
+    fun editTransaction(transactionId: Long, type: Int, name: String, category: Category, amount: Double, accountId: Long) {
+        val transaction = Transaction(type, name, category, amount, accountId, LocalDate.now(), transactionId)
         val disposable = editTransactionUseCase(transaction).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 Log.d("VM edit transaction", "Transaction edited: ${transaction.transactionId}")

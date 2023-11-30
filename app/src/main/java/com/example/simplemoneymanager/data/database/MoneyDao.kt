@@ -33,14 +33,14 @@ interface MoneyDao {
 
 //    Transaction
 
-    @Query("UPDATE transaction_list SET type = :type, transactionName = :transactionName, amount = :amount, date = :date, id = :categoryId, accountId = :accountId WHERE transactionId = :transactionId")
+    @Query("UPDATE transaction_list SET type = :type, transactionName = :transactionName, amount = :amount, date = :date, id = :categoryId, transactionAccountId = :transactionAccountId WHERE transactionId = :transactionId")
     fun editTransactionById(
         transactionId: Long,
         type: Int,
         transactionName: String,
         categoryId: Int,
         amount: Double,
-        accountId: Long,
+        transactionAccountId: Long,
         date: LocalDate
     ): Completable
 
@@ -56,8 +56,20 @@ interface MoneyDao {
     @Query("SELECT * FROM transaction_list WHERE type = 1")
     fun getExpenseTransactionList(): LiveData<List<Transaction>>
 
+    @Query("SELECT * FROM transaction_list WHERE substr(date,6,2) = :month")
+    fun getTransactionListByMonth(month: String): LiveData<List<Transaction>>
+
+    @Query("SELECT * FROM account_list INNER JOIN transaction_list ON accountId = transactionAccountId WHERE substr(date,6,2) = :month")
+    fun getTransactionListWithAccountsByMonth(month: String): LiveData<Map<Account, List<Transaction>>>
+
     @Query("SELECT * FROM transaction_list WHERE transactionId = :transactionId")
     fun getTransactionById(transactionId: Long): LiveData<Transaction>
+
+    @Query("SELECT * FROM account_list INNER JOIN transaction_list ON accountId = transactionAccountId")
+    fun getTransactionAccountMap(): LiveData<Map<Account, Transaction>>
+
+    @Query("SELECT * FROM account_list INNER JOIN transaction_list ON accountId = transactionAccountId WHERE transactionId = :transactionId")
+    fun getTransactionWithAccountById(transactionId: Long): LiveData<Map<Account, Transaction>>
 
     @Query("DELETE FROM transaction_list WHERE transactionId = :transactionId")
     fun removeTransaction(transactionId: Long): Completable
