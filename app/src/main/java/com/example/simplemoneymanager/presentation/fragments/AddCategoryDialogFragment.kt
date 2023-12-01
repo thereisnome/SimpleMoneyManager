@@ -70,19 +70,6 @@ class AddCategoryDialogFragment private constructor(private val categoryType: In
         }
     }
 
-    private fun createChipGroup() {
-        val colorList = ColorList.values().toList()
-        colorList.forEach {color->
-            val chip = Chip(requireContext())
-            chip.chipStrokeWidth = 0f
-            chip.chipBackgroundColor = ColorStateList.valueOf(color.hex.toColorInt())
-            binding.chipGroupColor.addView(chip)
-            chip.setOnClickListener {
-                this.color = color.hex
-            }
-        }
-    }
-
     override fun onStart() {
         super.onStart()
         val width = ViewGroup.LayoutParams.MATCH_PARENT
@@ -93,6 +80,19 @@ class AddCategoryDialogFragment private constructor(private val categoryType: In
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun createChipGroup() {
+        val colorList = ColorList.entries
+        colorList.forEach {color->
+            val chip = Chip(requireContext())
+            chip.chipStrokeWidth = 0f
+            chip.chipBackgroundColor = ColorStateList.valueOf(color.hex.toColorInt())
+            binding.chipGroupColor.addView(chip)
+            chip.setOnClickListener {
+                this.color = color.hex
+            }
+        }
     }
 
     companion object {

@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.simplemoneymanager.domain.account.AccountWithTransactions
 import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.domain.transaction.Transaction
@@ -33,7 +34,7 @@ interface MoneyDao {
 
 //    Transaction
 
-    @Query("UPDATE transaction_list SET type = :type, transactionName = :transactionName, amount = :amount, date = :date, id = :categoryId, transactionAccountId = :transactionAccountId WHERE transactionId = :transactionId")
+    @Query("UPDATE transaction_list SET type = :type, transactionName = :transactionName, amount = :amount, date = :date, id = :categoryId, accountId = :transactionAccountId WHERE transactionId = :transactionId")
     fun editTransactionById(
         transactionId: Long,
         type: Int,
@@ -56,20 +57,8 @@ interface MoneyDao {
     @Query("SELECT * FROM transaction_list WHERE type = 1")
     fun getExpenseTransactionList(): LiveData<List<Transaction>>
 
-    @Query("SELECT * FROM transaction_list WHERE substr(date,6,2) = :month")
-    fun getTransactionListByMonth(month: String): LiveData<List<Transaction>>
-
-    @Query("SELECT * FROM account_list INNER JOIN transaction_list ON accountId = transactionAccountId WHERE substr(date,6,2) = :month")
-    fun getTransactionListWithAccountsByMonth(month: String): LiveData<Map<Account, List<Transaction>>>
-
     @Query("SELECT * FROM transaction_list WHERE transactionId = :transactionId")
     fun getTransactionById(transactionId: Long): LiveData<Transaction>
-
-    @Query("SELECT * FROM account_list INNER JOIN transaction_list ON accountId = transactionAccountId")
-    fun getTransactionAccountMap(): LiveData<Map<Account, Transaction>>
-
-    @Query("SELECT * FROM account_list INNER JOIN transaction_list ON accountId = transactionAccountId WHERE transactionId = :transactionId")
-    fun getTransactionWithAccountById(transactionId: Long): LiveData<Map<Account, Transaction>>
 
     @Query("DELETE FROM transaction_list WHERE transactionId = :transactionId")
     fun removeTransaction(transactionId: Long): Completable
@@ -85,8 +74,8 @@ interface MoneyDao {
     @Query("SELECT * FROM account_list WHERE accountId = :accountId")
     fun getAccountById(accountId: Long): LiveData<Account>
 
-    @Query("DELETE FROM transaction_list")
-    fun removeAllTransactions(): Completable
+    @Query("SELECT * FROM account_list")
+    fun getAccountsWithTransactions(): LiveData<List<AccountWithTransactions>>
 
     @Query("DELETE FROM account_list WHERE accountId = :accountId")
     fun removeAccount(accountId: Long): Completable
@@ -99,9 +88,6 @@ interface MoneyDao {
 
     @Query("UPDATE account_list SET balance = balance + :amount WHERE accountId = :accountId")
     fun addAccountBalance(accountId: Long, amount: Double): Completable
-
-    @Query("UPDATE account_list SET balance = 0 WHERE accountId = :accountId")
-    fun clearAccountBalance(accountId: Long): Completable
 
     @Query("UPDATE account_list SET balance = 0")
     fun clearAllAccountBalances(): Completable

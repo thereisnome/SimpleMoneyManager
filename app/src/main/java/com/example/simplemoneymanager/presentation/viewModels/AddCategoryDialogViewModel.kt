@@ -31,8 +31,6 @@ class AddCategoryDialogViewModel(application: Application): AndroidViewModel(app
         compositeDisposable.add(disposable)
     }
 
-
-
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.dispose()

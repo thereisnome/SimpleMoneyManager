@@ -61,6 +61,11 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
         setFocusOnAmountField()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun setFocusOnAmountField() {
         binding.etAmount.requestFocus()
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -73,13 +78,23 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
         viewModel.getMainAccount().observe(viewLifecycleOwner) {
             account = it
             binding.buttonAccount.setBackgroundColor(it.accountColor.toColorInt())
-            binding.buttonAccount.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            binding.buttonAccount.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
         }
 
         viewModel.getDefaultCategory().observe(viewLifecycleOwner) {
             category = it
             binding.buttonCategory.setBackgroundColor(it.categoryColor.toColorInt())
-            binding.buttonCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+            binding.buttonCategory.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.black
+                )
+            )
         }
 
         with(binding) {
@@ -97,43 +112,54 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
     private fun launchEditMode() {
         binding.transactionAddToolbar.setTitle(R.string.edit_transaction)
-        viewModel.getTransactionWithAccountById(args.transactionId).observe(viewLifecycleOwner) {accountTransactionMap ->
-            account = accountTransactionMap.keys.single()
-            transaction = accountTransactionMap.getValue(account)
-            category = transaction.category
-            categoryType = transaction.type
-
-            if(transaction.type==Transaction.INCOME){
+        viewModel.getTransactionById(args.transactionId).observe(viewLifecycleOwner) {
+            transaction = it
+            category = it.category
+            categoryType = it.type
+            account = it.account
+            if (transaction.type == Transaction.INCOME) {
                 binding.tvAmount.prefixText = "-"
             } else binding.tvAmount.prefixText = "+"
-
             viewModel.subtractAccountBalance(account, transaction.amount)
-
-            binding.etAmount.setText(transaction.amount.absoluteValue.toString())
-            binding.etName.setText(transaction.transactionName)
-            binding.buttonCategory.text = transaction.category.categoryName
-            binding.buttonCategory.setBackgroundColor((transaction.category.categoryColor).toColorInt())
-            binding.buttonAccount.text = account.accountName
-            binding.buttonAccount.setBackgroundColor((account.accountColor).toColorInt())
-
+            binding.etAmount.setText(it.amount.absoluteValue.toString())
+            binding.etName.setText(it.transactionName)
+            binding.buttonCategory.text = it.category.categoryName
+            binding.buttonCategory.setBackgroundColor((it.category.categoryColor).toColorInt())
             val categoryContrast = ColorUtils.calculateContrast(
                 binding.buttonCategory.currentTextColor,
                 category.categoryColor.toColorInt()
             )
-
-            if (categoryContrast < 1.5f){
-                binding.buttonCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            } else binding.buttonCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-
+            if (categoryContrast < 1.5f) {
+                binding.buttonCategory.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+            } else binding.buttonCategory.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
             val accountContrast = ColorUtils.calculateContrast(
                 binding.buttonAccount.currentTextColor,
                 account.accountColor.toColorInt()
             )
-
-            if (accountContrast < 1.5f){
-                binding.buttonAccount.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            } else binding.buttonAccount.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-
+            if (accountContrast < 1.5f) {
+                binding.buttonAccount.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+            } else binding.buttonAccount.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
+            binding.buttonAccount.text = it.account.accountName
             val checkedButtonId =
                 if (transaction.type == Transaction.INCOME) binding.buttonIncome.id else binding.buttonExpense.id
             binding.toggleButtonTransactionType.check(checkedButtonId)
@@ -199,7 +225,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             val amount = if (type == Transaction.INCOME) {
                 binding.etAmount.text.toString().toDouble()
             } else -binding.etAmount.text.toString().toDouble()
-            viewModel.addTransaction(type, name, category, amount, account.accountId)
+            viewModel.addTransaction(type, name, category, amount, account)
             viewModel.addAccountBalance(account, amount)
             findNavController().navigateUp()
         } else {
@@ -214,64 +240,75 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             } else Transaction.EXPENSE
             val name = binding.etName.text.toString()
             val amount = if (type == Transaction.INCOME) {
-                binding.etAmount.text.toString().toDouble()
-            } else -binding.etAmount.text.toString().toDouble()
-            viewModel.editTransaction(args.transactionId, type, name, category, amount, account.accountId)
-            viewModel.addAccountBalance(account, amount)
-            findNavController().navigateUp()
-        } else {
-            binding.tvAmount.error = requireContext().getString(R.string.input_error)
-        }
+            binding.etAmount.text.toString().toDouble()
+        } else -binding.etAmount.text.toString().toDouble()
+        viewModel.editTransaction(args.transactionId, type, name, category, amount, account)
+        viewModel.addAccountBalance(account, amount)
+        findNavController().navigateUp()
+    } else
+    {
+        binding.tvAmount.error = requireContext().getString(R.string.input_error)
     }
+}
 
-    private fun checkInput(): Boolean {
-        return binding.etAmount.text.toString() != ""
-    }
+private fun checkInput(): Boolean {
+    return binding.etAmount.text.toString() != ""
+}
 
-    private fun resetCategoryButton(){
-        binding.buttonCategory.text = requireContext().getString(R.string.no_category)
+private fun resetCategoryButton() {
+    binding.buttonCategory.text = requireContext().getString(R.string.no_category)
+    binding.buttonCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+    binding.buttonCategory.setBackgroundColor(ColorList.BLUE_CHALK.hex.toColorInt())
+}
+
+override fun onCategoryPassed(category: Category) {
+    this.category = category
+
+    val contrast = ColorUtils.calculateContrast(
+        binding.buttonCategory.currentHintTextColor,
+        category.categoryColor.toColorInt()
+    )
+
+    if (contrast < 1.5f) {
         binding.buttonCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-        binding.buttonCategory.setBackgroundColor(ColorList.BLUE_CHALK.hex.toColorInt())
-    }
-
-    override fun onCategoryPassed(category: Category) {
-        this.category = category
-
-        val contrast = ColorUtils.calculateContrast(
-            binding.buttonCategory.currentHintTextColor,
-            category.categoryColor.toColorInt()
+    } else binding.buttonCategory.setTextColor(
+        ContextCompat.getColor(
+            requireContext(),
+            R.color.white
         )
+    )
 
-        if (contrast < 1.5f){
-            binding.buttonCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-        } else binding.buttonCategory.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+    binding.buttonCategory.text = category.categoryName
+    binding.buttonCategory.setBackgroundColor((category.categoryColor).toColorInt())
+}
 
-        binding.buttonCategory.text = category.categoryName
-        binding.buttonCategory.setBackgroundColor((category.categoryColor).toColorInt())
-    }
+override fun onAccountPassed(account: Account) {
+    this.account = account
+    val contrast = ColorUtils.calculateContrast(
+        binding.buttonAccount.currentHintTextColor,
+        account.accountColor.toColorInt()
+    )
 
-    override fun onAccountPassed(account: Account) {
-        this.account = account
-        val contrast = ColorUtils.calculateContrast(
-            binding.buttonAccount.currentHintTextColor,
-            account.accountColor.toColorInt()
+    if (contrast < 1.5f) {
+        binding.buttonAccount.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+    } else binding.buttonAccount.setTextColor(
+        ContextCompat.getColor(
+            requireContext(),
+            R.color.white
         )
+    )
 
-        if (contrast < 1.5f){
-            binding.buttonAccount.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-        } else binding.buttonAccount.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+    binding.buttonAccount.text = account.accountName
+    binding.buttonAccount.setBackgroundColor((account.accountColor).toColorInt())
+}
 
-        binding.buttonAccount.text = account.accountName
-        binding.buttonAccount.setBackgroundColor((account.accountColor).toColorInt())
-    }
-
-    private fun setOnBackPressed() {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                viewModel.addAccountBalance(account, transaction.amount)
-                findNavController().navigateUp()
-            }
+private fun setOnBackPressed() {
+    val callback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            viewModel.addAccountBalance(account, transaction.amount)
+            findNavController().navigateUp()
         }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
+    requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+}
 }

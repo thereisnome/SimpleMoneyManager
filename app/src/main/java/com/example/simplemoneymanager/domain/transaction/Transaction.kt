@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.category.Category
 import kotlinx.parcelize.Parcelize
 import java.text.NumberFormat
@@ -18,7 +19,8 @@ data class Transaction(
     @Embedded
     val category: Category,
     val amount: Double,
-    val transactionAccountId: Long,
+    @Embedded
+    val account: Account,
     val date: LocalDate,
     @PrimaryKey(autoGenerate = true)
     var transactionId: Long = 0
@@ -34,5 +36,9 @@ data class Transaction(
             } else formattedAmount.replace(" руб.", "₽")
         }
 
+        fun formatCurrencyWithoutSign(value: Double) : String {
+            val formattedAmount = NumberFormat.getCurrencyInstance(Locale("ru", "RU")).format(value)
+            return formattedAmount.replace(" руб.", "₽")
+        }
     }
 }

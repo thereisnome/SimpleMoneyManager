@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.FragmentAccountBottomSheetBinding
 import com.example.simplemoneymanager.domain.account.Account
-import com.example.simplemoneymanager.presentation.recyclerViews.AccountListAdapter
+import com.example.simplemoneymanager.presentation.recyclerViews.chooseAccount.ChooseAccountListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.AccountBottomSheetViewModel
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
@@ -19,11 +19,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class AccountBottomSheetDialogFragment :
-    BottomSheetDialogFragment(), AccountListAdapter.AccountPopupMenuItemClickListener {
+    BottomSheetDialogFragment(), ChooseAccountListAdapter.AccountPopupMenuItemClickListener {
 
     private var dataPassListener: DataPassListener? = null
 
-    private val adapter = AccountListAdapter(this)
+    private val adapter = ChooseAccountListAdapter(this)
 
     private val viewModel: AccountBottomSheetViewModel by viewModels()
 
@@ -104,10 +104,10 @@ class AccountBottomSheetDialogFragment :
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(resources.getString(R.string.delete_account_title, account.accountName))
             .setMessage(resources.getString(R.string.delete_account_dialog_description))
-            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, which ->
+            .setNeutralButton(resources.getString(R.string.cancel)) { _, _ ->
                 dismiss()
             }
-            .setPositiveButton(resources.getString(R.string.delete)) { dialog, which ->
+            .setPositiveButton(resources.getString(R.string.delete)) { _, _ ->
                 viewModel.removeAccount(account.accountId)
             }
             .show()

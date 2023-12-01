@@ -1,4 +1,4 @@
-package com.example.simplemoneymanager.presentation.recyclerViews
+package com.example.simplemoneymanager.presentation.recyclerViews.transactionList
 
 
 import androidx.recyclerview.widget.RecyclerView

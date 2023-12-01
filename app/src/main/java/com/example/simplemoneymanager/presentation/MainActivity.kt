@@ -12,19 +12,19 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        navController.addOnDestinationChangedListener{_, destination, _ ->
-            if (destination.id == R.id.addTransactionFragment){
-                binding.bottomNavigation.visibility = View.GONE
-                binding.fabAddTransaction.visibility = View.GONE
-            } else {
-                binding.bottomNavigation.visibility = View.VISIBLE
-                binding.fabAddTransaction.visibility = View.VISIBLE
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+
+            when (destination.id) {
+                R.id.addTransactionFragment, R.id.accountDetailsFragment -> hideNavigationBar()
+                else -> showNavigationBar()
             }
         }
 
@@ -33,17 +33,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.bottomNavigation.setOnItemSelectedListener {
-            when (it.itemId){
+            when (it.itemId) {
                 R.id.home -> {
                     navController.navigate(R.id.historyFragment)
                     true
                 }
+
                 R.id.accounts -> {
                     navController.navigate(R.id.accountListFragment)
                     true
                 }
+
                 else -> false
             }
         }
+    }
+
+    private fun hideNavigationBar(){
+        binding.bottomNavigation.visibility = View.GONE
+        binding.fabAddTransaction.visibility = View.GONE
+    }
+
+    private fun showNavigationBar(){
+        binding.bottomNavigation.visibility = View.VISIBLE
+        binding.fabAddTransaction.visibility = View.VISIBLE
     }
 }

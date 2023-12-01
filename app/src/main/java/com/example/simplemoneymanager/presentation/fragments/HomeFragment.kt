@@ -8,26 +8,26 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.simplemoneymanager.R
-import com.example.simplemoneymanager.databinding.FragmentHistoryBinding
+import com.example.simplemoneymanager.databinding.FragmentHomeBinding
 import com.example.simplemoneymanager.domain.transaction.Transaction
-import com.example.simplemoneymanager.presentation.recyclerViews.TransactionListAdapter
-import com.example.simplemoneymanager.presentation.viewModels.HistoryViewModel
+import com.example.simplemoneymanager.presentation.recyclerViews.transactionList.TransactionListAdapter
+import com.example.simplemoneymanager.presentation.viewModels.HomeFragmentViewModel
 import java.time.LocalDate
 
-class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuItemClickListener {
+class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuItemClickListener {
 
     private val adapter = TransactionListAdapter(this)
 
-    private val viewModel: HistoryViewModel by viewModels()
+    private val viewModel: HomeFragmentViewModel by viewModels()
 
-    private var _binding: FragmentHistoryBinding? = null
-    private val binding: FragmentHistoryBinding
+    private var _binding: FragmentHomeBinding? = null
+    private val binding: FragmentHomeBinding
         get() = _binding ?: throw RuntimeException("FragmentHistoryBinding is null")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -53,7 +53,7 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
         }
 
         viewModel.getOverallBalance().observe(viewLifecycleOwner){
-            binding.tvBalanceValue.text = Transaction.formatCurrency(it)
+            binding.tvBalanceValue.text = Transaction.formatCurrencyWithoutSign(it)
         }
 
         viewModel.getCashFlowByMonth(LocalDate.now().monthValue.toString()).observe(viewLifecycleOwner){
@@ -62,21 +62,21 @@ class HistoryFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenu
     }
 
     private fun setupRecyclerView() {
-        viewModel.getTransactionAccountMap().observe(viewLifecycleOwner){ transactionAccountMap ->
+        viewModel.getTransactionList().observe(viewLifecycleOwner){transactionList ->
             binding.rvTransactions.adapter = adapter
-            adapter.accountTransactionMap = transactionAccountMap
+            adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
         }
     }
 
     private fun launchAddTransactionFragmentEditMode(transactionId: Long) {
-        findNavController().navigate(HistoryFragmentDirections.actionHistoryFragmentToAddTransactionFragment(transactionId))
+        findNavController().navigate(HomeFragmentDirections.actionHistoryFragmentToAddTransactionFragment(transactionId))
     }
 
     override fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction) {
         when (itemId) {
             R.id.transaction_menu_button_delete -> {
                 viewModel.removeTransaction(transaction)
-                viewModel.subtractAccountBalance(transaction.transactionAccountId, transaction.amount)
+                viewModel.subtractAccountBalance(transaction.account.accountId, transaction.amount)
             }
             R.id.transaction_menu_button_edit -> {
                 launchAddTransactionFragmentEditMode(transaction.transactionId)

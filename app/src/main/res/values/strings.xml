@@ -36,4 +36,6 @@
     <string name="total">Total:</string>
     <string name="income_this_month">Income this month</string>
     <string name="expense_this_month">Expense this month</string>
+    <string name="transaction">transaction</string>
+    <string name="transactions">transactions</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.simplemoneymanager.presentation.recyclerViews
+package com.example.simplemoneymanager.presentation.recyclerViews.transactionList
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -11,14 +11,13 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.TransactionItemBinding
-import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import java.time.format.DateTimeFormatter
 
 class TransactionListAdapter(private val itemClickListener: TransactionsPopupMenuItemClickListener) :
     RecyclerView.Adapter<TransactionViewHolder>() {
 
-    var accountTransactionMap = mapOf<Account, Transaction>()
+    var transactionList = listOf<Transaction>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -31,19 +30,17 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
     }
 
     override fun getItemCount(): Int {
-        return accountTransactionMap.values.toList().size
+        return transactionList.size
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        val account = accountTransactionMap.keys.toList()[position]
-        val transaction = accountTransactionMap.getValue(account)
-        val balancePerDay =
-            accountTransactionMap.values.toList().filter { it.date == transaction.date }.sumOf { it.amount }
+        val transaction = transactionList[position]
+        val balancePerDay = transactionList.filter { it.date == transaction.date }.sumOf { it.amount }
         val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         val dateString = transaction.date.format(dateTimeFormatter)
 
         val shouldDisplayDate =
-            position == 0 || transaction.date != accountTransactionMap.values.toList()[position - 1].date
+            position == 0 || transaction.date != transactionList[position - 1].date
         val shouldDisplayName = transaction.transactionName.isNotBlank()
 
         if (shouldDisplayDate) {
@@ -71,7 +68,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
 
         val contrast = ColorUtils.calculateContrast(
             holder.binding.tvAccount.currentHintTextColor,
-            account.accountColor.toColorInt()
+            transaction.account.accountColor.toColorInt()
         )
 
         if (contrast < 1.5f) {
@@ -92,9 +89,9 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
         holder.binding.tvCategory.text = transaction.category.categoryName
         holder.binding.tvCategory.backgroundTintList =
             ColorStateList.valueOf(transaction.category.categoryColor.toColorInt())
-        holder.binding.tvAccount.text = account.accountName
+        holder.binding.tvAccount.text = transaction.account.accountName
         holder.binding.tvAccount.backgroundTintList =
-            ColorStateList.valueOf(account.accountColor.toColorInt())
+            ColorStateList.valueOf(transaction.account.accountColor.toColorInt())
 
         holder.itemView.setOnLongClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView)
@@ -105,7 +102,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
                 itemClickListener.onMenuItemClick(
                     menuItem.itemId,
                     itemPosition,
-                    accountTransactionMap.values.toList()[position]
+                    transactionList[position]
                 )
                 true
             }

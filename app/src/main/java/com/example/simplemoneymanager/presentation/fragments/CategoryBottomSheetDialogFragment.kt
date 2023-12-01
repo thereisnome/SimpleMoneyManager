@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.FragmentCategoryBottomSheetBinding
 import com.example.simplemoneymanager.domain.category.Category
-import com.example.simplemoneymanager.presentation.recyclerViews.CategoryListAdapter
+import com.example.simplemoneymanager.presentation.recyclerViews.chooseCategory.ChooseCategoryListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.CategoryBottomSheetViewModel
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
@@ -17,11 +17,11 @@ import com.google.android.flexbox.JustifyContent
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class CategoryBottomSheetDialogFragment private constructor(private val categoryType: Int) :
-    BottomSheetDialogFragment(), CategoryListAdapter.CategoryPopupMenuItemClickListener {
+    BottomSheetDialogFragment(), ChooseCategoryListAdapter.CategoryPopupMenuItemClickListener {
 
     private var dataPassListener: DataPassListener? = null
 
-    private val adapter = CategoryListAdapter(this)
+    private val adapter = ChooseCategoryListAdapter(this)
 
     private val viewModel: CategoryBottomSheetViewModel by viewModels()
 
@@ -73,6 +73,11 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun showAddCategoryBottomSheet() {
         val addCategoryDialogFragment = AddCategoryDialogFragment.newInstance(categoryType)
         addCategoryDialogFragment.show(childFragmentManager, "TEST")
@@ -88,11 +93,6 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
 
     interface DataPassListener {
         fun onCategoryPassed(category: Category)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {

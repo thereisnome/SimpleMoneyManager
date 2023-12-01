@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/historyFragment"
-        android:name="com.example.simplemoneymanager.presentation.fragments.HistoryFragment"
+        android:name="com.example.simplemoneymanager.presentation.fragments.HomeFragment"
         android:label="fragment_history"
-        tools:layout="@layout/fragment_history" >
+        tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_historyFragment_to_addTransactionFragment"
             app:destination="@id/addTransactionFragment" />
@@ -21,7 +21,11 @@
         tools:layout="@layout/fragment_add_transaction" >
         <action
             android:id="@+id/action_addTransactionFragment_to_categoryBottomSheetDialogFragment"
-            app:destination="@id/categoryBottomSheetDialogFragment" />
+            app:destination="@id/categoryBottomSheetDialogFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_enter_anim"
+            app:popExitAnim="@anim/nav_default_exit_anim" />
         <argument
             android:name="transactionId"
             app:argType="long"
@@ -36,5 +40,19 @@
         android:id="@+id/accountListFragment"
         android:name="com.example.simplemoneymanager.presentation.fragments.AccountListFragment"
         android:label="fragment_account_list"
-        tools:layout="@layout/fragment_account_list" />
+        tools:layout="@layout/fragment_account_list" >
+        <action
+            android:id="@+id/action_accountListFragment_to_accountDetailsFragment"
+            app:destination="@id/accountDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/accountDetailsFragment"
+        android:name="com.example.simplemoneymanager.presentation.fragments.AccountDetailsFragment"
+        android:label="AccountDetailsFragment"
+        tools:layout="@layout/fragment_account_details">
+        <argument
+            android:name="accountId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
 </navigation>

@@ -6,15 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.simplemoneymanager.databinding.FragmentAccountListBinding
 import com.example.simplemoneymanager.domain.transaction.Transaction
-import com.example.simplemoneymanager.presentation.recyclerViews.AccountDetailsListAdapter
+import com.example.simplemoneymanager.presentation.recyclerViews.accountList.AccountListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.AccountListViewModel
-import java.time.LocalDate
 
 class AccountListFragment : Fragment() {
 
     private val viewModel: AccountListViewModel by viewModels()
+
+    private val adapter = AccountListAdapter()
 
     private var _binding: FragmentAccountListBinding? = null
     private val binding: FragmentAccountListBinding
@@ -30,16 +32,26 @@ class AccountListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getTransactionListWithAccountsByMonth(LocalDate.now().monthValue.toString()).observe(viewLifecycleOwner){ accountTransactionsMap ->
-            val accountList = accountTransactionsMap.keys.toList().sortedBy { it.accountId }
-            val transactionList = accountTransactionsMap.values.flatten().toList()
-            val adapter = AccountDetailsListAdapter(transactionList)
-            adapter.submitList(accountList)
-            binding.rvAccountDetails.adapter = adapter
-        }
+        viewModel.getAccountWithTransactions()
+            .observe(viewLifecycleOwner) { accountWithTransactionsList ->
+                adapter.accountWithTransactions = accountWithTransactionsList
+                binding.rvAccountDetails.adapter = adapter
+                adapter.onItemClickListener = {
+                    findNavController().navigate(
+                        AccountListFragmentDirections.actionAccountListFragmentToAccountDetailsFragment(
+                            it.accountId
+                        )
+                    )
+                }
+            }
 
         viewModel.getOverallBalance().observe(viewLifecycleOwner) {
-            binding.tvTotalAmount.text = Transaction.formatCurrency(it)
+            binding.tvTotalAmount.text = Transaction.formatCurrencyWithoutSign(it)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

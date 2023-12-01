@@ -1,4 +1,4 @@
-package com.example.simplemoneymanager.presentation.recyclerViews
+package com.example.simplemoneymanager.presentation.recyclerViews.chooseCategory
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -12,18 +12,18 @@ import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.CategoryItemBinding
 import com.example.simplemoneymanager.domain.category.Category
 
-class CategoryListAdapter(private val itemClickListener: CategoryPopupMenuItemClickListener) :
-    ListAdapter<Category, CategoryViewHolder>(CategoryListDiffCallback()) {
+class ChooseCategoryListAdapter(private val itemClickListener: CategoryPopupMenuItemClickListener) :
+    ListAdapter<Category, ChooseCategoryViewHolder>(ChooseCategoryListDiffCallback()) {
 
     var onItemClickListener: ((Category) -> Unit)? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseCategoryViewHolder {
         val binding =
             CategoryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CategoryViewHolder((binding))
+        return ChooseCategoryViewHolder((binding))
     }
 
-    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChooseCategoryViewHolder, position: Int) {
         val category = getItem(position)
 
         val contrast = ColorUtils.calculateContrast(
