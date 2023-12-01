@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> {
-                    navController.navigate(R.id.historyFragment)
+                    navController.navigate(R.id.homeFragment)
                     true
                 }
 

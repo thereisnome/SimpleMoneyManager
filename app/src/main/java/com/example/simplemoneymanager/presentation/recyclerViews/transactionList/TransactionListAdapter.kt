@@ -11,11 +11,16 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.TransactionItemBinding
+import com.example.simplemoneymanager.domain.account.Account
+import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import java.time.format.DateTimeFormatter
 
 class TransactionListAdapter(private val itemClickListener: TransactionsPopupMenuItemClickListener) :
     RecyclerView.Adapter<TransactionViewHolder>() {
+
+    var onAccountClickListener: ((Account) -> Unit)? = null
+    var onCategoryClickListener: ((Category) -> Unit)? = null
 
     var transactionList = listOf<Transaction>()
         set(value) {
@@ -35,6 +40,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = transactionList[position]
+        val account = transaction.account
         val balancePerDay = transactionList.filter { it.date == transaction.date }.sumOf { it.amount }
         val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         val dateString = transaction.date.format(dateTimeFormatter)
@@ -92,6 +98,9 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
         holder.binding.tvAccount.text = transaction.account.accountName
         holder.binding.tvAccount.backgroundTintList =
             ColorStateList.valueOf(transaction.account.accountColor.toColorInt())
+        holder.binding.tvAccount.setOnClickListener {
+            onAccountClickListener?.invoke(account)
+        }
 
         holder.itemView.setOnLongClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView)

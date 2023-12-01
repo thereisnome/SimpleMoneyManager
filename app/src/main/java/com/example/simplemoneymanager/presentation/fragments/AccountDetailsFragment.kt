@@ -71,7 +71,7 @@ class AccountDetailsFragment : Fragment(),
         viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
             val transactionListByAccount =
                 transactionList.filter { it.account.accountId == args.accountId }
-            adapter.transactionList = transactionListByAccount
+            adapter.transactionList = transactionListByAccount.sortedByDescending { it.transactionId }
             binding.rvTransactions.adapter = adapter
 
             val incomeSum = transactionListByAccount.filter { it.type == Transaction.INCOME }
@@ -110,7 +110,7 @@ class AccountDetailsFragment : Fragment(),
 
     private fun launchAddTransactionFragmentEditMode(transactionId: Long) {
         findNavController().navigate(
-            HomeFragmentDirections.actionHistoryFragmentToAddTransactionFragment(
+            AccountDetailsFragmentDirections.actionAccountDetailsFragmentToAddTransactionFragment(
                 transactionId
             )
         )

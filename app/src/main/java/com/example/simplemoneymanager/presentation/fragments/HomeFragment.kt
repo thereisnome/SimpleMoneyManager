@@ -65,11 +65,14 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
         viewModel.getTransactionList().observe(viewLifecycleOwner){transactionList ->
             binding.rvTransactions.adapter = adapter
             adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
+            adapter.onAccountClickListener = {
+                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAccountDetailsFragment(accountId = it.accountId))
+            }
         }
     }
 
     private fun launchAddTransactionFragmentEditMode(transactionId: Long) {
-        findNavController().navigate(HomeFragmentDirections.actionHistoryFragmentToAddTransactionFragment(transactionId))
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAddTransactionFragment(transactionId))
     }
 
     override fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction) {

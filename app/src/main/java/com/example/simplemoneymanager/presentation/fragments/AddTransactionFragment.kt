@@ -160,6 +160,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
                 )
             )
             binding.buttonAccount.text = it.account.accountName
+            binding.buttonAccount.setBackgroundColor(it.account.accountColor.toColorInt())
             val checkedButtonId =
                 if (transaction.type == Transaction.INCOME) binding.buttonIncome.id else binding.buttonExpense.id
             binding.toggleButtonTransactionType.check(checkedButtonId)
