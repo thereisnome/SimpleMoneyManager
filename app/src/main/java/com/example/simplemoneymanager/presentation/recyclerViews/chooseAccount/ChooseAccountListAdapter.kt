@@ -1,4 +1,4 @@
-package com.example.simplemoneymanager.presentation.recyclerViews
+package com.example.simplemoneymanager.presentation.recyclerViews.chooseAccount
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -12,18 +12,18 @@ import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.AccountItemBinding
 import com.example.simplemoneymanager.domain.account.Account
 
-class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClickListener) :
-    ListAdapter<Account, AccountViewHolder>(AccountListDiffCallback()) {
+class ChooseAccountListAdapter(private val itemClickListener: AccountPopupMenuItemClickListener) :
+    ListAdapter<Account, ChooseAccountViewHolder>(ChooseAccountListDiffCallback()) {
 
     var onItemClickListener: ((Account) -> Unit)? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseAccountViewHolder {
         val binding =
             AccountItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return AccountViewHolder((binding))
+        return ChooseAccountViewHolder((binding))
     }
 
-    override fun onBindViewHolder(holder: AccountViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChooseAccountViewHolder, position: Int) {
         val account = getItem(position)
 
         val contrast = ColorUtils.calculateContrast(
@@ -31,8 +31,13 @@ class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClic
             account.accountColor.toColorInt()
         )
 
-        if (contrast < 1.5f){
-            holder.binding.tvAccountName.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+        if (contrast < 1.5f) {
+            holder.binding.tvAccountName.setTextColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.black
+                )
+            )
         }
 
         holder.binding.tvAccountName.text = account.accountName

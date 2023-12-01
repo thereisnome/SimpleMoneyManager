@@ -1,4 +1,4 @@
-package com.example.simplemoneymanager.presentation.recyclerViews
+package com.example.simplemoneymanager.presentation.recyclerViews.transactionList
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
@@ -45,11 +45,8 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
 
         if (shouldDisplayDate) {
             holder.binding.tvDate.text = dateString
-            if (balancePerDay >= 0){
-                holder.binding.tvBalancePerDay.text = Transaction.formatIncome(balancePerDay)
-            } else {
-                holder.binding.tvBalancePerDay.text = Transaction.formatExpense(balancePerDay)
-            }
+            holder.binding.tvBalancePerDay.text = Transaction.formatCurrency(balancePerDay)
+
             holder.binding.layoutDate.visibility = View.VISIBLE
         } else {
             holder.binding.layoutDate.visibility = View.GONE
@@ -60,8 +57,13 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             transaction.category.categoryColor.toColorInt()
         )
 
-        if (categoryContrast < 1.5f){
-            holder.binding.tvCategory.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+        if (categoryContrast < 1.5f) {
+            holder.binding.tvCategory.setTextColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.black
+                )
+            )
         }
 
         val contrast = ColorUtils.calculateContrast(
@@ -69,23 +71,27 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             transaction.account.accountColor.toColorInt()
         )
 
-        if (contrast < 1.5f){
-            holder.binding.tvAccount.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.black))
+        if (contrast < 1.5f) {
+            holder.binding.tvAccount.setTextColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.black
+                )
+            )
         }
 
-        when (transaction.type) {
-            Transaction.INCOME -> holder.binding.tvAmount.text = Transaction.formatIncome(transaction.amount)
-            Transaction.EXPENSE -> holder.binding.tvAmount.text = Transaction.formatExpense(transaction.amount)
-        }
+        holder.binding.tvAmount.text = Transaction.formatCurrency(transaction.amount)
 
         if (shouldDisplayName) {
             holder.binding.tvName.visibility = View.VISIBLE
             holder.binding.tvName.text = transaction.transactionName
         } else holder.binding.tvName.visibility = View.GONE
         holder.binding.tvCategory.text = transaction.category.categoryName
-        holder.binding.tvCategory.backgroundTintList = ColorStateList.valueOf(transaction.category.categoryColor.toColorInt())
+        holder.binding.tvCategory.backgroundTintList =
+            ColorStateList.valueOf(transaction.category.categoryColor.toColorInt())
         holder.binding.tvAccount.text = transaction.account.accountName
-        holder.binding.tvAccount.backgroundTintList = ColorStateList.valueOf(transaction.account.accountColor.toColorInt())
+        holder.binding.tvAccount.backgroundTintList =
+            ColorStateList.valueOf(transaction.account.accountColor.toColorInt())
 
         holder.itemView.setOnLongClickListener {
             val popupMenu = PopupMenu(holder.itemView.context, holder.itemView)

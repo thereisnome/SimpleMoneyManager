@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.fragments.HistoryFragment">
+    tools:context=".presentation.fragments.HomeFragment">
 
     <TextView
         android:id="@+id/tv_balance_label"
@@ -148,16 +148,5 @@
         app:layout_constraintTop_toBottomOf="@+id/divider"
         tools:itemCount="2"
         tools:listitem="@layout/transaction_item" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add_transaction"
-        style="@style/Navigation_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/add_new_transaction"
-        android:src="@android:drawable/ic_input_add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="24dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

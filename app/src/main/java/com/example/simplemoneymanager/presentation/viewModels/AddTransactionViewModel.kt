@@ -33,9 +33,9 @@ class AddTransactionViewModel(application: Application) : AndroidViewModel(appli
     private val addAccountBalanceUseCase = AddAccountBalanceUseCase(accountRepositoryImpl)
     private val getDefaultCategoryUseCase = GetDefaultCategoryUseCase(categoryRepositoryImpl)
     private val getMainAccountUseCase = GetMainAccountUseCase(accountRepositoryImpl)
-    private val getTransactionByIdUseCase = GetTransactionByIdUseCase(transactionRepositoryImpl)
     private val editTransactionUseCase = EditTransactionUseCase(transactionRepositoryImpl)
     private val subtractAccountBalanceUseCase = SubtractAccountBalanceUseCase(accountRepositoryImpl)
+    private val getTransactionByIdUseCase = GetTransactionByIdUseCase(transactionRepositoryImpl)
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -68,7 +68,7 @@ class AddTransactionViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun subtractAccountBalance(account: Account, amount: Double){
-        val disposable = subtractAccountBalanceUseCase(account, amount).subscribeOn(Schedulers.io())
+        val disposable = subtractAccountBalanceUseCase(account.accountId, amount).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 Log.d("VM updateAccountBalance", "ID: $account.accountId, amount: $amount")
             }, {

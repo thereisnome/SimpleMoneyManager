@@ -2,6 +2,7 @@ package com.example.simplemoneymanager.data.repository
 
 import androidx.lifecycle.LiveData
 import com.example.simplemoneymanager.data.database.MoneyDao
+import com.example.simplemoneymanager.domain.account.AccountWithTransactions
 import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.repository.AccountRepository
 import io.reactivex.rxjava3.core.Completable
@@ -19,6 +20,10 @@ class AccountRepositoryImpl(private val moneyDao: MoneyDao): AccountRepository {
         return moneyDao.getAccountList()
     }
 
+    override fun getAccountWithTransactions(): LiveData<List<AccountWithTransactions>> {
+        return moneyDao.getAccountsWithTransactions()
+    }
+
     override fun removeAccount(accountId: Long): Completable {
         return moneyDao.removeAccount(accountId)
     }
@@ -33,10 +38,6 @@ class AccountRepositoryImpl(private val moneyDao: MoneyDao): AccountRepository {
 
     override fun addAccountBalance(accountId: Long, amount: Double): Completable {
         return moneyDao.addAccountBalance(accountId, amount)
-    }
-
-    override fun clearAccountBalance(accountId: Long): Completable {
-        return moneyDao.clearAccountBalance(accountId)
     }
 
     override fun clearAllAccountBalances(): Completable {

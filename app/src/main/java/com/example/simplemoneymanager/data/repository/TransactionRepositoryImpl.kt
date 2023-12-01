@@ -32,10 +32,6 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
         return moneyDao.removeTransaction(transactionId)
     }
 
-    override fun removeAllTransactions(): Completable {
-        return moneyDao.removeAllTransactions()
-    }
-
     override fun getCashFlowByMonth(month: String): LiveData<Double> {
         return moneyDao.getCashFlowByMonth(month)
     }

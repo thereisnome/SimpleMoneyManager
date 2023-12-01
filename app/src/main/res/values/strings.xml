@@ -30,4 +30,12 @@
     <string name="choose_color">Choose color</string>
     <string name="current_balance">Current balance</string>
     <string name="cash_flow">Cashflow:</string>
+    <string name="home">Home</string>
+    <string name="budgets">Budgets</string>
+    <string name="statistic">Statistic</string>
+    <string name="total">Total:</string>
+    <string name="income_this_month">Income this month</string>
+    <string name="expense_this_month">Expense this month</string>
+    <string name="transaction">transaction</string>
+    <string name="transactions">transactions</string>
 </resources>

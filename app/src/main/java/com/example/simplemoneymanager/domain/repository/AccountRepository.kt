@@ -1,6 +1,7 @@
 package com.example.simplemoneymanager.domain.repository
 
 import androidx.lifecycle.LiveData
+import com.example.simplemoneymanager.domain.account.AccountWithTransactions
 import com.example.simplemoneymanager.domain.account.Account
 import io.reactivex.rxjava3.core.Completable
 
@@ -12,6 +13,8 @@ interface AccountRepository {
 
     fun getAccountList(): LiveData<List<Account>>
 
+    fun getAccountWithTransactions(): LiveData<List<AccountWithTransactions>>
+
     fun removeAccount(accountId: Long): Completable
 
     fun updateAccountBalance(accountId: Long, newBalance: Double): Completable
@@ -19,8 +22,6 @@ interface AccountRepository {
     fun subtractAccountBalance(accountId: Long, amount: Double): Completable
 
     fun addAccountBalance(accountId: Long, amount: Double): Completable
-
-    fun clearAccountBalance(accountId: Long): Completable
 
     fun clearAllAccountBalances(): Completable
 

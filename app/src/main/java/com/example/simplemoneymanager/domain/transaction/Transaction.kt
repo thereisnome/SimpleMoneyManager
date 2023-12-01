@@ -29,15 +29,16 @@ data class Transaction(
         const val INCOME = 0
         const val EXPENSE = 1
 
-        fun formatIncome(value: Double): String {
+        fun formatCurrency(value: Double): String {
             val formattedAmount = NumberFormat.getCurrencyInstance(Locale("ru", "RU")).format(value)
-            return "+$formattedAmount".replace(" руб.", "₽")
+            return if (value>=0){
+                "+$formattedAmount".replace(" руб.", "₽")
+            } else formattedAmount.replace(" руб.", "₽")
         }
 
-        fun formatExpense(value: Double): String {
+        fun formatCurrencyWithoutSign(value: Double) : String {
             val formattedAmount = NumberFormat.getCurrencyInstance(Locale("ru", "RU")).format(value)
             return formattedAmount.replace(" руб.", "₽")
         }
-
     }
 }

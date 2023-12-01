@@ -18,8 +18,6 @@ interface TransactionRepository {
 
     fun removeTransaction(transactionId: Long): Completable
 
-    fun removeAllTransactions(): Completable
-
     fun getCashFlowByMonth(month: String): LiveData<Double>
 
     fun getOverallIncome(): LiveData<Double>
