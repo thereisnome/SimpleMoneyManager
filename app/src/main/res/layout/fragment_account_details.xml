@@ -41,7 +41,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_account_name"
                 tools:text="20 000,00 rub." />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/income_details_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -50,6 +50,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/background_category_history_fragment"
                 android:backgroundTint="@color/md_theme_dark_surface"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/expense_details_layout"
                 app:layout_constraintStart_toStartOf="parent"
@@ -104,9 +105,9 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_income_transactions_count_value"
                     tools:text="transactions" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:id="@+id/expense_details_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -115,6 +116,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/background_category_history_fragment"
                 android:backgroundTint="@color/md_theme_dark_surface"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/income_details_layout"
@@ -128,9 +130,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/expense"
                     android:textColor="@color/md_theme_dark_outline"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_expense_value"
@@ -140,8 +140,6 @@
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/open_sans_bold"
                     android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_expense_label"
                     tools:text="-1 000 rub." />
 
                 <TextView
@@ -152,8 +150,6 @@
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/open_sans_bold"
                     android:textSize="18sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_expense_value"
                     tools:text="3" />
 
                 <TextView
@@ -164,12 +160,9 @@
                     android:layout_marginBottom="16dp"
                     android:textColor="@color/md_theme_dark_outline"
                     android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_expense_transactions_count_value"
                     tools:text="transactions" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -181,7 +174,7 @@
             android:layout_marginTop="4dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@+id/account_details_layout"
-            tools:listitem="@layout/transaction_item"/>
+            tools:listitem="@layout/transaction_item" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

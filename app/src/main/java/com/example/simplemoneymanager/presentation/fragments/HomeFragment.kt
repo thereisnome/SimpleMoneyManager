@@ -12,6 +12,7 @@ import com.example.simplemoneymanager.databinding.FragmentHomeBinding
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.presentation.recyclerViews.transactionList.TransactionListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.HomeFragmentViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.time.LocalDate
 
 class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuItemClickListener {
@@ -36,6 +37,11 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
 
         setupRecyclerView()
         setStatisticValues()
+
+        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fab)
+        fab.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addTransactionFragment)
+        }
     }
 
     override fun onDestroyView() {
@@ -44,35 +50,51 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
     }
 
     private fun setStatisticValues() {
-        viewModel.getOverallIncome().observe(viewLifecycleOwner){
+        viewModel.getOverallIncome().observe(viewLifecycleOwner) {
             binding.tvIncomeValue.text = Transaction.formatCurrency(it)
         }
 
-        viewModel.getOverallExpense().observe(viewLifecycleOwner){
+        viewModel.getOverallExpense().observe(viewLifecycleOwner) {
             binding.tvExpenseValue.text = Transaction.formatCurrency(it)
         }
 
-        viewModel.getOverallBalance().observe(viewLifecycleOwner){
+        viewModel.getOverallBalance().observe(viewLifecycleOwner) {
             binding.tvBalanceValue.text = Transaction.formatCurrencyWithoutSign(it)
         }
 
-        viewModel.getCashFlowByMonth(LocalDate.now().monthValue.toString()).observe(viewLifecycleOwner){
-            binding.tvCashFlowBalance.text = Transaction.formatCurrency(it)
-        }
+        viewModel.getCashFlowByMonth(LocalDate.now().monthValue.toString())
+            .observe(viewLifecycleOwner) {
+                binding.tvCashFlowBalance.text = Transaction.formatCurrency(it)
+            }
     }
 
     private fun setupRecyclerView() {
-        viewModel.getTransactionList().observe(viewLifecycleOwner){transactionList ->
+        viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
             binding.rvTransactions.adapter = adapter
             adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
             adapter.onAccountClickListener = {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAccountDetailsFragment(accountId = it.accountId))
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToAccountDetailsFragment(
+                        accountId = it.accountId
+                    )
+                )
+            }
+            adapter.onCategoryClickListener = { category ->
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToCategoryDetailsFragment(
+                        categoryId = category.id
+                    )
+                )
             }
         }
     }
 
     private fun launchAddTransactionFragmentEditMode(transactionId: Long) {
-        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAddTransactionFragment(transactionId))
+        findNavController().navigate(
+            HomeFragmentDirections.actionHomeFragmentToAddTransactionFragment(
+                transactionId
+            )
+        )
     }
 
     override fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction) {
@@ -81,6 +103,7 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
                 viewModel.removeTransaction(transaction)
                 viewModel.subtractAccountBalance(transaction.account.accountId, transaction.amount)
             }
+
             R.id.transaction_menu_button_edit -> {
                 launchAddTransactionFragmentEditMode(transaction.transactionId)
             }
