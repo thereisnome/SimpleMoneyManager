@@ -14,53 +14,52 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplemoneymanager.R
-import com.example.simplemoneymanager.databinding.FragmentAccountDetailsBinding
+import com.example.simplemoneymanager.databinding.FragmentCategoryDetailsBinding
+import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.presentation.recyclerViews.transactionList.TransactionListAdapter
-import com.example.simplemoneymanager.presentation.viewModels.AccountDetailsFragmentViewModel
+import com.example.simplemoneymanager.presentation.viewModels.CategoryDetailsFragmentViewModel
+import kotlin.math.absoluteValue
 
-class AccountDetailsFragment : Fragment(),
+class CategoryDetailsFragment : Fragment(),
     TransactionListAdapter.TransactionsPopupMenuItemClickListener {
 
-    private val args by navArgs<AccountDetailsFragmentArgs>()
+    private val args by navArgs<CategoryDetailsFragmentArgs>()
 
     private val adapter = TransactionListAdapter(this)
 
-    private val viewModel: AccountDetailsFragmentViewModel by viewModels()
+    private val viewModel: CategoryDetailsFragmentViewModel by viewModels()
 
-    private var _binding: FragmentAccountDetailsBinding? = null
-    private val binding: FragmentAccountDetailsBinding
+    private var _binding: FragmentCategoryDetailsBinding? = null
+    private val binding: FragmentCategoryDetailsBinding
         get() = _binding ?: throw RuntimeException("FragmentHistoryBinding is null")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAccountDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentCategoryDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getAccountById(args.accountId).observe(viewLifecycleOwner) { account ->
-            binding.tvAccountName.text = account.accountName
-            binding.tvAccountBalance.text = Transaction.formatCurrencyWithoutSign(account.balance)
-            binding.accountDetailsLayout.backgroundTintList =
-                ColorStateList.valueOf(account.accountColor.toColorInt())
+        viewModel.getCategoryById(args.categoryId).observe(viewLifecycleOwner) { category ->
+            binding.tvCategoryName.text = category.categoryName
+            binding.tvTypeLabel.text = if (category.categoryType == Category.INCOME) {
+                requireContext().getString(R.string.income)
+            } else requireContext().getString(R.string.expense)
+
+            binding.categoryDetailsLayout.backgroundTintList =
+                ColorStateList.valueOf(category.categoryColor.toColorInt())
 
             val contrast = ColorUtils.calculateContrast(
-                binding.tvAccountName.currentHintTextColor,
-                account.accountColor.toColorInt()
+                binding.tvCategoryName.currentHintTextColor,
+                category.categoryColor.toColorInt()
             )
 
             if (contrast < 1.5f) {
-                binding.tvAccountName.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.black
-                    )
-                )
-                binding.tvAccountBalance.setTextColor(
+                binding.tvCategoryName.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
                         R.color.black
@@ -70,10 +69,11 @@ class AccountDetailsFragment : Fragment(),
         }
 
         viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
-            val transactionListByAccount =
-                transactionList.filter { it.account.accountId == args.accountId }
+            val transactionListByCategory =
+                transactionList.filter { it.category.id == args.categoryId }
+
             adapter.transactionList =
-                transactionListByAccount.sortedByDescending { it.transactionId }
+                transactionListByCategory.sortedByDescending { it.transactionId }
 
             val linearLayoutManager = object : LinearLayoutManager(requireContext()) {
                 override fun canScrollVertically(): Boolean {
@@ -82,39 +82,25 @@ class AccountDetailsFragment : Fragment(),
             }
             binding.rvTransactions.layoutManager = linearLayoutManager
             binding.rvTransactions.adapter = adapter
-            adapter.onCategoryClickListener = { category ->
+            adapter.onAccountClickListener = { account ->
                 findNavController().navigate(
-                    AccountDetailsFragmentDirections.actionAccountDetailsFragmentToCategoryDetailsFragment(
-                        categoryId = category.id
+                    CategoryDetailsFragmentDirections.actionCategoryDetailsFragmentToAccountDetailsFragment(
+                        accountId = account.accountId
                     )
                 )
             }
 
-            val incomeSum = transactionListByAccount.filter { it.type == Transaction.INCOME }
-                .sumOf { it.amount }
-            val expenseSum = transactionListByAccount.filter { it.type == Transaction.EXPENSE }
-                .sumOf { it.amount }
+            val transactionsSum = transactionListByCategory.sumOf { it.amount }
 
-            val incomeTransactionCount =
-                transactionListByAccount.filter { it.type == Transaction.INCOME }.size.toString()
-            val expenseTransactionCount =
-                transactionListByAccount.filter { it.type == Transaction.EXPENSE }.size.toString()
+            val incomeTransactionCount = transactionListByCategory.size.toString()
 
-            binding.tvIncomeValue.text = Transaction.formatCurrency(incomeSum)
-            binding.tvExpenseValue.text = Transaction.formatCurrency(expenseSum)
+            binding.tvTypeValue.text = Transaction.formatCurrency(transactionsSum.absoluteValue)
 
-            binding.tvIncomeTransactionsCountValue.text = incomeTransactionCount
+            binding.tvTransactionsCountValue.text = incomeTransactionCount
             if (incomeTransactionCount.toInt() > 1) {
-                binding.tvIncomeTransactionsCountLabel.text =
+                binding.tvTransactionsCountLabel.text =
                     requireContext().getString(R.string.transactions)
-            } else binding.tvIncomeTransactionsCountLabel.text =
-                requireContext().getString(R.string.transaction)
-
-            binding.tvExpenseTransactionsCountValue.text = expenseTransactionCount
-            if (incomeTransactionCount.toInt() > 1) {
-                binding.tvExpenseTransactionsCountLabel.text =
-                    requireContext().getString(R.string.transactions)
-            } else binding.tvExpenseTransactionsCountLabel.text =
+            } else binding.tvTransactionsCountLabel.text =
                 requireContext().getString(R.string.transaction)
         }
     }

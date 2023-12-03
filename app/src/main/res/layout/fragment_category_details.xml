@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".presentation.fragments.AccountDetailsFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/category_details_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_account_details_bot"
+            android:backgroundTint="@color/md_theme_dark_primary"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_category_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/open_sans_bold"
+                android:textSize="32sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Some category" />
+
+            <LinearLayout
+                android:id="@+id/income_details_layout"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/background_category_history_fragment"
+                android:backgroundTint="@color/md_theme_dark_surface"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/category_screen_center"
+                app:layout_constraintTop_toBottomOf="@id/tv_category_name">
+
+                <TextView
+                    android:id="@+id/tv_type_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    tools:text="@string/income"
+                    android:textColor="@color/md_theme_dark_outline"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_type_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans_bold"
+                    android:textSize="18sp"
+                    tools:text="+10 000 000 rub." />
+
+                <TextView
+                    android:id="@+id/tv_transactions_count_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans_bold"
+                    android:textSize="18sp"
+                    tools:text="3" />
+
+                <TextView
+                    android:id="@+id/tv_transactions_count_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:textColor="@color/md_theme_dark_outline"
+                    android:textSize="16sp"
+                    tools:text="transactions" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/category_screen_center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@+id/income_details_layout"
+                app:layout_constraintBottom_toBottomOf="@+id/income_details_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_transactions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="4dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/category_details_layout"
+            tools:listitem="@layout/transaction_item"
+            tools:itemCount="2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

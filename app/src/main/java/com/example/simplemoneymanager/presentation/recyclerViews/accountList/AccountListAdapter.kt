@@ -3,6 +3,7 @@ package com.example.simplemoneymanager.presentation.recyclerViews.accountList
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
@@ -14,7 +15,7 @@ import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.account.AccountWithTransactions
 import com.example.simplemoneymanager.domain.transaction.Transaction
 
-class AccountListAdapter : RecyclerView.Adapter<AccountViewHolder>() {
+class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClickListener) : RecyclerView.Adapter<AccountViewHolder>() {
 
     var onItemClickListener: ((Account) -> Unit)? = null
 
@@ -76,8 +77,29 @@ class AccountListAdapter : RecyclerView.Adapter<AccountViewHolder>() {
         holder.binding.balanceLayout.backgroundTintList =
             ColorStateList.valueOf(account.accountColor.toColorInt())
 
-        holder.binding.accountDetailsLayout.setOnClickListener {
+        holder.binding.accountListItemLayout.setOnClickListener {
             onItemClickListener?.invoke(account)
         }
+
+        holder.binding.accountListItemLayout.setOnLongClickListener {
+            val popupMenu = PopupMenu(holder.itemView.context, holder.itemView)
+            popupMenu.inflate(R.menu.account_bottom_sheet_dialog_fragment_context_menu)
+
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                val itemPosition = holder.adapterPosition
+                itemClickListener.onMenuItemClick(
+                    menuItem.itemId,
+                    itemPosition,
+                    account
+                )
+                true
+            }
+            popupMenu.show()
+            true
+        }
+    }
+
+    interface AccountPopupMenuItemClickListener {
+        fun onMenuItemClick(itemId: Int, position: Int, account: Account)
     }
 }

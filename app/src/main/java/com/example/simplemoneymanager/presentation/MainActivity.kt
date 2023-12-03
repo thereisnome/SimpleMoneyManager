@@ -23,13 +23,9 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
             when (destination.id) {
-                R.id.addTransactionFragment, R.id.accountDetailsFragment -> hideNavigationBar()
+                R.id.addTransactionFragment, R.id.accountDetailsFragment, R.id.categoryDetailsFragment -> hideNavigationBar()
                 else -> showNavigationBar()
             }
-        }
-
-        binding.fabAddTransaction.setOnClickListener {
-            navController.navigate(R.id.addTransactionFragment)
         }
 
         binding.bottomNavigation.setOnItemSelectedListener {
@@ -44,6 +40,10 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
+                R.id.budgets -> {
+                    navController.navigate(R.id.budgetListFragment)
+                    true
+                }
                 else -> false
             }
         }
@@ -51,11 +51,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun hideNavigationBar(){
         binding.bottomNavigation.visibility = View.GONE
-        binding.fabAddTransaction.visibility = View.GONE
+        binding.fab.visibility = View.GONE
     }
 
     private fun showNavigationBar(){
         binding.bottomNavigation.visibility = View.VISIBLE
-        binding.fabAddTransaction.visibility = View.VISIBLE
+        binding.fab.visibility = View.VISIBLE
     }
 }

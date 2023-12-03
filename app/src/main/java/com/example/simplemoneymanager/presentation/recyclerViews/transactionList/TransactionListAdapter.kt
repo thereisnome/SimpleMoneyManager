@@ -41,6 +41,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = transactionList[position]
         val account = transaction.account
+        val category = transaction.category
         val balancePerDay = transactionList.filter { it.date == transaction.date }.sumOf { it.amount }
         val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
         val dateString = transaction.date.format(dateTimeFormatter)
@@ -60,7 +61,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
 
         val categoryContrast = ColorUtils.calculateContrast(
             holder.binding.tvCategory.currentHintTextColor,
-            transaction.category.categoryColor.toColorInt()
+            category.categoryColor.toColorInt()
         )
 
         if (categoryContrast < 1.5f) {
@@ -72,12 +73,12 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             )
         }
 
-        val contrast = ColorUtils.calculateContrast(
+        val accountContrast = ColorUtils.calculateContrast(
             holder.binding.tvAccount.currentHintTextColor,
-            transaction.account.accountColor.toColorInt()
+            account.accountColor.toColorInt()
         )
 
-        if (contrast < 1.5f) {
+        if (accountContrast < 1.5f) {
             holder.binding.tvAccount.setTextColor(
                 ContextCompat.getColor(
                     holder.itemView.context,
@@ -92,12 +93,16 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             holder.binding.tvName.visibility = View.VISIBLE
             holder.binding.tvName.text = transaction.transactionName
         } else holder.binding.tvName.visibility = View.GONE
-        holder.binding.tvCategory.text = transaction.category.categoryName
+        holder.binding.tvCategory.text = category.categoryName
         holder.binding.tvCategory.backgroundTintList =
-            ColorStateList.valueOf(transaction.category.categoryColor.toColorInt())
-        holder.binding.tvAccount.text = transaction.account.accountName
+            ColorStateList.valueOf(category.categoryColor.toColorInt())
+        holder.binding.tvCategory.setOnClickListener {
+            onCategoryClickListener?.invoke(category)
+        }
+
+        holder.binding.tvAccount.text = account.accountName
         holder.binding.tvAccount.backgroundTintList =
-            ColorStateList.valueOf(transaction.account.accountColor.toColorInt())
+            ColorStateList.valueOf(account.accountColor.toColorInt())
         holder.binding.tvAccount.setOnClickListener {
             onAccountClickListener?.invoke(account)
         }

@@ -44,7 +44,7 @@ class AccountBottomSheetDialogFragment :
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonAddNewAccount.setOnClickListener {
-            showAddAccountBottomSheet()
+            showAddAccountDialogFragment()
         }
 
         val flexboxLayoutManager = FlexboxLayoutManager(requireContext(), FlexDirection.ROW)
@@ -64,7 +64,7 @@ class AccountBottomSheetDialogFragment :
 
     }
 
-    private fun showAddAccountBottomSheet() {
+    private fun showAddAccountDialogFragment() {
         val addAccountDialogFragment = AddAccountDialogFragment()
         addAccountDialogFragment.show(childFragmentManager, "TEST")
     }
@@ -102,10 +102,13 @@ class AccountBottomSheetDialogFragment :
 
     private fun createDeleteAccountDialogAlert(account: Account) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(resources.getString(R.string.delete_account_title, account.accountName))
+            .setTitle(resources.getString(
+                    R.string.delete_account_title,
+                    account.accountName
+                ))
             .setMessage(resources.getString(R.string.delete_account_dialog_description))
-            .setNeutralButton(resources.getString(R.string.cancel)) { _, _ ->
-                dismiss()
+            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
             }
             .setPositiveButton(resources.getString(R.string.delete)) { _, _ ->
                 viewModel.removeAccount(account.accountId)

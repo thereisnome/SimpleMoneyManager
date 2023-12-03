@@ -5,8 +5,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.simplemoneymanager.domain.account.AccountWithTransactions
 import com.example.simplemoneymanager.domain.account.Account
+import com.example.simplemoneymanager.domain.account.AccountWithTransactions
+import com.example.simplemoneymanager.domain.budget.Budget
+import com.example.simplemoneymanager.domain.budget.BudgetWithTransactions
 import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import io.reactivex.rxjava3.core.Completable
@@ -91,6 +93,26 @@ interface MoneyDao {
 
     @Query("UPDATE account_list SET balance = 0")
     fun clearAllAccountBalances(): Completable
+
+//    Budget
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun addBudget(budget: Budget): Completable
+
+    @Query("UPDATE budget_list SET maxValue = :maxValue, id = :categoryId WHERE budgetId = :budgetId")
+    fun editBudgetById(budgetId: Long, maxValue: Double, categoryId: Int): Completable
+
+    @Query("SELECT * FROM budget_list")
+    fun getBudgetList(): LiveData<List<Budget>>
+
+    @Query("SELECT * FROM budget_list WHERE budgetId = :budgetId")
+    fun getBudgetById(budgetId: Long): LiveData<Budget>
+
+    @Query("DELETE FROM budget_list WHERE budgetId = :budgetId")
+    fun removeBudget(budgetId: Long): Completable
+
+    @Query("SELECT * FROM budget_list")
+    fun getBudgetWithTransactions(): LiveData<List<BudgetWithTransactions>>
 
 //    Sums
 

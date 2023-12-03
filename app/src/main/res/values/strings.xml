@@ -14,6 +14,7 @@
     <string name="edit_transaction">Edit transaction</string>
     <string name="delete">Delete</string>
     <string name="input_error">Field is empty</string>
+    <string name="balance_error">Not enough money</string>
     <string name="empty_transaction_list">Transaction list is empty</string>
     <string name="edit">Edit</string>
     <string name="add_new_category_button">Add new category button</string>
@@ -25,7 +26,9 @@
     <string name="accounts">Accounts</string>
     <string name="account">Account</string>
     <string name="delete_account_title">Delete account %s?</string>
+    <string name="delete_budget_title">Delete budget for %s category?</string>
     <string name="delete_account_dialog_description">You will lose all transactions associated with this account. Cannot be undone.</string>
+    <string name="delete_budget_dialog_description">Cannot be undone.</string>
     <string name="cancel">Cancel</string>
     <string name="choose_color">Choose color</string>
     <string name="current_balance">Current balance</string>
@@ -38,4 +41,8 @@
     <string name="expense_this_month">Expense this month</string>
     <string name="transaction">transaction</string>
     <string name="transactions">transactions</string>
+    <string name="budget_spend">%s/%s</string>
+    <string name="left_to_spend">Left to spend:</string>
+    <string name="state_of_budget">State of budget</string>
+    <string name="add_new_budget">Add new budget</string>
 </resources>
