@@ -35,8 +35,8 @@ interface MoneyDao {
     @Query("SELECT * FROM category_list")
     fun getCategoryList(): LiveData<List<Category>>
 
-    @Query("SELECT * FROM category_list WHERE categoryType = :type")
-    fun getCategoryWithTransactions(type: Int): LiveData<List<CategoryWithTransactions>>
+    @Query("SELECT * FROM category_list")
+    fun getCategoryWithTransactions(): LiveData<List<CategoryWithTransactions>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addCategory(category: Category): Completable

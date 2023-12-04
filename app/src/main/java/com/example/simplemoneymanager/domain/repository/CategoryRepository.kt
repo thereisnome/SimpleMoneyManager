@@ -19,5 +19,5 @@ interface CategoryRepository {
 
     fun removeCategory(categoryId: Int): Completable
 
-    fun getCategoryWithTransactions(type: Int): LiveData<List<CategoryWithTransactions>>
+    fun getCategoryWithTransactions(): LiveData<List<CategoryWithTransactions>>
 }

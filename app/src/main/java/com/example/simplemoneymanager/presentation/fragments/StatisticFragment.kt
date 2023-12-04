@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.FragmentStatisticBinding
 import com.example.simplemoneymanager.domain.category.Category
+import com.example.simplemoneymanager.domain.category.CategoryWithTransactions
 import com.example.simplemoneymanager.presentation.recyclerViews.statisticAccount.StatisticCategoryListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.StatisticViewModel
 import com.github.mikephil.charting.animation.Easing
@@ -23,7 +24,10 @@ import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters.firstDayOfMonth
+import java.time.temporal.TemporalAdjusters.lastDayOfMonth
 import kotlin.math.absoluteValue
+
 
 class StatisticFragment : Fragment() {
     private val viewModel: StatisticViewModel by viewModels()
@@ -32,11 +36,15 @@ class StatisticFragment : Fragment() {
 
     private var _binding: FragmentStatisticBinding? = null
 
-    private val incomeCategoryList = mutableListOf<Category>()
-    private val expenseCategoryList = mutableListOf<Category>()
+    private lateinit var categoryWithTransactionList: List<CategoryWithTransactions>
 
-    private lateinit var expensePieData: PieData
-    private lateinit var incomePieData: PieData
+    private lateinit var categoryList: List<Category>
+
+    private var dateFilter = listOf<LocalDate>(
+        LocalDate.now().with(firstDayOfMonth()), LocalDate.now().with(
+            lastDayOfMonth()
+        )
+    )
 
     private val binding: FragmentStatisticBinding
         get() = _binding ?: throw RuntimeException("FragmentStatisticBinding is null")
@@ -50,24 +58,10 @@ class StatisticFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setupPieChart()
-        createPieDataSets()
         setupRecyclerView()
-
-        binding.buttonExpenseStatistic.setOnClickListener {
-            adapter.submitList(expenseCategoryList)
-            binding.rvStatisticCategory.adapter = adapter
-            passDataToChart(expensePieData)
-            binding.pieChart.animateXY(500,500, Easing.EaseInOutCirc)
-        }
-
-        binding.buttonIncomeStatistic.setOnClickListener {
-            adapter.submitList(incomeCategoryList)
-            binding.rvStatisticCategory.adapter = adapter
-            passDataToChart(incomePieData)
-            binding.pieChart.animateXY(500,500, Easing.EaseInOutCirc)
-        }
+        initData()
+        setupPieChart()
+        setTypeButtonsClickListeners()
     }
 
     override fun onDestroyView() {
@@ -82,77 +76,123 @@ class StatisticFragment : Fragment() {
         binding.rvStatisticCategory.layoutManager = flexboxLayoutManager
     }
 
+    private fun initData() {
+        viewModel.getCategoryWithTransactions()
+            .observe(viewLifecycleOwner) { overallListCategoryWithTransactions ->
+
+                categoryWithTransactionList =
+                    overallListCategoryWithTransactions.filter { it.transactions.isNotEmpty() }
+                categoryList = categoryWithTransactionList.map { it.category }
+
+                passDataToListAdapter(categoryList, Category.INCOME)
+                passDataToChart(
+                    createPieData(
+                        Category.INCOME,
+                        viewModel.filterTransactionsByDate(categoryWithTransactionList)
+                    )
+                )
+            }
+    }
+
     private fun setupPieChart() {
-        binding.pieChart.setHoleColor(ContextCompat.getColor(requireContext(), R.color.md_theme_dark_surface))
+        binding.pieChart.setHoleColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.md_theme_dark_surface
+            )
+        )
         binding.pieChart.description.isEnabled = false
         binding.pieChart.legend.isEnabled = false
         binding.pieChart.minAngleForSlices = 20f
-        binding.pieChart.setEntryLabelTypeface(ResourcesCompat.getFont(requireContext(), R.font.open_sans_semibold))
+        binding.pieChart.setEntryLabelTypeface(
+            ResourcesCompat.getFont(
+                requireContext(),
+                R.font.open_sans_semibold
+            )
+        )
         binding.pieChart.setEntryLabelTextSize(15f)
     }
 
-    private fun passDataToChart(pieData: PieData){
+    private fun setTypeButtonsClickListeners() {
+        binding.buttonExpenseStatistic.setOnClickListener {
+            passDataToListAdapter(categoryList, Category.EXPENSE)
+            if (isFilteredListNotEmpty(Category.EXPENSE)){
+                showChart()
+                passDataToChart(createPieData(Category.EXPENSE, viewModel.filterTransactionsByDate(dateFilter[0], dateFilter[1], categoryWithTransactionList)))
+            } else {
+                showEmptyLayout()
+            }
+        }
+
+        binding.buttonIncomeStatistic.setOnClickListener {
+            passDataToListAdapter(categoryList, Category.INCOME)
+            if (isFilteredListNotEmpty(Category.INCOME)){
+                showChart()
+                passDataToChart(createPieData(Category.INCOME, viewModel.filterTransactionsByDate(dateFilter[0], dateFilter[1], categoryWithTransactionList)))
+            } else {
+                showEmptyLayout()
+            }
+        }
+    }
+
+    private fun passDataToListAdapter(categoryList: List<Category>, type: Int) {
+        adapter.submitList(categoryList.filter { it.categoryType == type })
+        binding.rvStatisticCategory.adapter = adapter
+    }
+
+    private fun passDataToChart(pieData: PieData) {
         binding.pieChart.data = pieData
+        binding.pieChart.animateXY(500, 500, Easing.EaseInOutCirc)
         binding.pieChart.invalidate()
     }
 
-    private fun createPieDataSets() {
-        viewModel.getCategoryWithTransactions(Category.INCOME).observe(viewLifecycleOwner) {
+    //    categoryWithTransactionsList should be filtered by date
+    private fun createPieData(
+        type: Int,
+        categoryWithTransactionsList: List<CategoryWithTransactions>
+    ): PieData {
+        val entries = ArrayList<PieEntry>()
+        val colors = ArrayList<Int>()
+        val filteredCategoryWithTransactionsList =
+            categoryWithTransactionsList.filter { it.category.categoryType == type }
 
-            incomeCategoryList.addAll(it.filter { it.transactions.isNotEmpty() }.map { it.category })
-            adapter.submitList(incomeCategoryList)
-            binding.rvStatisticCategory.adapter = adapter
-
-            val incomeEntries = ArrayList<PieEntry>()
-            val incomeColors = ArrayList<Int>()
-
-            for (item in it) {
-                if (item.transactions.isNotEmpty()){
-                    incomeEntries.add(PieEntry(item.transactions.filter { it.date.monthValue == LocalDate.now().monthValue }
-                        .sumOf { it.amount }.toFloat(), item.category.categoryName))
-                    incomeColors.add(item.category.categoryColor.toColorInt())
-                }
-            }
-
-            val incomePieDataSet =
-                PieDataSet(incomeEntries, requireContext().getString(R.string.statistics))
-
-            incomePieDataSet.valueTextSize = 20f
-            incomePieDataSet.sliceSpace = 10F
-            incomePieDataSet.valueTypeface = ResourcesCompat.getFont(requireContext(), R.font.open_sans_semibold)
-            incomePieDataSet.colors = incomeColors
-            incomePieData = PieData(incomePieDataSet)
-
-            binding.pieChart.data = incomePieData
-            binding.pieChart.animateXY(500,500, Easing.EaseInOutCirc)
-            binding.pieChart.invalidate()
+        for (item in filteredCategoryWithTransactionsList) {
+            entries.add(
+                PieEntry(
+                    item.transactions.sumOf { it.amount.absoluteValue }.toFloat(),
+                    item.category.categoryName
+                )
+            )
+            colors.add(item.category.categoryColor.toColorInt())
         }
 
-        viewModel.getCategoryWithTransactions(Category.EXPENSE).observe(viewLifecycleOwner) {
+        val pieDataSet = PieDataSet(entries, requireContext().getString(R.string.statistics))
 
-            expenseCategoryList.addAll(it.filter { it.transactions.isNotEmpty() }.map { it.category })
+        pieDataSet.valueTextSize = 20f
+        pieDataSet.sliceSpace = 10F
+        pieDataSet.valueTypeface =
+            ResourcesCompat.getFont(requireContext(), R.font.open_sans_semibold)
+        pieDataSet.colors = colors
 
-            val expenseEntries = ArrayList<PieEntry>()
-            val expenseColors = ArrayList<Int>()
+        return PieData(pieDataSet)
+    }
 
-            for (item in it) {
-                if (item.transactions.isNotEmpty()){
-                    expenseEntries.add(PieEntry(item.transactions.filter { it.date.monthValue == LocalDate.now().monthValue }
-                        .sumOf { it.amount.absoluteValue }.toFloat(), item.category.categoryName))
-                    expenseColors.add(item.category.categoryColor.toColorInt())
-                }
-            }
+    private fun showChart(){
+        binding.layoutEmpty.visibility = View.GONE
+        binding.pieChart.visibility = View.VISIBLE
+    }
 
-            val expensePieDataSet =
-                PieDataSet(expenseEntries, requireContext().getString(R.string.statistics))
+    private fun showEmptyLayout(){
+        binding.layoutEmpty.visibility = View.VISIBLE
+        binding.pieChart.visibility = View.GONE
+    }
 
-            expensePieDataSet.valueTextSize = 20f
-            expensePieDataSet.sliceSpace = 10F
-            expensePieDataSet.valueTypeface = ResourcesCompat.getFont(requireContext(), R.font.open_sans_semibold)
-            expensePieDataSet.colors = expenseColors
-
-            expensePieData = PieData(expensePieDataSet)
-        }
+    private fun isFilteredListNotEmpty(type: Int):Boolean{
+        return viewModel.filterTransactionsByDate(
+            dateFilter[0],
+            dateFilter[1],
+            categoryWithTransactionList
+        ).any { it.category.categoryType == type }
     }
 }
 

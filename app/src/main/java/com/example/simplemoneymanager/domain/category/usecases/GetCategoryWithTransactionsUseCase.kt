@@ -6,7 +6,7 @@ import com.example.simplemoneymanager.domain.repository.CategoryRepository
 
 class GetCategoryWithTransactionsUseCase(private val categoryRepository: CategoryRepository) {
 
-    operator fun invoke(type: Int): LiveData<List<CategoryWithTransactions>>{
-        return categoryRepository.getCategoryWithTransactions(type)
+    operator fun invoke(): LiveData<List<CategoryWithTransactions>>{
+        return categoryRepository.getCategoryWithTransactions()
     }
 }

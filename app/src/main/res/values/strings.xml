@@ -47,4 +47,6 @@
     <string name="state_of_budget">State of budget</string>
     <string name="add_new_budget">Add new budget</string>
     <string name="statistics">Statistics</string>
+    <string name="transaction_list_is_empty">Transaction list is empty</string>
+    <string name="add_some_transactions_to_see_statistics">Add some transactions to see statistics</string>
 </resources>

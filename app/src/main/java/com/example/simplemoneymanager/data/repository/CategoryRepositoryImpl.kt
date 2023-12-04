@@ -34,7 +34,7 @@ class CategoryRepositoryImpl(private val moneyDao: MoneyDao): CategoryRepository
         return moneyDao.removeCategory(categoryId)
     }
 
-    override fun getCategoryWithTransactions(type: Int): LiveData<List<CategoryWithTransactions>> {
-        return moneyDao.getCategoryWithTransactions(type)
+    override fun getCategoryWithTransactions(): LiveData<List<CategoryWithTransactions>> {
+        return moneyDao.getCategoryWithTransactions()
     }
 }
