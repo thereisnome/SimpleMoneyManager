@@ -47,7 +47,7 @@ class AddBudgetViewModel(application: Application) : AndroidViewModel(applicatio
         return getBudgetByIdUseCase(budgetId)
     }
 
-    fun editBudget(maxValue: Double, budgetId: Long, category: Category,) {
+    fun editBudget(maxValue: Double, budgetId: Long, category: Category) {
         val budget = Budget(maxValue, budgetId, category)
         val disposable = editBudgetUseCase(budget).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({

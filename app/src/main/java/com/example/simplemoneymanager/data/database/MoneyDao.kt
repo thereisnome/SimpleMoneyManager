@@ -10,6 +10,7 @@ import com.example.simplemoneymanager.domain.account.AccountWithTransactions
 import com.example.simplemoneymanager.domain.budget.Budget
 import com.example.simplemoneymanager.domain.budget.BudgetWithTransactions
 import com.example.simplemoneymanager.domain.category.Category
+import com.example.simplemoneymanager.domain.category.CategoryWithTransactions
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import io.reactivex.rxjava3.core.Completable
 import java.time.LocalDate
@@ -30,6 +31,12 @@ interface MoneyDao {
 
     @Query("SELECT * FROM category_list WHERE categoryType = 0")
     fun getIncomeCategoryList(): LiveData<List<Category>>
+
+    @Query("SELECT * FROM category_list")
+    fun getCategoryList(): LiveData<List<Category>>
+
+    @Query("SELECT * FROM category_list WHERE categoryType = :type")
+    fun getCategoryWithTransactions(type: Int): LiveData<List<CategoryWithTransactions>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addCategory(category: Category): Completable

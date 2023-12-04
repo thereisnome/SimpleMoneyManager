@@ -3,6 +3,7 @@ package com.example.simplemoneymanager.data.repository
 import androidx.lifecycle.LiveData
 import com.example.simplemoneymanager.data.database.MoneyDao
 import com.example.simplemoneymanager.domain.category.Category
+import com.example.simplemoneymanager.domain.category.CategoryWithTransactions
 import com.example.simplemoneymanager.domain.repository.CategoryRepository
 import io.reactivex.rxjava3.core.Completable
 
@@ -21,11 +22,19 @@ class CategoryRepositoryImpl(private val moneyDao: MoneyDao): CategoryRepository
         return moneyDao.getIncomeCategoryList()
     }
 
+    override fun getCategoryList(): LiveData<List<Category>> {
+        return moneyDao.getCategoryList()
+    }
+
     override fun getCategoryById(categoryId: Int): LiveData<Category> {
         return moneyDao.getCategoryById(categoryId)
     }
 
     override fun removeCategory(categoryId: Int): Completable {
         return moneyDao.removeCategory(categoryId)
+    }
+
+    override fun getCategoryWithTransactions(type: Int): LiveData<List<CategoryWithTransactions>> {
+        return moneyDao.getCategoryWithTransactions(type)
     }
 }

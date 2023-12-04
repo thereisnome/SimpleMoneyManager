@@ -14,8 +14,10 @@ import com.example.simplemoneymanager.databinding.AccountListItemBinding
 import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.account.AccountWithTransactions
 import com.example.simplemoneymanager.domain.transaction.Transaction
+import java.time.LocalDate
 
-class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClickListener) : RecyclerView.Adapter<AccountViewHolder>() {
+class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClickListener) :
+    RecyclerView.Adapter<AccountViewHolder>() {
 
     var onItemClickListener: ((Account) -> Unit)? = null
 
@@ -40,7 +42,8 @@ class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClic
 
     override fun onBindViewHolder(holder: AccountViewHolder, position: Int) {
         val account = accountWithTransactions.map { it.account }[position]
-        val transactionList = accountWithTransactions[position].transactions
+        val transactionList =
+            accountWithTransactions[position].transactions.filter { it.date.monthValue == LocalDate.now().monthValue }
         val accountIncomeValue =
             transactionList.filter { it.type == Transaction.INCOME }.sumOf { it.amount }
         val accountExpenseValue =
@@ -67,7 +70,8 @@ class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClic
         }
 
         holder.binding.tvAccountDetailsName.text = account.accountName
-        holder.binding.tvAccountDetailsBalance.text = Transaction.formatCurrencyWithoutSign(account.balance)
+        holder.binding.tvAccountDetailsBalance.text =
+            Transaction.formatCurrencyWithoutSign(account.balance)
 
         holder.binding.tvAccountDetailsIncomeValue.text =
             Transaction.formatCurrency(accountIncomeValue)

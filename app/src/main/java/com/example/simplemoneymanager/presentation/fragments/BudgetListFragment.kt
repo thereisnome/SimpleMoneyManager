@@ -41,13 +41,18 @@ class BudgetListFragment : Fragment(), BudgetListAdapter.BudgetPopupMenuItemClic
             findNavController().navigate(R.id.action_budgetListFragment_to_addBudgetFragment)
         }
 
-        viewModel.getBudgetWithTransactions().observe(viewLifecycleOwner) {
-            adapter.budgetWithTransactionsList = it
-            binding.rvBudgets.adapter = adapter
-            adapter.onItemClickListener = {
-
+        viewModel.getBudgetWithTransactions()
+            .observe(viewLifecycleOwner) { budgetWithTransactionsList ->
+                adapter.budgetWithTransactionsList = budgetWithTransactionsList
+                binding.rvBudgets.adapter = adapter
+                adapter.onItemClickListener = { budget ->
+                    findNavController().navigate(
+                        BudgetListFragmentDirections.actionBudgetListFragmentToCategoryDetailsFragment(
+                            budget.category.id
+                        )
+                    )
+                }
             }
-        }
     }
 
     override fun onDestroyView() {

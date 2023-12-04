@@ -43,6 +43,8 @@
     <string name="transactions">transactions</string>
     <string name="budget_spend">%s/%s</string>
     <string name="left_to_spend">Left to spend:</string>
+    <string name="limit_exceeded">Limit exceeded by:</string>
     <string name="state_of_budget">State of budget</string>
     <string name="add_new_budget">Add new budget</string>
+    <string name="statistics">Statistics</string>
 </resources>

@@ -88,6 +88,9 @@
         <action
             android:id="@+id/action_budgetListFragment_to_addBudgetFragment"
             app:destination="@id/addBudgetFragment" />
+        <action
+            android:id="@+id/action_budgetListFragment_to_categoryDetailsFragment"
+            app:destination="@id/categoryDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/addBudgetFragment"
@@ -99,4 +102,9 @@
             app:argType="long"
             android:defaultValue="-1L" />
     </fragment>
+    <fragment
+        android:id="@+id/statisticFragment"
+        android:name="com.example.simplemoneymanager.presentation.fragments.StatisticFragment"
+        android:label="fragment_statistic"
+        tools:layout="@layout/fragment_statistic" />
 </navigation>

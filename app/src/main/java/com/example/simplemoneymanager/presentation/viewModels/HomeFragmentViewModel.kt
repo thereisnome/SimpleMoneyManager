@@ -12,8 +12,6 @@ import com.example.simplemoneymanager.domain.account.usecases.GetOverallBalanceU
 import com.example.simplemoneymanager.domain.account.usecases.SubtractAccountBalanceUseCase
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.domain.transaction.usecases.GetCashFlowByMonthUseCase
-import com.example.simplemoneymanager.domain.transaction.usecases.GetOverallExpenseUseCase
-import com.example.simplemoneymanager.domain.transaction.usecases.GetOverallIncomeUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionListUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveTransactionUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -29,8 +27,6 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
     private val removeTransactionUseCase = RemoveTransactionUseCase(transactionRepositoryImpl)
     private val subtractAccountBalanceUseCase = SubtractAccountBalanceUseCase(accountRepositoryImpl)
     private val getOverallBalanceUseCase = GetOverallBalanceUseCase(accountRepositoryImpl)
-    private val getOverallIncomeUseCase = GetOverallIncomeUseCase(transactionRepositoryImpl)
-    private val getOverallExpenseUseCase = GetOverallExpenseUseCase(transactionRepositoryImpl)
     private val getCashFlowByMonthUseCase = GetCashFlowByMonthUseCase(transactionRepositoryImpl)
 
     private val compositeDisposable = CompositeDisposable()
@@ -55,12 +51,13 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun subtractAccountBalance(accountId: Long, amount: Double) {
-        val disposable = subtractAccountBalanceUseCase(accountId, amount).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                Log.d("VM subtractAccountBalance", "ID: $accountId.accountId, amount: $amount")
-            }, {
-                Log.d("VM subtractAccountBalance", it.message.toString())
-            })
+        val disposable =
+            subtractAccountBalanceUseCase(accountId, amount).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe({
+                    Log.d("VM subtractAccountBalance", "ID: $accountId.accountId, amount: $amount")
+                }, {
+                    Log.d("VM subtractAccountBalance", it.message.toString())
+                })
         compositeDisposable.add(disposable)
     }
 
@@ -68,15 +65,17 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
         return getOverallBalanceUseCase()
     }
 
-    fun getOverallIncome(): LiveData<Double> {
-        return getOverallIncomeUseCase()
+    fun getMonthIncome(transactionList: List<Transaction>, month: Int): Double {
+        return transactionList.filter { it.date.monthValue == month && it.type == Transaction.INCOME }
+            .sumOf { it.amount }
     }
 
-    fun getOverallExpense(): LiveData<Double> {
-        return getOverallExpenseUseCase()
+    fun getMonthExpense(transactionList: List<Transaction>, month: Int): Double {
+        return transactionList.filter { it.date.monthValue == month && it.type == Transaction.EXPENSE }
+            .sumOf { it.amount }
     }
 
-    fun getCashFlowByMonth(month: String): LiveData<Double>{
+    fun getCashFlowByMonth(month: String): LiveData<Double> {
         return getCashFlowByMonthUseCase(month)
     }
 

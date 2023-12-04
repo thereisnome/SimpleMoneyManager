@@ -35,40 +35,9 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupRecyclerView()
-        setStatisticValues()
+        //TODO implement sorting feature
+        val month = LocalDate.now().monthValue
 
-        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addTransactionFragment)
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun setStatisticValues() {
-        viewModel.getOverallIncome().observe(viewLifecycleOwner) {
-            binding.tvIncomeValue.text = Transaction.formatCurrency(it)
-        }
-
-        viewModel.getOverallExpense().observe(viewLifecycleOwner) {
-            binding.tvExpenseValue.text = Transaction.formatCurrency(it)
-        }
-
-        viewModel.getOverallBalance().observe(viewLifecycleOwner) {
-            binding.tvBalanceValue.text = Transaction.formatCurrencyWithoutSign(it)
-        }
-
-        viewModel.getCashFlowByMonth(LocalDate.now().monthValue.toString())
-            .observe(viewLifecycleOwner) {
-                binding.tvCashFlowBalance.text = Transaction.formatCurrency(it)
-            }
-    }
-
-    private fun setupRecyclerView() {
         viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
             binding.rvTransactions.adapter = adapter
             adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
@@ -86,7 +55,33 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
                     )
                 )
             }
+            setStatisticValues(transactionList, month)
         }
+
+        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fab)
+        fab.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addTransactionFragment)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setStatisticValues(transactionList: List<Transaction>, month: Int) {
+        binding.tvIncomeValue.text = Transaction.formatCurrency(viewModel.getMonthIncome(transactionList, month))
+
+        binding.tvExpenseValue.text = Transaction.formatCurrency(viewModel.getMonthExpense(transactionList, month))
+
+        viewModel.getOverallBalance().observe(viewLifecycleOwner) {
+            binding.tvBalanceValue.text = Transaction.formatCurrencyWithoutSign(it)
+        }
+
+        viewModel.getCashFlowByMonth(LocalDate.now().monthValue.toString())
+            .observe(viewLifecycleOwner) {
+                binding.tvCashFlowBalance.text = Transaction.formatCurrency(it)
+            }
     }
 
     private fun launchAddTransactionFragmentEditMode(transactionId: Long) {

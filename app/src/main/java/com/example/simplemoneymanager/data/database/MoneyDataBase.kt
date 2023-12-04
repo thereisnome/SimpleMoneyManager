@@ -31,6 +31,7 @@ abstract class MoneyDataBase : RoomDatabase() {
                     .addCallback(object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
+
                             db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (1, 'No category', 0, '#E5DEFF')")
                             db.execSQL("INSERT INTO category_list (categoryType, categoryName, id, categoryColor) VALUES (0, 'No category', 1, '#E5DEFF')")
 

@@ -9,8 +9,8 @@ import androidx.core.graphics.toColorInt
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.common.ColorList
 import com.example.simplemoneymanager.databinding.FragmentAddAccountDialogBinding
-import com.example.simplemoneymanager.presentation.ColorList
 import com.example.simplemoneymanager.presentation.viewModels.AddAccountDialogViewModel
 import com.google.android.material.chip.Chip
 
@@ -20,7 +20,7 @@ class AddAccountDialogFragment : DialogFragment() {
 
     private var _binding: FragmentAddAccountDialogBinding? = null
     private val binding: FragmentAddAccountDialogBinding
-        get() = _binding ?: throw RuntimeException("FragmentHistoryBinding is null")
+        get() = _binding ?: throw RuntimeException("FragmentAddAccountDialogBinding is null")
 
     private lateinit var color: String
 

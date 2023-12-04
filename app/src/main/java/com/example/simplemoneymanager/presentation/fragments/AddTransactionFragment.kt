@@ -17,11 +17,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.common.ColorList
 import com.example.simplemoneymanager.databinding.FragmentAddTransactionBinding
 import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.domain.transaction.Transaction
-import com.example.simplemoneymanager.presentation.ColorList
 import com.example.simplemoneymanager.presentation.viewModels.AddTransactionViewModel
 import kotlin.math.absoluteValue
 
