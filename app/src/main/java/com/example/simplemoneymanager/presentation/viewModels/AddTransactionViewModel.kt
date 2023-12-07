@@ -39,8 +39,8 @@ class AddTransactionViewModel(application: Application) : AndroidViewModel(appli
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun addTransaction(type: Int, name: String, category: Category, amount: Double, account: Account) {
-        val transaction = Transaction(type, name, category, amount, account, LocalDate.now())
+    fun addTransaction(type: Int, name: String, category: Category, amount: Double, account: Account, date: LocalDate) {
+        val transaction = Transaction(type, name, category, amount, account, date)
         val disposable = addTransactionUseCase(transaction).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
             }, {
@@ -81,8 +81,8 @@ class AddTransactionViewModel(application: Application) : AndroidViewModel(appli
         return getTransactionByIdUseCase(transactionId)
     }
 
-    fun editTransaction(transactionId: Long, type: Int, name: String, category: Category, amount: Double, account: Account) {
-        val transaction = Transaction(type, name, category, amount, account, LocalDate.now(), transactionId)
+    fun editTransaction(transactionId: Long, type: Int, name: String, category: Category, amount: Double, account: Account, date: LocalDate) {
+        val transaction = Transaction(type, name, category, amount, account, date, transactionId)
         val disposable = editTransactionUseCase(transaction).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 Log.d("VM edit transaction", "Transaction edited: ${transaction.transactionId}")

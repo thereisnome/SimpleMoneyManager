@@ -97,9 +97,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/rv_statistic_transactions"
             app:layout_constraintTop_toBottomOf="@id/pie_chart"
-            tools:listitem="@layout/category_item" />
+            tools:listitem="@layout/category_item"
+            tools:itemCount="3"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_statistic_transactions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rv_statistic_category"
+            tools:listitem="@layout/transaction_item"
+            tools:itemCount="3"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

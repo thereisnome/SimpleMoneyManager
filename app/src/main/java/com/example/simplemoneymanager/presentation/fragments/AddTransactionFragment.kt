@@ -23,6 +23,10 @@ import com.example.simplemoneymanager.domain.account.Account
 import com.example.simplemoneymanager.domain.category.Category
 import com.example.simplemoneymanager.domain.transaction.Transaction
 import com.example.simplemoneymanager.presentation.viewModels.AddTransactionViewModel
+import com.google.android.material.datepicker.MaterialDatePicker
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Locale
 import kotlin.math.absoluteValue
 
 
@@ -40,6 +44,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
     private lateinit var category: Category
     private lateinit var account: Account
     private lateinit var transaction: Transaction
+    private var date = LocalDate.now()
 
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding: FragmentAddTransactionBinding
@@ -60,7 +65,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             setOnBackPressed()
         } else launchAddMode()
         setFocusOnAmountField()
-        binding.etAmount.addTextChangedListener (object :TextWatcher{
+        binding.etAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
@@ -89,7 +94,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
     private fun launchAddMode() {
         binding.tvAmount.prefixText = "+"
-
+        binding.buttonDate.text = LocalDate.now().toString()
         viewModel.getMainAccount().observe(viewLifecycleOwner) {
             account = it
             binding.buttonAccount.setBackgroundColor(it.accountColor.toColorInt())
@@ -121,6 +126,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             }
         }
 
+        setDateButtonClickListener()
         setCategoryButtonsClickListeners()
         setBottomSheetClickListeners()
     }
@@ -132,6 +138,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             category = it.category
             categoryType = it.type
             account = it.account
+            date = it.date
             if (transaction.type == Transaction.INCOME) {
                 binding.tvAmount.prefixText = "-"
             } else binding.tvAmount.prefixText = "+"
@@ -176,6 +183,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             )
             binding.buttonAccount.text = it.account.accountName
             binding.buttonAccount.setBackgroundColor(it.account.accountColor.toColorInt())
+            binding.buttonDate.text = it.date.toString()
             val checkedButtonId =
                 if (transaction.type == Transaction.INCOME) binding.buttonIncome.id else binding.buttonExpense.id
             binding.toggleButtonTransactionType.check(checkedButtonId)
@@ -192,6 +200,8 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
                 true
             }
         }
+
+        setDateButtonClickListener()
         setCategoryButtonsClickListeners()
         setBottomSheetClickListeners()
     }
@@ -222,6 +232,35 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
         }
     }
 
+    private fun setDateButtonClickListener() {
+        val datePicker = buildDatePicker()
+
+        binding.buttonDate.setOnClickListener {
+            datePicker.show(childFragmentManager, "TAG")
+        }
+
+        datePicker.addOnPositiveButtonClickListener {
+            date = datePicker.selection?.let { it1 -> formatDateToLocalDate(it1) }
+            binding.buttonDate.text = formatDateToString(it)
+        }
+    }
+
+    private fun formatDateToLocalDate(date: Long): LocalDate {
+        val formatToDigits = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
+        return LocalDate.parse(formatToDigits.format(date))
+    }
+
+    private fun formatDateToString(date: Long): String {
+        val formatToString = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
+        return formatToString.format(date)
+    }
+
+    private fun buildDatePicker(): MaterialDatePicker<Long> {
+        return MaterialDatePicker.Builder.datePicker()
+            .setTitleText(requireContext().getString(R.string.select_date))
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build()
+    }
+
     private fun showCategoryBottomSheetDialog() {
         val bottomSheetDialogFragment = CategoryBottomSheetDialogFragment.newInstance(categoryType)
         bottomSheetDialogFragment.setDataPassListener(this)
@@ -235,7 +274,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
     }
 
     private fun addTransaction() {
-        when(checkInput()) {
+        when (checkInput()) {
             0 -> {
                 val type = if (categoryType == Category.INCOME) {
                     Transaction.INCOME
@@ -244,17 +283,18 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
                 val amount = if (type == Transaction.INCOME) {
                     binding.etAmount.text.toString().toDouble()
                 } else -binding.etAmount.text.toString().toDouble()
-                viewModel.addTransaction(type, name, category, amount, account)
+                viewModel.addTransaction(type, name, category, amount, account, date)
                 viewModel.addAccountBalance(account, amount)
                 findNavController().navigateUp()
             }
+
             1 -> binding.tvAmount.error = requireContext().getString(R.string.input_error)
             2 -> binding.tvAmount.error = requireContext().getString(R.string.balance_error)
         }
     }
 
     private fun editTransaction() {
-        when(checkInput()) {
+        when (checkInput()) {
             0 -> {
                 val type = if (categoryType == Category.INCOME) {
                     Transaction.INCOME
@@ -263,10 +303,19 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
                 val amount = if (type == Transaction.INCOME) {
                     binding.etAmount.text.toString().toDouble()
                 } else -binding.etAmount.text.toString().toDouble()
-                viewModel.editTransaction(args.transactionId, type, name, category, amount, account)
+                viewModel.editTransaction(
+                    args.transactionId,
+                    type,
+                    name,
+                    category,
+                    amount,
+                    account,
+                    date
+                )
                 viewModel.addAccountBalance(account, amount)
                 findNavController().navigateUp()
             }
+
             1 -> binding.tvAmount.error = requireContext().getString(R.string.input_error)
             2 -> binding.tvAmount.error = requireContext().getString(R.string.balance_error)
         }
@@ -279,7 +328,9 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             if (binding.toggleButtonTransactionType.checkedButtonId == binding.buttonIncome.id) 0 else 1
         return if (binding.etAmount.text.toString().isEmpty()) {
             1
-        } else if (type == Transaction.EXPENSE && account.balance - binding.etAmount.text.toString().toDouble() < 0) {
+        } else if (type == Transaction.EXPENSE && account.balance - binding.etAmount.text.toString()
+                .toDouble() < 0
+        ) {
             2
         } else 0
     }

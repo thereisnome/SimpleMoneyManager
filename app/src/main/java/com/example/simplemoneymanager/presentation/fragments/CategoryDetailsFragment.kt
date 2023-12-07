@@ -94,7 +94,7 @@ class CategoryDetailsFragment : Fragment(),
 
             val incomeTransactionCount = transactionListByCategory.size.toString()
 
-            binding.tvTypeValue.text = Transaction.formatCurrency(transactionsSum.absoluteValue)
+            binding.tvTypeValue.text = Transaction.formatCurrencyWithoutSign(transactionsSum.absoluteValue)
 
             binding.tvTransactionsCountValue.text = incomeTransactionCount
             if (incomeTransactionCount.toInt() > 1) {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -35,12 +36,18 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fab)
+        fab.foreground = ContextCompat.getDrawable(requireContext(), R.drawable.background_fab_add_transaction)
+        fab.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_addTransactionFragment)
+        }
+
         //TODO implement sorting feature
         val month = LocalDate.now().monthValue
 
         viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
             binding.rvTransactions.adapter = adapter
-            adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
+            adapter.transactionList = transactionList.sortedWith(compareByDescending<Transaction> { it.date }.thenByDescending { it.transactionId })
             adapter.onAccountClickListener = {
                 findNavController().navigate(
                     HomeFragmentDirections.actionHomeFragmentToAccountDetailsFragment(
@@ -56,11 +63,6 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
                 )
             }
             setStatisticValues(transactionList, month)
-        }
-
-        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addTransactionFragment)
         }
     }
 

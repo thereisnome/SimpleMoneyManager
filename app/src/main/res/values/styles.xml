@@ -62,10 +62,6 @@
         <item name="chipIconEnabled">false</item>
     </style>
 
-    <style name="Navigation_fab" parent="Widget.MaterialComponents.FloatingActionButton">
-        <item name="android:foreground">@drawable/background_fab</item>
-    </style>
-
     <style name="Navigation_bar" parent="Widget.MaterialComponents.BottomNavigationView">
         <item name="elevation">2dp</item>
     </style>

@@ -49,4 +49,14 @@
     <string name="statistics">Statistics</string>
     <string name="transaction_list_is_empty">Transaction list is empty</string>
     <string name="add_some_transactions_to_see_statistics">Add some transactions to see statistics</string>
+    <string name="filter">Filter</string>
+    <string name="save_filter_button">Save filter button</string>
+    <string name="month">Month</string>
+    <string name="range">Range</string>
+    <string name="by_month">By month</string>
+    <string name="select_range">Select range</string>
+    <string name="select_date">Select date</string>
+    <string name="select_date_to_show_statistics">Select date to show statistics for</string>
+    <string name="date">Date</string>
+    <string name="overall">Overall</string>
 </resources>
