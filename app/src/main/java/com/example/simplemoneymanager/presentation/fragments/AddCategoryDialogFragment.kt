@@ -9,9 +9,9 @@ import androidx.core.graphics.toColorInt
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.common.ColorList
 import com.example.simplemoneymanager.databinding.FragmentAddCategoryDialogBinding
 import com.example.simplemoneymanager.domain.category.Category
-import com.example.simplemoneymanager.presentation.ColorList
 import com.example.simplemoneymanager.presentation.viewModels.AddCategoryDialogViewModel
 import com.google.android.material.chip.Chip
 

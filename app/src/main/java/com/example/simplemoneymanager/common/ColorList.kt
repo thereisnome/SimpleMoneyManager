@@ -1,4 +1,4 @@
-package com.example.simplemoneymanager.presentation
+package com.example.simplemoneymanager.common
 
 enum class ColorList(val hex: String) {
     FLAMINGO("#F64C32"),

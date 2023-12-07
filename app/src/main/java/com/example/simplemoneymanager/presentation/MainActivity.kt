@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
@@ -42,6 +43,10 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.budgets -> {
                     navController.navigate(R.id.budgetListFragment)
+                    true
+                }
+                R.id.statistic -> {
+                    navController.navigate(R.id.statisticFragment)
                     true
                 }
                 else -> false

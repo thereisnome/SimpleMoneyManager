@@ -7,32 +7,55 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.example.simplemoneymanager.data.database.MoneyDataBase
 import com.example.simplemoneymanager.data.repository.AccountRepositoryImpl
+import com.example.simplemoneymanager.data.repository.CategoryRepositoryImpl
 import com.example.simplemoneymanager.data.repository.TransactionRepositoryImpl
-import com.example.simplemoneymanager.domain.account.usecases.GetOverallBalanceUseCase
 import com.example.simplemoneymanager.domain.account.usecases.SubtractAccountBalanceUseCase
+import com.example.simplemoneymanager.domain.category.CategoryWithTransactions
+import com.example.simplemoneymanager.domain.category.usecases.GetCategoryWithTransactionsUseCase
 import com.example.simplemoneymanager.domain.transaction.Transaction
-import com.example.simplemoneymanager.domain.transaction.usecases.GetCashFlowByMonthUseCase
-import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionListUseCase
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveTransactionUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import java.time.LocalDate
 
-class HomeFragmentViewModel(application: Application) : AndroidViewModel(application) {
+class StatisticViewModel(application: Application) : AndroidViewModel(application) {
+
     private val db = MoneyDataBase.getInstance(application)
-
+    private val categoryRepositoryImpl = CategoryRepositoryImpl(db.moneyDao())
     private val transactionRepositoryImpl = TransactionRepositoryImpl(db.moneyDao())
     private val accountRepositoryImpl = AccountRepositoryImpl(db.moneyDao())
-    private val getTransactionListUseCase = GetTransactionListUseCase(transactionRepositoryImpl)
+    private val getCategoryWithTransactionsUseCase =
+        GetCategoryWithTransactionsUseCase(categoryRepositoryImpl)
     private val removeTransactionUseCase = RemoveTransactionUseCase(transactionRepositoryImpl)
     private val subtractAccountBalanceUseCase = SubtractAccountBalanceUseCase(accountRepositoryImpl)
-    private val getOverallBalanceUseCase = GetOverallBalanceUseCase(accountRepositoryImpl)
-    private val getCashFlowByMonthUseCase = GetCashFlowByMonthUseCase(transactionRepositoryImpl)
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun getTransactionList(): LiveData<List<Transaction>> {
-        return getTransactionListUseCase()
+    fun getCategoryWithTransactions(): LiveData<List<CategoryWithTransactions>> {
+        return getCategoryWithTransactionsUseCase()
+    }
+
+    fun filterCategoryWithTransactionsByDate(
+        startDay: LocalDate,
+        endDay: LocalDate,
+        categoryWithTransactionsList: List<CategoryWithTransactions>
+    ): List<CategoryWithTransactions> {
+        val result = mutableListOf<CategoryWithTransactions>()
+        categoryWithTransactionsList.forEach { categoryWithTransactions ->
+            val item = CategoryWithTransactions(
+                categoryWithTransactions.category,
+                categoryWithTransactions.transactions.filter { it.date in startDay..endDay })
+            result.add(item)
+        }
+        return result.filter { it.transactions.isNotEmpty() }
+    }
+
+    fun filterTransactionsByDate(
+        startDay: LocalDate,
+        endDay: LocalDate, transactionList: List<Transaction>
+    ): List<Transaction> {
+        return transactionList.filter { it.date in startDay..endDay }
     }
 
     fun removeTransaction(transaction: Transaction) {
@@ -59,24 +82,6 @@ class HomeFragmentViewModel(application: Application) : AndroidViewModel(applica
                     Log.d("VM subtractAccountBalance", it.message.toString())
                 })
         compositeDisposable.add(disposable)
-    }
-
-    fun getOverallBalance(): LiveData<Double> {
-        return getOverallBalanceUseCase()
-    }
-
-    fun getMonthIncome(transactionList: List<Transaction>, month: Int): Double {
-        return transactionList.filter { it.date.monthValue == month && it.type == Transaction.INCOME }
-            .sumOf { it.amount }
-    }
-
-    fun getMonthExpense(transactionList: List<Transaction>, month: Int): Double {
-        return transactionList.filter { it.date.monthValue == month && it.type == Transaction.EXPENSE }
-            .sumOf { it.amount }
-    }
-
-    fun getCashFlowByMonth(month: String): LiveData<Double> {
-        return getCashFlowByMonthUseCase(month)
     }
 
     override fun onCleared() {

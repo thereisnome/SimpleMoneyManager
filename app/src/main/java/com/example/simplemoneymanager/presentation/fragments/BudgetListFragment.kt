@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -37,17 +38,23 @@ class BudgetListFragment : Fragment(), BudgetListAdapter.BudgetPopupMenuItemClic
         super.onViewCreated(view, savedInstanceState)
 
         val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fab)
+        fab.foreground = ContextCompat.getDrawable(requireContext(), R.drawable.background_fab_add_budget)
         fab.setOnClickListener {
             findNavController().navigate(R.id.action_budgetListFragment_to_addBudgetFragment)
         }
 
-        viewModel.getBudgetWithTransactions().observe(viewLifecycleOwner) {
-            adapter.budgetWithTransactionsList = it
-            binding.rvBudgets.adapter = adapter
-            adapter.onItemClickListener = {
-
+        viewModel.getBudgetWithTransactions()
+            .observe(viewLifecycleOwner) { budgetWithTransactionsList ->
+                adapter.budgetWithTransactionsList = budgetWithTransactionsList
+                binding.rvBudgets.adapter = adapter
+                adapter.onItemClickListener = { budget ->
+                    findNavController().navigate(
+                        BudgetListFragmentDirections.actionBudgetListFragmentToCategoryDetailsFragment(
+                            budget.category.id
+                        )
+                    )
+                }
             }
-        }
     }
 
     override fun onDestroyView() {

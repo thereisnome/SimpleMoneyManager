@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -35,43 +36,18 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupRecyclerView()
-        setStatisticValues()
-
         val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fab)
+        fab.foreground = ContextCompat.getDrawable(requireContext(), R.drawable.background_fab_add_transaction)
         fab.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_addTransactionFragment)
         }
-    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+        //TODO implement sorting feature
+        val month = LocalDate.now().monthValue
 
-    private fun setStatisticValues() {
-        viewModel.getOverallIncome().observe(viewLifecycleOwner) {
-            binding.tvIncomeValue.text = Transaction.formatCurrency(it)
-        }
-
-        viewModel.getOverallExpense().observe(viewLifecycleOwner) {
-            binding.tvExpenseValue.text = Transaction.formatCurrency(it)
-        }
-
-        viewModel.getOverallBalance().observe(viewLifecycleOwner) {
-            binding.tvBalanceValue.text = Transaction.formatCurrencyWithoutSign(it)
-        }
-
-        viewModel.getCashFlowByMonth(LocalDate.now().monthValue.toString())
-            .observe(viewLifecycleOwner) {
-                binding.tvCashFlowBalance.text = Transaction.formatCurrency(it)
-            }
-    }
-
-    private fun setupRecyclerView() {
         viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
             binding.rvTransactions.adapter = adapter
-            adapter.transactionList = transactionList.sortedByDescending { it.transactionId }
+            adapter.transactionList = transactionList.sortedWith(compareByDescending<Transaction> { it.date }.thenByDescending { it.transactionId })
             adapter.onAccountClickListener = {
                 findNavController().navigate(
                     HomeFragmentDirections.actionHomeFragmentToAccountDetailsFragment(
@@ -86,7 +62,28 @@ class HomeFragment : Fragment(), TransactionListAdapter.TransactionsPopupMenuIte
                     )
                 )
             }
+            setStatisticValues(transactionList, month)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setStatisticValues(transactionList: List<Transaction>, month: Int) {
+        binding.tvIncomeValue.text = Transaction.formatCurrency(viewModel.getMonthIncome(transactionList, month))
+
+        binding.tvExpenseValue.text = Transaction.formatCurrency(viewModel.getMonthExpense(transactionList, month))
+
+        viewModel.getOverallBalance().observe(viewLifecycleOwner) {
+            binding.tvBalanceValue.text = Transaction.formatCurrencyWithoutSign(it)
+        }
+
+        viewModel.getCashFlowByMonth(LocalDate.now().monthValue.toString())
+            .observe(viewLifecycleOwner) {
+                binding.tvCashFlowBalance.text = Transaction.formatCurrency(it)
+            }
     }
 
     private fun launchAddTransactionFragmentEditMode(transactionId: Long) {

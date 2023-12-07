@@ -14,6 +14,7 @@ import com.example.simplemoneymanager.databinding.BudgetListItemBinding
 import com.example.simplemoneymanager.domain.budget.Budget
 import com.example.simplemoneymanager.domain.budget.BudgetWithTransactions
 import com.example.simplemoneymanager.domain.transaction.Transaction
+import java.time.LocalDate
 import kotlin.math.absoluteValue
 
 class BudgetListAdapter(private val itemClickListener: BudgetPopupMenuItemClickListener) :
@@ -43,15 +44,21 @@ class BudgetListAdapter(private val itemClickListener: BudgetPopupMenuItemClickL
     override fun onBindViewHolder(holder: BudgetViewHolder, position: Int) {
         val budget = budgetWithTransactionsList.map { it.budget }[position]
         val category = budget.category
-        val transactionList = budgetWithTransactionsList[position].transactions
+        val transactionList =
+            budgetWithTransactionsList[position].transactions.filter { it.date.monthValue == LocalDate.now().monthValue }
         val currentSpentValue = transactionList.sumOf { it.amount.absoluteValue }
 
         val progress = (currentSpentValue / budget.maxValue * 100).toInt()
         holder.binding.budgetProgressIndicator.progress = progress
         holder.binding.budgetProgressIndicator.setIndicatorColor(category.categoryColor.toColorInt())
 
-        if (progress > 100){
-            holder.binding.budgetProgressIndicator.setIndicatorColor(ContextCompat.getColor(holder.itemView.context, R.color.md_theme_dark_errorContainer))
+        if (progress > 100) {
+            holder.binding.budgetProgressIndicator.setIndicatorColor(
+                ContextCompat.getColor(
+                    holder.itemView.context,
+                    R.color.md_theme_dark_errorContainer
+                )
+            )
         }
 
         val contrast = ColorUtils.calculateContrast(
@@ -89,15 +96,23 @@ class BudgetListAdapter(private val itemClickListener: BudgetPopupMenuItemClickL
         holder.binding.tvBudgetName.text = category.categoryName
         holder.binding.tvBudgetValue.text = Transaction.formatCurrencyWithoutSign(budget.maxValue)
         val leftToSpendValue = budget.maxValue - currentSpentValue
-        holder.binding.tvLeftToSpendValue.text =
-            Transaction.formatCurrencyWithoutSign(leftToSpendValue)
+        if (leftToSpendValue >= 0) {
+            holder.binding.tvLeftToSpendValue.text =
+                Transaction.formatCurrencyWithoutSign(leftToSpendValue)
+        } else {
+            holder.binding.tvLeftToSpendLabel.text =
+                holder.itemView.context.getString(R.string.limit_exceeded)
+            holder.binding.tvLeftToSpendValue.text =
+                Transaction.formatCurrencyWithoutSign(leftToSpendValue.absoluteValue)
+        }
+
         holder.binding.tvBudgetSpend.text = holder.itemView.context.getString(
             R.string.budget_spend,
             Transaction.formatCurrencyWithoutCurrencySigh(currentSpentValue),
             Transaction.formatCurrencyWithoutSign(budget.maxValue)
         )
 
-        val budgetIcon = if (progress <= 100){
+        val budgetIcon = if (progress <= 100) {
             ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_done)!!
         } else ContextCompat.getDrawable(holder.itemView.context, R.drawable.ic_warning)!!
 

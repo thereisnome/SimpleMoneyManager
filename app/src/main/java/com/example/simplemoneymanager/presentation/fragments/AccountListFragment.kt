@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -37,6 +38,12 @@ class AccountListFragment : Fragment(), AccountListAdapter.AccountPopupMenuItemC
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fab)
+        fab.foreground = ContextCompat.getDrawable(requireContext(), R.drawable.background_fab_add_account)
+        fab.setOnClickListener {
+            showAddAccountDialogFragment()
+        }
+
         viewModel.getAccountWithTransactions()
             .observe(viewLifecycleOwner) { accountWithTransactionsList ->
                 adapter.accountWithTransactions = accountWithTransactionsList
@@ -52,11 +59,6 @@ class AccountListFragment : Fragment(), AccountListAdapter.AccountPopupMenuItemC
 
         viewModel.getOverallBalance().observe(viewLifecycleOwner) {
             binding.tvTotalAmount.text = Transaction.formatCurrencyWithoutSign(it)
-        }
-
-        val fab = requireActivity().findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener {
-            showAddAccountDialogFragment()
         }
     }
 
