@@ -1,11 +1,11 @@
 package com.example.simplemoneymanager.presentation.recyclerViews.budgetList
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.simplemoneymanager.domain.budget.Budget
+import com.example.simplemoneymanager.domain.budget.BudgetEntity
 
 class BudgetListDiffCallback(
-    private val oldList: List<Budget>,
-    private val newList: List<Budget>,
+    private val oldList: List<BudgetEntity>,
+    private val newList: List<BudgetEntity>,
 ): DiffUtil.Callback() {
 
     override fun getOldListSize(): Int {

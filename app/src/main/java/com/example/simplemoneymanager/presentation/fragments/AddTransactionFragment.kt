@@ -18,15 +18,20 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.common.ColorList
+import com.example.simplemoneymanager.data.database.models.CategoryDbModel
+import com.example.simplemoneymanager.data.database.models.TransactionDbModel
 import com.example.simplemoneymanager.databinding.FragmentAddTransactionBinding
-import com.example.simplemoneymanager.domain.account.Account
-import com.example.simplemoneymanager.domain.category.Category
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.account.AccountEntity
+import com.example.simplemoneymanager.domain.category.CategoryEntity
+import com.example.simplemoneymanager.domain.transaction.TransactionEntity
+import com.example.simplemoneymanager.presentation.SimpleMoneyManagerApp
 import com.example.simplemoneymanager.presentation.viewModels.AddTransactionViewModel
+import com.example.simplemoneymanager.presentation.viewModels.ViewModelFactory
 import com.google.android.material.datepicker.MaterialDatePicker
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Locale
+import javax.inject.Inject
 import kotlin.math.absoluteValue
 
 
@@ -35,20 +40,32 @@ private const val UNDEFINED_TRANSACTION = -1L
 class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.DataPassListener,
     AccountBottomSheetDialogFragment.DataPassListener {
 
-    private val viewModel: AddTransactionViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<AddTransactionViewModel>{
+        viewModelFactory
+    }
 
     private val args by navArgs<AddTransactionFragmentArgs>()
 
     private var categoryType: Int = 0
 
-    private lateinit var category: Category
-    private lateinit var account: Account
-    private lateinit var transaction: Transaction
+    private lateinit var category: CategoryEntity
+    private lateinit var account: AccountEntity
+    private lateinit var transaction: TransactionEntity
     private var date = LocalDate.now()
 
     private var _binding: FragmentAddTransactionBinding? = null
     private val binding: FragmentAddTransactionBinding
         get() = _binding ?: throw RuntimeException("FragmentAddTransactionBinding is null")
+
+    private val component by lazy { (requireActivity().application as SimpleMoneyManagerApp).component }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -138,8 +155,8 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             category = it.category
             categoryType = it.type
             account = it.account
-            date = it.date
-            if (transaction.type == Transaction.INCOME) {
+            date = LocalDate.parse(it.date)
+            if (transaction.type == TransactionDbModel.INCOME) {
                 binding.tvAmount.prefixText = "-"
             } else binding.tvAmount.prefixText = "+"
             viewModel.subtractAccountBalance(account, transaction.amount)
@@ -183,9 +200,9 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             )
             binding.buttonAccount.text = it.account.accountName
             binding.buttonAccount.setBackgroundColor(it.account.accountColor.toColorInt())
-            binding.buttonDate.text = it.date.toString()
+            binding.buttonDate.text = it.date
             val checkedButtonId =
-                if (transaction.type == Transaction.INCOME) binding.buttonIncome.id else binding.buttonExpense.id
+                if (transaction.type == TransactionDbModel.INCOME) binding.buttonIncome.id else binding.buttonExpense.id
             binding.toggleButtonTransactionType.check(checkedButtonId)
         }
 
@@ -218,14 +235,14 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
 
     private fun setCategoryButtonsClickListeners() {
         binding.buttonIncome.setOnClickListener {
-            categoryType = Category.INCOME
+            categoryType = CategoryDbModel.INCOME
             binding.tvAmount.prefixText = "+"
             binding.tvAmount.error = null
             resetCategoryButton()
         }
 
         binding.buttonExpense.setOnClickListener {
-            categoryType = Category.EXPENSE
+            categoryType = CategoryDbModel.EXPENSE
             binding.tvAmount.prefixText = "-"
             binding.tvAmount.error = null
             resetCategoryButton()
@@ -276,11 +293,11 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
     private fun addTransaction() {
         when (checkInput()) {
             0 -> {
-                val type = if (categoryType == Category.INCOME) {
-                    Transaction.INCOME
-                } else Transaction.EXPENSE
+                val type = if (categoryType == CategoryDbModel.INCOME) {
+                    TransactionDbModel.INCOME
+                } else TransactionDbModel.EXPENSE
                 val name = binding.etName.text.toString()
-                val amount = if (type == Transaction.INCOME) {
+                val amount = if (type == TransactionDbModel.INCOME) {
                     binding.etAmount.text.toString().toDouble()
                 } else -binding.etAmount.text.toString().toDouble()
                 viewModel.addTransaction(type, name, category, amount, account, date)
@@ -296,11 +313,11 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
     private fun editTransaction() {
         when (checkInput()) {
             0 -> {
-                val type = if (categoryType == Category.INCOME) {
-                    Transaction.INCOME
-                } else Transaction.EXPENSE
+                val type = if (categoryType == CategoryDbModel.INCOME) {
+                    TransactionDbModel.INCOME
+                } else TransactionDbModel.EXPENSE
                 val name = binding.etName.text.toString()
-                val amount = if (type == Transaction.INCOME) {
+                val amount = if (type == TransactionDbModel.INCOME) {
                     binding.etAmount.text.toString().toDouble()
                 } else -binding.etAmount.text.toString().toDouble()
                 viewModel.editTransaction(
@@ -319,8 +336,6 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             1 -> binding.tvAmount.error = requireContext().getString(R.string.input_error)
             2 -> binding.tvAmount.error = requireContext().getString(R.string.balance_error)
         }
-
-
     }
 
     private fun checkInput(): Int {
@@ -328,7 +343,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
             if (binding.toggleButtonTransactionType.checkedButtonId == binding.buttonIncome.id) 0 else 1
         return if (binding.etAmount.text.toString().isEmpty()) {
             1
-        } else if (type == Transaction.EXPENSE && account.balance - binding.etAmount.text.toString()
+        } else if (type == TransactionDbModel.EXPENSE && account.balance - binding.etAmount.text.toString()
                 .toDouble() < 0
         ) {
             2
@@ -341,7 +356,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
         binding.buttonCategory.setBackgroundColor(ColorList.BLUE_CHALK.hex.toColorInt())
     }
 
-    override fun onCategoryPassed(category: Category) {
+    override fun onCategoryPassed(category: CategoryEntity) {
         this.category = category
 
         val contrast = ColorUtils.calculateContrast(
@@ -367,7 +382,7 @@ class AddTransactionFragment : Fragment(), CategoryBottomSheetDialogFragment.Dat
         binding.buttonCategory.setBackgroundColor((category.categoryColor).toColorInt())
     }
 
-    override fun onAccountPassed(account: Account) {
+    override fun onAccountPassed(account: AccountEntity) {
         this.account = account
         val contrast = ColorUtils.calculateContrast(
             binding.buttonAccount.currentHintTextColor,

@@ -1,12 +1,13 @@
 package com.example.simplemoneymanager.domain.category.usecases
 
 import androidx.lifecycle.LiveData
-import com.example.simplemoneymanager.domain.category.CategoryWithTransactions
+import com.example.simplemoneymanager.domain.category.CategoryWithTransactionsEntity
 import com.example.simplemoneymanager.domain.repository.CategoryRepository
+import javax.inject.Inject
 
-class GetCategoryWithTransactionsUseCase(private val categoryRepository: CategoryRepository) {
+class GetCategoryWithTransactionsUseCase @Inject constructor(private val categoryRepository: CategoryRepository) {
 
-    operator fun invoke(): LiveData<List<CategoryWithTransactions>>{
+    operator fun invoke(): LiveData<List<CategoryWithTransactionsEntity>>{
         return categoryRepository.getCategoryWithTransactions()
     }
 }

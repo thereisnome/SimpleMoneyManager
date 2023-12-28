@@ -9,10 +9,10 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.ListAdapter
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.CategoryItemBinding
-import com.example.simplemoneymanager.domain.category.Category
+import com.example.simplemoneymanager.domain.category.CategoryEntity
 
-class StatisticCategoryListAdapter() :
-    ListAdapter<Category, StatisticCategoryViewHolder>(StatisticCategoryListDiffCallback()) {
+class StatisticCategoryListAdapter :
+    ListAdapter<CategoryEntity, StatisticCategoryViewHolder>(StatisticCategoryListDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatisticCategoryViewHolder {
         val binding =

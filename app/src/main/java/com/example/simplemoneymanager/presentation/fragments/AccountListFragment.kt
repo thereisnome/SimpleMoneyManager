@@ -1,5 +1,6 @@
 package com.example.simplemoneymanager.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,23 +11,40 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.common.Format
 import com.example.simplemoneymanager.databinding.FragmentAccountListBinding
-import com.example.simplemoneymanager.domain.account.Account
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.account.AccountEntity
+import com.example.simplemoneymanager.presentation.SimpleMoneyManagerApp
 import com.example.simplemoneymanager.presentation.recyclerViews.accountList.AccountListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.AccountListViewModel
+import com.example.simplemoneymanager.presentation.viewModels.ViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import javax.inject.Inject
 
 class AccountListFragment : Fragment(), AccountListAdapter.AccountPopupMenuItemClickListener {
 
-    private val viewModel: AccountListViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<AccountListViewModel>{
+        viewModelFactory
+    }
 
     private val adapter = AccountListAdapter(this)
+
+    private val format = Format()
 
     private var _binding: FragmentAccountListBinding? = null
     private val binding: FragmentAccountListBinding
         get() = _binding ?: throw RuntimeException("FragmentHistoryBinding is null")
+
+    private val component by lazy { (requireActivity().application as SimpleMoneyManagerApp).component }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -58,7 +76,7 @@ class AccountListFragment : Fragment(), AccountListAdapter.AccountPopupMenuItemC
             }
 
         viewModel.getOverallBalance().observe(viewLifecycleOwner) {
-            binding.tvTotalAmount.text = Transaction.formatCurrencyWithoutSign(it)
+            binding.tvTotalAmount.text = format.formatCurrencyWithoutSign(it)
         }
     }
 
@@ -72,7 +90,7 @@ class AccountListFragment : Fragment(), AccountListAdapter.AccountPopupMenuItemC
         addAccountDialogFragment.show(childFragmentManager, "TEST")
     }
 
-    override fun onMenuItemClick(itemId: Int, position: Int, account: Account) {
+    override fun onMenuItemClick(itemId: Int, position: Int, account: AccountEntity) {
         when (itemId) {
             R.id.account_menu_button_delete -> {
                 if (account.accountId == 0L) {
@@ -86,7 +104,7 @@ class AccountListFragment : Fragment(), AccountListAdapter.AccountPopupMenuItemC
         }
     }
 
-    private fun createDeleteAccountDialogAlert(account: Account) {
+    private fun createDeleteAccountDialogAlert(account: AccountEntity) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(resources.getString(
                 R.string.delete_account_title,
@@ -98,6 +116,7 @@ class AccountListFragment : Fragment(), AccountListAdapter.AccountPopupMenuItemC
             }
             .setPositiveButton(resources.getString(R.string.delete)) { _, _ ->
                 viewModel.removeAccount(account.accountId)
+                Toast.makeText(requireContext(), "Account removed", Toast.LENGTH_LONG).show()
             }
             .show()
     }

@@ -10,19 +10,21 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.common.Format
 import com.example.simplemoneymanager.databinding.BudgetListItemBinding
-import com.example.simplemoneymanager.domain.budget.Budget
-import com.example.simplemoneymanager.domain.budget.BudgetWithTransactions
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.budget.BudgetEntity
+import com.example.simplemoneymanager.domain.budget.BudgetWithTransactionsEntity
 import java.time.LocalDate
 import kotlin.math.absoluteValue
 
 class BudgetListAdapter(private val itemClickListener: BudgetPopupMenuItemClickListener) :
     RecyclerView.Adapter<BudgetViewHolder>() {
 
-    var onItemClickListener: ((Budget) -> Unit)? = null
+    private val format = Format()
 
-    var budgetWithTransactionsList = listOf<BudgetWithTransactions>()
+    var onItemClickListener: ((BudgetEntity) -> Unit)? = null
+
+    var budgetWithTransactionsList = listOf<BudgetWithTransactionsEntity>()
         set(value) {
             val callback = BudgetListDiffCallback(budgetWithTransactionsList.map { it.budget },
                 value.map { it.budget })
@@ -45,7 +47,7 @@ class BudgetListAdapter(private val itemClickListener: BudgetPopupMenuItemClickL
         val budget = budgetWithTransactionsList.map { it.budget }[position]
         val category = budget.category
         val transactionList =
-            budgetWithTransactionsList[position].transactions.filter { it.date.monthValue == LocalDate.now().monthValue }
+            budgetWithTransactionsList[position].transactions.filter { LocalDate.parse(it.date).monthValue == LocalDate.now().monthValue }
         val currentSpentValue = transactionList.sumOf { it.amount.absoluteValue }
 
         val progress = (currentSpentValue / budget.maxValue * 100).toInt()
@@ -94,22 +96,22 @@ class BudgetListAdapter(private val itemClickListener: BudgetPopupMenuItemClickL
         }
 
         holder.binding.tvBudgetName.text = category.categoryName
-        holder.binding.tvBudgetValue.text = Transaction.formatCurrencyWithoutSign(budget.maxValue)
+        holder.binding.tvBudgetValue.text = format.formatCurrencyWithoutSign(budget.maxValue)
         val leftToSpendValue = budget.maxValue - currentSpentValue
         if (leftToSpendValue >= 0) {
             holder.binding.tvLeftToSpendValue.text =
-                Transaction.formatCurrencyWithoutSign(leftToSpendValue)
+                format.formatCurrencyWithoutSign(leftToSpendValue)
         } else {
             holder.binding.tvLeftToSpendLabel.text =
                 holder.itemView.context.getString(R.string.limit_exceeded)
             holder.binding.tvLeftToSpendValue.text =
-                Transaction.formatCurrencyWithoutSign(leftToSpendValue.absoluteValue)
+                format.formatCurrencyWithoutSign(leftToSpendValue.absoluteValue)
         }
 
         holder.binding.tvBudgetSpend.text = holder.itemView.context.getString(
             R.string.budget_spend,
-            Transaction.formatCurrencyWithoutCurrencySigh(currentSpentValue),
-            Transaction.formatCurrencyWithoutSign(budget.maxValue)
+            format.formatCurrencyWithoutCurrencySigh(currentSpentValue),
+            format.formatCurrencyWithoutSign(budget.maxValue)
         )
 
         val budgetIcon = if (progress <= 100) {
@@ -141,6 +143,6 @@ class BudgetListAdapter(private val itemClickListener: BudgetPopupMenuItemClickL
     }
 
     interface BudgetPopupMenuItemClickListener {
-        fun onMenuItemClick(itemId: Int, position: Int, budget: Budget)
+        fun onMenuItemClick(itemId: Int, position: Int, budget: BudgetEntity)
     }
 }

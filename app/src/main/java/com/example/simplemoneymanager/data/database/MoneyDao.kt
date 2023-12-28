@@ -5,13 +5,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.simplemoneymanager.domain.account.Account
-import com.example.simplemoneymanager.domain.account.AccountWithTransactions
-import com.example.simplemoneymanager.domain.budget.Budget
-import com.example.simplemoneymanager.domain.budget.BudgetWithTransactions
-import com.example.simplemoneymanager.domain.category.Category
-import com.example.simplemoneymanager.domain.category.CategoryWithTransactions
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.data.database.models.AccountDbModel
+import com.example.simplemoneymanager.data.database.models.AccountWithTransactionsDbModel
+import com.example.simplemoneymanager.data.database.models.BudgetDbModel
+import com.example.simplemoneymanager.data.database.models.BudgetWithTransactionsDbModel
+import com.example.simplemoneymanager.data.database.models.CategoryDbModel
+import com.example.simplemoneymanager.data.database.models.CategoryWithTransactionsDbModel
+import com.example.simplemoneymanager.data.database.models.TransactionDbModel
 import io.reactivex.rxjava3.core.Completable
 import java.time.LocalDate
 
@@ -24,22 +24,22 @@ interface MoneyDao {
     fun removeCategory(categoryId: Int): Completable
 
     @Query("SELECT * FROM category_list WHERE id = :categoryId")
-    fun getCategoryById(categoryId: Int): LiveData<Category>
+    fun getCategoryById(categoryId: Int): LiveData<CategoryDbModel>
 
     @Query("SELECT * FROM category_list WHERE categoryType = 1")
-    fun getExpenseCategoryList(): LiveData<List<Category>>
+    fun getExpenseCategoryList(): LiveData<List<CategoryDbModel>>
 
     @Query("SELECT * FROM category_list WHERE categoryType = 0")
-    fun getIncomeCategoryList(): LiveData<List<Category>>
+    fun getIncomeCategoryList(): LiveData<List<CategoryDbModel>>
 
     @Query("SELECT * FROM category_list")
-    fun getCategoryList(): LiveData<List<Category>>
+    fun getCategoryList(): LiveData<List<CategoryDbModel>>
 
     @Query("SELECT * FROM category_list")
-    fun getCategoryWithTransactions(): LiveData<List<CategoryWithTransactions>>
+    fun getCategoryWithTransactions(): LiveData<List<CategoryWithTransactionsDbModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addCategory(category: Category): Completable
+    fun addCategory(category: CategoryDbModel): Completable
 
 //    Transaction
 
@@ -55,19 +55,19 @@ interface MoneyDao {
     ): Completable
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addTransaction(transaction: Transaction): Completable
+    fun addTransaction(transaction: TransactionDbModel): Completable
 
     @Query("SELECT * FROM transaction_list")
-    fun getTransactionList(): LiveData<List<Transaction>>
+    fun getTransactionList(): LiveData<List<TransactionDbModel>>
 
     @Query("SELECT * FROM transaction_list WHERE type = 0")
-    fun getIncomeTransactionList(): LiveData<List<Transaction>>
+    fun getIncomeTransactionList(): LiveData<List<TransactionDbModel>>
 
     @Query("SELECT * FROM transaction_list WHERE type = 1")
-    fun getExpenseTransactionList(): LiveData<List<Transaction>>
+    fun getExpenseTransactionList(): LiveData<List<TransactionDbModel>>
 
     @Query("SELECT * FROM transaction_list WHERE transactionId = :transactionId")
-    fun getTransactionById(transactionId: Long): LiveData<Transaction>
+    fun getTransactionById(transactionId: Long): LiveData<TransactionDbModel>
 
     @Query("DELETE FROM transaction_list WHERE transactionId = :transactionId")
     fun removeTransaction(transactionId: Long): Completable
@@ -75,16 +75,16 @@ interface MoneyDao {
 //    Account
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addAccount(account: Account): Completable
+    fun addAccount(account: AccountDbModel): Completable
 
     @Query("SELECT * FROM account_list")
-    fun getAccountList(): LiveData<List<Account>>
+    fun getAccountList(): LiveData<List<AccountDbModel>>
 
     @Query("SELECT * FROM account_list WHERE accountId = :accountId")
-    fun getAccountById(accountId: Long): LiveData<Account>
+    fun getAccountById(accountId: Long): LiveData<AccountDbModel>
 
     @Query("SELECT * FROM account_list")
-    fun getAccountsWithTransactions(): LiveData<List<AccountWithTransactions>>
+    fun getAccountsWithTransactions(): LiveData<List<AccountWithTransactionsDbModel>>
 
     @Query("DELETE FROM account_list WHERE accountId = :accountId")
     fun removeAccount(accountId: Long): Completable
@@ -104,22 +104,22 @@ interface MoneyDao {
 //    Budget
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addBudget(budget: Budget): Completable
+    fun addBudget(budget: BudgetDbModel): Completable
 
     @Query("UPDATE budget_list SET maxValue = :maxValue, id = :categoryId WHERE budgetId = :budgetId")
     fun editBudgetById(budgetId: Long, maxValue: Double, categoryId: Int): Completable
 
     @Query("SELECT * FROM budget_list")
-    fun getBudgetList(): LiveData<List<Budget>>
+    fun getBudgetList(): LiveData<List<BudgetDbModel>>
 
     @Query("SELECT * FROM budget_list WHERE budgetId = :budgetId")
-    fun getBudgetById(budgetId: Long): LiveData<Budget>
+    fun getBudgetById(budgetId: Long): LiveData<BudgetDbModel>
 
     @Query("DELETE FROM budget_list WHERE budgetId = :budgetId")
     fun removeBudget(budgetId: Long): Completable
 
     @Query("SELECT * FROM budget_list")
-    fun getBudgetWithTransactions(): LiveData<List<BudgetWithTransactions>>
+    fun getBudgetWithTransactions(): LiveData<List<BudgetWithTransactionsDbModel>>
 
 //    Sums
 

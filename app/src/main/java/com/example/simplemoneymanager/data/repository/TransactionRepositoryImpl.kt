@@ -1,31 +1,46 @@
 package com.example.simplemoneymanager.data.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import com.example.simplemoneymanager.data.database.MoneyDao
+import com.example.simplemoneymanager.data.mappers.Mapper
 import com.example.simplemoneymanager.domain.repository.TransactionRepository
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.transaction.TransactionEntity
 import io.reactivex.rxjava3.core.Completable
+import java.time.LocalDate
+import javax.inject.Inject
 
-class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRepository {
+class TransactionRepositoryImpl @Inject constructor(
+    private val moneyDao: MoneyDao,
+    private val mapper: Mapper
+) : TransactionRepository {
 
-    override fun addTransaction(transaction: Transaction): Completable {
-        return moneyDao.addTransaction(transaction)
+    override fun addTransaction(transaction: TransactionEntity): Completable {
+        return moneyDao.addTransaction(mapper.mapTransactionEntityToDbModel(transaction))
     }
 
-    override fun getTransactionList(): LiveData<List<Transaction>> {
-        return moneyDao.getTransactionList()
+    override fun getTransactionList(): LiveData<List<TransactionEntity>> {
+        return moneyDao.getTransactionList().map { transactionDbModelList ->
+            transactionDbModelList.map { mapper.mapTransactionDbModelToEntity(it) }
+        }
     }
 
-    override fun getIncomeTransactionList(): LiveData<List<Transaction>> {
-        return moneyDao.getIncomeTransactionList()
+    override fun getIncomeTransactionList(): LiveData<List<TransactionEntity>> {
+        return moneyDao.getIncomeTransactionList().map { transactionDbModelList ->
+            transactionDbModelList.map { mapper.mapTransactionDbModelToEntity(it) }
+        }
     }
 
-    override fun getExpenseTransactionList(): LiveData<List<Transaction>> {
-        return moneyDao.getExpenseTransactionList()
+    override fun getExpenseTransactionList(): LiveData<List<TransactionEntity>> {
+        return moneyDao.getExpenseTransactionList().map { transactionDbModelList ->
+            transactionDbModelList.map { mapper.mapTransactionDbModelToEntity(it) }
+        }
     }
 
-    override fun getTransactionById(transactionId: Long): LiveData<Transaction> {
-        return moneyDao.getTransactionById(transactionId)
+    override fun getTransactionById(transactionId: Long): LiveData<TransactionEntity> {
+        return moneyDao.getTransactionById(transactionId).map { transactionDbModel ->
+            mapper.mapTransactionDbModelToEntity(transactionDbModel)
+        }
     }
 
     override fun removeTransaction(transactionId: Long): Completable {
@@ -44,7 +59,7 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
         return moneyDao.getOverallExpense()
     }
 
-    override fun editTransaction(transaction: Transaction): Completable {
+    override fun editTransaction(transaction: TransactionEntity): Completable {
         return moneyDao.editTransactionById(
             transaction.transactionId,
             transaction.type,
@@ -52,7 +67,7 @@ class TransactionRepositoryImpl(private val moneyDao: MoneyDao) : TransactionRep
             transaction.category.id,
             transaction.amount,
             transaction.account.accountId,
-            transaction.date
+            LocalDate.parse(transaction.date)
         )
     }
 }

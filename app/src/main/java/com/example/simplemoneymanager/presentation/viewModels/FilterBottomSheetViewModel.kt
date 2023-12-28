@@ -1,25 +1,21 @@
 package com.example.simplemoneymanager.presentation.viewModels
 
-import android.app.Application
 import androidx.core.util.Pair
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.example.simplemoneymanager.common.DateFilter
-import com.example.simplemoneymanager.data.database.MoneyDataBase
-import com.example.simplemoneymanager.data.repository.TransactionRepositoryImpl
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.transaction.TransactionEntity
 import com.example.simplemoneymanager.domain.transaction.usecases.GetTransactionListUseCase
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Locale
+import javax.inject.Inject
 
-class FilterBottomSheetViewModel(application: Application) : AndroidViewModel(application) {
+class FilterBottomSheetViewModel @Inject constructor(
+    private val getTransactionListUseCase: GetTransactionListUseCase
+) : ViewModel() {
 
-    private val db = MoneyDataBase.getInstance(application)
-    private val transactionRepositoryImpl = TransactionRepositoryImpl(db.moneyDao())
-    private val getTransactionListUseCase = GetTransactionListUseCase(transactionRepositoryImpl)
-
-    fun getTransactionList(): LiveData<List<Transaction>>{
+    fun getTransactionList(): LiveData<List<TransactionEntity>> {
         return getTransactionListUseCase()
     }
 
@@ -30,7 +26,13 @@ class FilterBottomSheetViewModel(application: Application) : AndroidViewModel(ap
         return DateFilter(startDate, endDate, true)
     }
 
-    fun createSetOfMonths(transactionList: List<Transaction>): Set<LocalDate> {
-        return transactionList.map { LocalDate.of(it.date.year, it.date.month, 1) }.toSet()
+    fun createSetOfMonths(transactionList: List<TransactionEntity>): Set<LocalDate> {
+        return transactionList.map {
+            LocalDate.of(
+                LocalDate.parse(it.date).year,
+                LocalDate.parse(it.date).month,
+                1
+            )
+        }.toSet()
     }
 }

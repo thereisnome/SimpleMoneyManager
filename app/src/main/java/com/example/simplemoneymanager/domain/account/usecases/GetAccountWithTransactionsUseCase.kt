@@ -1,12 +1,13 @@
 package com.example.simplemoneymanager.domain.account.usecases
 
 import androidx.lifecycle.LiveData
-import com.example.simplemoneymanager.domain.account.AccountWithTransactions
+import com.example.simplemoneymanager.domain.account.AccountWithTransactionsEntity
 import com.example.simplemoneymanager.domain.repository.AccountRepository
+import javax.inject.Inject
 
-class GetAccountWithTransactionsUseCase(private val accountRepository: AccountRepository) {
+class GetAccountWithTransactionsUseCase @Inject constructor(private val accountRepository: AccountRepository) {
 
-    operator fun invoke(): LiveData<List<AccountWithTransactions>> {
+    operator fun invoke(): LiveData<List<AccountWithTransactionsEntity>> {
         return accountRepository.getAccountWithTransactions()
     }
 }

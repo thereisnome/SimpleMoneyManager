@@ -10,19 +10,22 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.common.Format
 import com.example.simplemoneymanager.databinding.TransactionItemBinding
-import com.example.simplemoneymanager.domain.account.Account
-import com.example.simplemoneymanager.domain.category.Category
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.account.AccountEntity
+import com.example.simplemoneymanager.domain.category.CategoryEntity
+import com.example.simplemoneymanager.domain.transaction.TransactionEntity
 import java.time.format.DateTimeFormatter
 
 class TransactionListAdapter(private val itemClickListener: TransactionsPopupMenuItemClickListener) :
     RecyclerView.Adapter<TransactionViewHolder>() {
 
-    var onAccountClickListener: ((Account) -> Unit)? = null
-    var onCategoryClickListener: ((Category) -> Unit)? = null
+    private val format = Format()
 
-    var transactionList = listOf<Transaction>()
+    var onAccountClickListener: ((AccountEntity) -> Unit)? = null
+    var onCategoryClickListener: ((CategoryEntity) -> Unit)? = null
+
+    var transactionList = listOf<TransactionEntity>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -52,7 +55,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
 
         if (shouldDisplayDate) {
             holder.binding.tvDate.text = dateString
-            holder.binding.tvBalancePerDay.text = Transaction.formatCurrency(balancePerDay)
+            holder.binding.tvBalancePerDay.text = format.formatCurrency(balancePerDay)
 
             holder.binding.layoutDate.visibility = View.VISIBLE
         } else {
@@ -87,7 +90,7 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
             )
         }
 
-        holder.binding.tvAmount.text = Transaction.formatCurrency(transaction.amount)
+        holder.binding.tvAmount.text = format.formatCurrency(transaction.amount)
 
         if (shouldDisplayName) {
             holder.binding.tvName.visibility = View.VISIBLE
@@ -126,6 +129,6 @@ class TransactionListAdapter(private val itemClickListener: TransactionsPopupMen
     }
 
     interface TransactionsPopupMenuItemClickListener {
-        fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction)
+        fun onMenuItemClick(itemId: Int, position: Int, transaction: TransactionEntity)
     }
 }

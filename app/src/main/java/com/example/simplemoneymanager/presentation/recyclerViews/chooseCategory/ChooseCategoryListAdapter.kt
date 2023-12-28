@@ -10,12 +10,12 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.ListAdapter
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.CategoryItemBinding
-import com.example.simplemoneymanager.domain.category.Category
+import com.example.simplemoneymanager.domain.category.CategoryEntity
 
 class ChooseCategoryListAdapter(private val itemClickListener: CategoryPopupMenuItemClickListener) :
-    ListAdapter<Category, ChooseCategoryViewHolder>(ChooseCategoryListDiffCallback()) {
+    ListAdapter<CategoryEntity, ChooseCategoryViewHolder>(ChooseCategoryListDiffCallback()) {
 
-    var onItemClickListener: ((Category) -> Unit)? = null
+    var onItemClickListener: ((CategoryEntity) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseCategoryViewHolder {
         val binding =
@@ -62,6 +62,6 @@ class ChooseCategoryListAdapter(private val itemClickListener: CategoryPopupMenu
     }
 
     interface CategoryPopupMenuItemClickListener {
-        fun onMenuItemClick(itemId: Int, position: Int, category: Category)
+        fun onMenuItemClick(itemId: Int, position: Int, category: CategoryEntity)
     }
 }
