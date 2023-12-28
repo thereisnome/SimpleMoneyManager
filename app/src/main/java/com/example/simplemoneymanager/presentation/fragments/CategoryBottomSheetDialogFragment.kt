@@ -1,20 +1,26 @@
 package com.example.simplemoneymanager.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.data.database.models.CategoryDbModel
 import com.example.simplemoneymanager.databinding.FragmentCategoryBottomSheetBinding
-import com.example.simplemoneymanager.domain.category.Category
+import com.example.simplemoneymanager.domain.category.CategoryEntity
+import com.example.simplemoneymanager.presentation.SimpleMoneyManagerApp
 import com.example.simplemoneymanager.presentation.recyclerViews.chooseCategory.ChooseCategoryListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.CategoryBottomSheetViewModel
+import com.example.simplemoneymanager.presentation.viewModels.ViewModelFactory
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import javax.inject.Inject
 
 class CategoryBottomSheetDialogFragment private constructor(private val categoryType: Int) :
     BottomSheetDialogFragment(), ChooseCategoryListAdapter.CategoryPopupMenuItemClickListener {
@@ -23,11 +29,23 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
 
     private val adapter = ChooseCategoryListAdapter(this)
 
-    private val viewModel: CategoryBottomSheetViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<CategoryBottomSheetViewModel>{
+        viewModelFactory
+    }
 
     private var _binding: FragmentCategoryBottomSheetBinding? = null
     private val binding: FragmentCategoryBottomSheetBinding
         get() = _binding ?: throw RuntimeException("FragmentHistoryBinding is null")
+
+    private val component by lazy { (requireActivity().application as SimpleMoneyManagerApp).component }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -50,7 +68,7 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
         flexboxLayoutManager.justifyContent = JustifyContent.FLEX_START
         binding.rvCategories.layoutManager = flexboxLayoutManager
 
-        if (categoryType == Category.EXPENSE) {
+        if (categoryType == CategoryDbModel.EXPENSE) {
             viewModel.getExpenseCategoryList()
                 .observe(viewLifecycleOwner) { categoryList ->
                     adapter.submitList(categoryList)
@@ -87,12 +105,12 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
         dataPassListener = listener
     }
 
-    private fun passDataBack(category: Category) {
+    private fun passDataBack(category: CategoryEntity) {
         dataPassListener?.onCategoryPassed(category)
     }
 
     interface DataPassListener {
-        fun onCategoryPassed(category: Category)
+        fun onCategoryPassed(category: CategoryEntity)
     }
 
     companion object {
@@ -101,9 +119,12 @@ class CategoryBottomSheetDialogFragment private constructor(private val category
         }
     }
 
-    override fun onMenuItemClick(itemId: Int, position: Int, category: Category) {
+    override fun onMenuItemClick(itemId: Int, position: Int, category: CategoryEntity) {
         when (itemId) {
-            R.id.category_menu_button_delete -> viewModel.removeCategory(category.id)
+            R.id.category_menu_button_delete -> {
+                viewModel.removeCategory(category.id)
+                Toast.makeText(requireContext(), "Category removed", Toast.LENGTH_LONG).show()
+            }
         }
     }
 }

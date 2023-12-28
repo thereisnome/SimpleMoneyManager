@@ -10,18 +10,21 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.common.Format
+import com.example.simplemoneymanager.data.database.models.TransactionDbModel
 import com.example.simplemoneymanager.databinding.AccountListItemBinding
-import com.example.simplemoneymanager.domain.account.Account
-import com.example.simplemoneymanager.domain.account.AccountWithTransactions
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.account.AccountEntity
+import com.example.simplemoneymanager.domain.account.AccountWithTransactionsEntity
 import java.time.LocalDate
 
 class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClickListener) :
     RecyclerView.Adapter<AccountViewHolder>() {
 
-    var onItemClickListener: ((Account) -> Unit)? = null
+    var onItemClickListener: ((AccountEntity) -> Unit)? = null
 
-    var accountWithTransactions = listOf<AccountWithTransactions>()
+    private val format = Format()
+
+    var accountWithTransactions = listOf<AccountWithTransactionsEntity>()
         set(value) {
             val callback = AccountListDiffCallback(accountWithTransactions.map { it.account },
                 value.map { it.account })
@@ -43,11 +46,11 @@ class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClic
     override fun onBindViewHolder(holder: AccountViewHolder, position: Int) {
         val account = accountWithTransactions.map { it.account }[position]
         val transactionList =
-            accountWithTransactions[position].transactions.filter { it.date.monthValue == LocalDate.now().monthValue }
+            accountWithTransactions[position].transactions.filter { LocalDate.parse(it.date).monthValue == LocalDate.now().monthValue }
         val accountIncomeValue =
-            transactionList.filter { it.type == Transaction.INCOME }.sumOf { it.amount }
+            transactionList.filter { it.type == TransactionDbModel.INCOME }.sumOf { it.amount }
         val accountExpenseValue =
-            transactionList.filter { it.type == Transaction.EXPENSE }.sumOf { it.amount }
+            transactionList.filter { it.type == TransactionDbModel.EXPENSE }.sumOf { it.amount }
 
         val contrast = ColorUtils.calculateContrast(
             holder.binding.tvAccountDetailsName.currentHintTextColor,
@@ -71,12 +74,12 @@ class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClic
 
         holder.binding.tvAccountDetailsName.text = account.accountName
         holder.binding.tvAccountDetailsBalance.text =
-            Transaction.formatCurrencyWithoutSign(account.balance)
+            format.formatCurrencyWithoutSign(account.balance)
 
         holder.binding.tvAccountDetailsIncomeValue.text =
-            Transaction.formatCurrency(accountIncomeValue)
+            format.formatCurrency(accountIncomeValue)
         holder.binding.tvAccountDetailsExpenseValue.text =
-            Transaction.formatCurrency(accountExpenseValue)
+            format.formatCurrency(accountExpenseValue)
 
         holder.binding.balanceLayout.backgroundTintList =
             ColorStateList.valueOf(account.accountColor.toColorInt())
@@ -104,6 +107,6 @@ class AccountListAdapter(private val itemClickListener: AccountPopupMenuItemClic
     }
 
     interface AccountPopupMenuItemClickListener {
-        fun onMenuItemClick(itemId: Int, position: Int, account: Account)
+        fun onMenuItemClick(itemId: Int, position: Int, account: AccountEntity)
     }
 }

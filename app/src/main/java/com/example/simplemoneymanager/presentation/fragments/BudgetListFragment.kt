@@ -1,24 +1,34 @@
 package com.example.simplemoneymanager.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.databinding.FragmentBudgetListBinding
-import com.example.simplemoneymanager.domain.budget.Budget
+import com.example.simplemoneymanager.domain.budget.BudgetEntity
+import com.example.simplemoneymanager.presentation.SimpleMoneyManagerApp
 import com.example.simplemoneymanager.presentation.recyclerViews.budgetList.BudgetListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.BudgetListViewModel
+import com.example.simplemoneymanager.presentation.viewModels.ViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import javax.inject.Inject
 
 class BudgetListFragment : Fragment(), BudgetListAdapter.BudgetPopupMenuItemClickListener {
 
-    private val viewModel: BudgetListViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<BudgetListViewModel>{
+        viewModelFactory
+    }
 
     private val adapter = BudgetListAdapter(this)
 
@@ -26,6 +36,13 @@ class BudgetListFragment : Fragment(), BudgetListAdapter.BudgetPopupMenuItemClic
 
     private val binding: FragmentBudgetListBinding
         get() = _binding ?: throw RuntimeException("FragmentBudgetListBinding is null")
+
+    private val component by lazy { (requireActivity().application as SimpleMoneyManagerApp).component }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -62,7 +79,7 @@ class BudgetListFragment : Fragment(), BudgetListAdapter.BudgetPopupMenuItemClic
         _binding = null
     }
 
-    override fun onMenuItemClick(itemId: Int, position: Int, budget: Budget) {
+    override fun onMenuItemClick(itemId: Int, position: Int, budget: BudgetEntity) {
         when (itemId) {
             R.id.category_menu_button_delete -> createDeleteAccountDialogAlert(budget)
             R.id.category_menu_button_edit -> {
@@ -75,7 +92,7 @@ class BudgetListFragment : Fragment(), BudgetListAdapter.BudgetPopupMenuItemClic
         }
     }
 
-    private fun createDeleteAccountDialogAlert(budget: Budget) {
+    private fun createDeleteAccountDialogAlert(budget: BudgetEntity) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(
                 resources.getString(
@@ -89,6 +106,7 @@ class BudgetListFragment : Fragment(), BudgetListAdapter.BudgetPopupMenuItemClic
             }
             .setPositiveButton(resources.getString(R.string.delete)) { _, _ ->
                 viewModel.removeBudget(budget.budgetId)
+                Toast.makeText(requireContext(), "Budget removed", Toast.LENGTH_LONG).show()
             }
             .show()
     }

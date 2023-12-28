@@ -1,9 +1,11 @@
 package com.example.simplemoneymanager.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.toColorInt
@@ -13,13 +15,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.common.DateFilter
+import com.example.simplemoneymanager.data.database.models.CategoryDbModel
 import com.example.simplemoneymanager.databinding.FragmentStatisticBinding
-import com.example.simplemoneymanager.domain.category.Category
-import com.example.simplemoneymanager.domain.category.CategoryWithTransactions
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.category.CategoryEntity
+import com.example.simplemoneymanager.domain.category.CategoryWithTransactionsEntity
+import com.example.simplemoneymanager.domain.transaction.TransactionEntity
+import com.example.simplemoneymanager.presentation.SimpleMoneyManagerApp
 import com.example.simplemoneymanager.presentation.recyclerViews.statisticAccount.StatisticCategoryListAdapter
 import com.example.simplemoneymanager.presentation.recyclerViews.transactionList.TransactionListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.StatisticViewModel
+import com.example.simplemoneymanager.presentation.viewModels.ViewModelFactory
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -29,11 +34,18 @@ import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import javax.inject.Inject
 import kotlin.math.absoluteValue
 
 class StatisticFragment : Fragment(), FilterBottomSheetDialogFragment.DataPassListener,
     TransactionListAdapter.TransactionsPopupMenuItemClickListener {
-    private val viewModel: StatisticViewModel by viewModels()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<StatisticViewModel>{
+        viewModelFactory
+    }
 
     private val categoryAdapter = StatisticCategoryListAdapter()
 
@@ -41,14 +53,21 @@ class StatisticFragment : Fragment(), FilterBottomSheetDialogFragment.DataPassLi
 
     private var _binding: FragmentStatisticBinding? = null
 
-    private lateinit var categoryWithTransactionList: List<CategoryWithTransactions>
+    private lateinit var categoryWithTransactionList: List<CategoryWithTransactionsEntity>
 
     private var dateFilter: DateFilter = DateFilter.getDefaultDateFilter()
 
-    private var statisticType = Category.INCOME
+    private var statisticType = CategoryEntity.INCOME
 
     private val binding: FragmentStatisticBinding
         get() = _binding ?: throw RuntimeException("FragmentStatisticBinding is null")
+
+    private val component by lazy { (requireActivity().application as SimpleMoneyManagerApp).component }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -108,15 +127,15 @@ class StatisticFragment : Fragment(), FilterBottomSheetDialogFragment.DataPassLi
                 categoryWithTransactionList =
                     overallListCategoryWithTransactions.filter { it.transactions.isNotEmpty() }
 
-                passDataToListAdapter(categoryWithTransactionList, Category.INCOME)
+                passDataToListAdapter(categoryWithTransactionList, CategoryDbModel.INCOME)
                 updateChart()
             }
     }
 
     private fun filterCategoryList(
-        categoryWithTransactionsList: List<CategoryWithTransactions>,
+        categoryWithTransactionsList: List<CategoryWithTransactionsEntity>,
         type: Int
-    ): List<Category> {
+    ): List<CategoryEntity> {
         return viewModel.filterCategoryWithTransactionsByDate(
             dateFilter.startDate,
             dateFilter.endDate,
@@ -125,13 +144,13 @@ class StatisticFragment : Fragment(), FilterBottomSheetDialogFragment.DataPassLi
     }
 
     private fun filterTransactionList(
-        categoryWithTransactionsList: List<CategoryWithTransactions>,
+        categoryWithTransactionsList: List<CategoryWithTransactionsEntity>,
         type: Int
-    ): List<Transaction> {
+    ): List<TransactionEntity> {
         return viewModel.filterTransactionsByDate(dateFilter.startDate,
             dateFilter.endDate,
             categoryWithTransactionsList.flatMap { it.transactions }.filter { it.type == type })
-            .sortedWith(compareByDescending<Transaction> { it.date }.thenByDescending { it.transactionId })
+            .sortedWith(compareByDescending<TransactionEntity> { it.date }.thenByDescending { it.transactionId })
     }
 
     private fun setupPieChart() {
@@ -155,20 +174,20 @@ class StatisticFragment : Fragment(), FilterBottomSheetDialogFragment.DataPassLi
 
     private fun setTypeButtonsClickListeners() {
         binding.buttonIncomeStatistic.setOnClickListener {
-            statisticType = Category.INCOME
-            passDataToListAdapter(categoryWithTransactionList, Category.INCOME)
+            statisticType = CategoryEntity.INCOME
+            passDataToListAdapter(categoryWithTransactionList, CategoryEntity.INCOME)
             updateChart()
         }
 
         binding.buttonExpenseStatistic.setOnClickListener {
-            statisticType = Category.EXPENSE
-            passDataToListAdapter(categoryWithTransactionList, Category.EXPENSE)
+            statisticType = CategoryEntity.EXPENSE
+            passDataToListAdapter(categoryWithTransactionList, CategoryEntity.EXPENSE)
             updateChart()
         }
     }
 
     private fun passDataToListAdapter(
-        categoryWithTransactionsList: List<CategoryWithTransactions>,
+        categoryWithTransactionsList: List<CategoryWithTransactionsEntity>,
         type: Int
     ) {
         categoryAdapter.submitList(filterCategoryList(categoryWithTransactionsList, type))
@@ -187,7 +206,7 @@ class StatisticFragment : Fragment(), FilterBottomSheetDialogFragment.DataPassLi
     //    categoryWithTransactionsList should be filtered by date
     private fun createPieData(
         type: Int,
-        categoryWithTransactionsList: List<CategoryWithTransactions>
+        categoryWithTransactionsList: List<CategoryWithTransactionsEntity>
     ): PieData {
         val entries = ArrayList<PieEntry>()
         val colors = ArrayList<Int>()
@@ -267,10 +286,12 @@ class StatisticFragment : Fragment(), FilterBottomSheetDialogFragment.DataPassLi
         passDataToListAdapter(categoryWithTransactionList, statisticType)
     }
 
-    override fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction) {
+    override fun onMenuItemClick(itemId: Int, position: Int, transaction: TransactionEntity) {
         when (itemId) {
             R.id.transaction_menu_button_delete -> {
                 viewModel.removeTransaction(transaction)
+                Toast.makeText(requireContext(), "Transaction removed", Toast.LENGTH_SHORT)
+                    .show()
                 viewModel.subtractAccountBalance(transaction.account.accountId, transaction.amount)
             }
 

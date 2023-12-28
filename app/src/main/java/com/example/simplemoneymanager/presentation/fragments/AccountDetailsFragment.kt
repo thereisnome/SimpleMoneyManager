@@ -1,10 +1,12 @@
 package com.example.simplemoneymanager.presentation.fragments
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
@@ -14,10 +16,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.common.Format
+import com.example.simplemoneymanager.data.database.models.TransactionDbModel
 import com.example.simplemoneymanager.databinding.FragmentAccountDetailsBinding
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.transaction.TransactionEntity
+import com.example.simplemoneymanager.presentation.SimpleMoneyManagerApp
 import com.example.simplemoneymanager.presentation.recyclerViews.transactionList.TransactionListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.AccountDetailsFragmentViewModel
+import com.example.simplemoneymanager.presentation.viewModels.ViewModelFactory
+import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 class AccountDetailsFragment : Fragment(),
     TransactionListAdapter.TransactionsPopupMenuItemClickListener {
@@ -26,11 +34,25 @@ class AccountDetailsFragment : Fragment(),
 
     private val adapter = TransactionListAdapter(this)
 
-    private val viewModel: AccountDetailsFragmentViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<AccountDetailsFragmentViewModel>{
+        viewModelFactory
+    }
+
+    private val format = Format()
 
     private var _binding: FragmentAccountDetailsBinding? = null
     private val binding: FragmentAccountDetailsBinding
         get() = _binding ?: throw RuntimeException("FragmentHistoryBinding is null")
+
+    private val component by lazy { (requireActivity().application as SimpleMoneyManagerApp).component }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -44,7 +66,7 @@ class AccountDetailsFragment : Fragment(),
 
         viewModel.getAccountById(args.accountId).observe(viewLifecycleOwner) { account ->
             binding.tvAccountName.text = account.accountName
-            binding.tvAccountBalance.text = Transaction.formatCurrencyWithoutSign(account.balance)
+            binding.tvAccountBalance.text = format.formatCurrencyWithoutSign(account.balance)
             binding.accountDetailsLayout.backgroundTintList =
                 ColorStateList.valueOf(account.accountColor.toColorInt())
 
@@ -72,36 +94,21 @@ class AccountDetailsFragment : Fragment(),
         viewModel.getTransactionList().observe(viewLifecycleOwner) { transactionList ->
             val transactionListByAccount =
                 transactionList.filter { it.account.accountId == args.accountId }
-            adapter.transactionList =
-                transactionListByAccount.sortedByDescending { it.transactionId }
 
-            val linearLayoutManager = object : LinearLayoutManager(requireContext()) {
-                override fun canScrollVertically(): Boolean {
-                    return false
-                }
-            }
-            binding.rvTransactions.layoutManager = linearLayoutManager
-            binding.rvTransactions.adapter = adapter
-            adapter.onCategoryClickListener = { category ->
-                findNavController().navigate(
-                    AccountDetailsFragmentDirections.actionAccountDetailsFragmentToCategoryDetailsFragment(
-                        categoryId = category.id
-                    )
-                )
-            }
+            setupRecyclerView(transactionListByAccount)
 
-            val incomeSum = transactionListByAccount.filter { it.type == Transaction.INCOME }
+            val incomeSum = transactionListByAccount.filter { it.type == TransactionDbModel.INCOME }
                 .sumOf { it.amount }
-            val expenseSum = transactionListByAccount.filter { it.type == Transaction.EXPENSE }
+            val expenseSum = transactionListByAccount.filter { it.type == TransactionDbModel.EXPENSE }
                 .sumOf { it.amount }
 
             val incomeTransactionCount =
-                transactionListByAccount.filter { it.type == Transaction.INCOME }.size.toString()
+                transactionListByAccount.filter { it.type == TransactionDbModel.INCOME }.size.toString()
             val expenseTransactionCount =
-                transactionListByAccount.filter { it.type == Transaction.EXPENSE }.size.toString()
+                transactionListByAccount.filter { it.type == TransactionDbModel.EXPENSE }.size.toString()
 
-            binding.tvIncomeValue.text = Transaction.formatCurrency(incomeSum)
-            binding.tvExpenseValue.text = Transaction.formatCurrency(expenseSum)
+            binding.tvIncomeValue.text = format.formatCurrencyWithoutSign(incomeSum.absoluteValue)
+            binding.tvExpenseValue.text = format.formatCurrencyWithoutSign(expenseSum.absoluteValue)
 
             binding.tvIncomeTransactionsCountValue.text = incomeTransactionCount
             if (incomeTransactionCount.toInt() > 1) {
@@ -124,6 +131,26 @@ class AccountDetailsFragment : Fragment(),
         _binding = null
     }
 
+    private fun setupRecyclerView(transactionListByAccount: List<TransactionEntity>){
+        val linearLayoutManager = object : LinearLayoutManager(requireContext()) {
+            override fun canScrollVertically(): Boolean {
+                return false
+            }
+        }
+        binding.rvTransactions.layoutManager = linearLayoutManager
+        binding.rvTransactions.adapter = adapter
+        adapter.onCategoryClickListener = { category ->
+            findNavController().navigate(
+                AccountDetailsFragmentDirections.actionAccountDetailsFragmentToCategoryDetailsFragment(
+                    categoryId = category.id
+                )
+            )
+        }
+
+        adapter.transactionList =
+            transactionListByAccount.sortedWith(compareByDescending<TransactionEntity> { it.date }.thenByDescending { it.transactionId })
+    }
+
     private fun launchAddTransactionFragmentEditMode(transactionId: Long) {
         findNavController().navigate(
             AccountDetailsFragmentDirections.actionAccountDetailsFragmentToAddTransactionFragment(
@@ -132,10 +159,12 @@ class AccountDetailsFragment : Fragment(),
         )
     }
 
-    override fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction) {
+    override fun onMenuItemClick(itemId: Int, position: Int, transaction: TransactionEntity) {
         when (itemId) {
             R.id.transaction_menu_button_delete -> {
                 viewModel.removeTransaction(transaction)
+                Toast.makeText(requireContext(), "Transaction removed", Toast.LENGTH_SHORT)
+                    .show()
                 viewModel.subtractAccountBalance(transaction.account.accountId, transaction.amount)
             }
 

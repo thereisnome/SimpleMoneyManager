@@ -1,20 +1,20 @@
 package com.example.simplemoneymanager.domain.repository
 
 import androidx.lifecycle.LiveData
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.transaction.TransactionEntity
 import io.reactivex.rxjava3.core.Completable
 
 interface TransactionRepository {
 
-    fun addTransaction(transaction: Transaction): Completable
+    fun addTransaction(transaction: TransactionEntity): Completable
 
-    fun getTransactionList(): LiveData<List<Transaction>>
+    fun getTransactionList(): LiveData<List<TransactionEntity>>
 
-    fun getIncomeTransactionList(): LiveData<List<Transaction>>
+    fun getIncomeTransactionList(): LiveData<List<TransactionEntity>>
 
-    fun getExpenseTransactionList(): LiveData<List<Transaction>>
+    fun getExpenseTransactionList(): LiveData<List<TransactionEntity>>
 
-    fun getTransactionById(transactionId: Long): LiveData<Transaction>
+    fun getTransactionById(transactionId: Long): LiveData<TransactionEntity>
 
     fun removeTransaction(transactionId: Long): Completable
 
@@ -24,5 +24,5 @@ interface TransactionRepository {
 
     fun getOverallExpense(): LiveData<Double>
 
-    fun editTransaction(transaction: Transaction): Completable
+    fun editTransaction(transaction: TransactionEntity): Completable
 }

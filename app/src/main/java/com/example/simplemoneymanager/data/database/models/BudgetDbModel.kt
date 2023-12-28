@@ -1,18 +1,17 @@
-package com.example.simplemoneymanager.domain.budget
+package com.example.simplemoneymanager.data.database.models
 
 import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.simplemoneymanager.domain.category.Category
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(tableName = "budget_list")
-data class Budget(
-    var maxValue: Double,
+data class BudgetDbModel(
     @PrimaryKey(autoGenerate = true)
     val budgetId: Long = 0,
+    var maxValue: Double,
     @Embedded
-    val category: Category
+    val category: CategoryDbModel
 ) : Parcelable

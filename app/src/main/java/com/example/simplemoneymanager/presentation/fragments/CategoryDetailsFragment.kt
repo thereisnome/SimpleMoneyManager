@@ -1,10 +1,12 @@
 package com.example.simplemoneymanager.presentation.fragments
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
@@ -14,11 +16,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.common.Format
+import com.example.simplemoneymanager.data.database.models.CategoryDbModel
 import com.example.simplemoneymanager.databinding.FragmentCategoryDetailsBinding
-import com.example.simplemoneymanager.domain.category.Category
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.transaction.TransactionEntity
+import com.example.simplemoneymanager.presentation.SimpleMoneyManagerApp
 import com.example.simplemoneymanager.presentation.recyclerViews.transactionList.TransactionListAdapter
 import com.example.simplemoneymanager.presentation.viewModels.CategoryDetailsFragmentViewModel
+import com.example.simplemoneymanager.presentation.viewModels.ViewModelFactory
+import javax.inject.Inject
 import kotlin.math.absoluteValue
 
 class CategoryDetailsFragment : Fragment(),
@@ -28,11 +34,25 @@ class CategoryDetailsFragment : Fragment(),
 
     private val adapter = TransactionListAdapter(this)
 
-    private val viewModel: CategoryDetailsFragmentViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<CategoryDetailsFragmentViewModel>{
+        viewModelFactory
+    }
+
+    private val format = Format()
 
     private var _binding: FragmentCategoryDetailsBinding? = null
     private val binding: FragmentCategoryDetailsBinding
         get() = _binding ?: throw RuntimeException("FragmentHistoryBinding is null")
+
+    private val component by lazy { (requireActivity().application as SimpleMoneyManagerApp).component }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -46,7 +66,7 @@ class CategoryDetailsFragment : Fragment(),
 
         viewModel.getCategoryById(args.categoryId).observe(viewLifecycleOwner) { category ->
             binding.tvCategoryName.text = category.categoryName
-            binding.tvTypeLabel.text = if (category.categoryType == Category.INCOME) {
+            binding.tvTypeLabel.text = if (category.categoryType == CategoryDbModel.INCOME) {
                 requireContext().getString(R.string.income)
             } else requireContext().getString(R.string.expense)
 
@@ -94,7 +114,7 @@ class CategoryDetailsFragment : Fragment(),
 
             val incomeTransactionCount = transactionListByCategory.size.toString()
 
-            binding.tvTypeValue.text = Transaction.formatCurrencyWithoutSign(transactionsSum.absoluteValue)
+            binding.tvTypeValue.text = format.formatCurrencyWithoutSign(transactionsSum.absoluteValue)
 
             binding.tvTransactionsCountValue.text = incomeTransactionCount
             if (incomeTransactionCount.toInt() > 1) {
@@ -118,10 +138,12 @@ class CategoryDetailsFragment : Fragment(),
         )
     }
 
-    override fun onMenuItemClick(itemId: Int, position: Int, transaction: Transaction) {
+    override fun onMenuItemClick(itemId: Int, position: Int, transaction: TransactionEntity) {
         when (itemId) {
             R.id.transaction_menu_button_delete -> {
                 viewModel.removeTransaction(transaction)
+                Toast.makeText(requireContext(), "Transaction removed", Toast.LENGTH_SHORT)
+                    .show()
                 viewModel.subtractAccountBalance(transaction.account.accountId, transaction.amount)
             }
 

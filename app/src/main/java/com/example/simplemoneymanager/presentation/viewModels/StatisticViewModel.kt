@@ -1,51 +1,41 @@
 package com.example.simplemoneymanager.presentation.viewModels
 
-import android.app.Application
 import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.example.simplemoneymanager.data.database.MoneyDataBase
-import com.example.simplemoneymanager.data.repository.AccountRepositoryImpl
-import com.example.simplemoneymanager.data.repository.CategoryRepositoryImpl
-import com.example.simplemoneymanager.data.repository.TransactionRepositoryImpl
+import androidx.lifecycle.ViewModel
 import com.example.simplemoneymanager.domain.account.usecases.SubtractAccountBalanceUseCase
-import com.example.simplemoneymanager.domain.category.CategoryWithTransactions
+import com.example.simplemoneymanager.domain.category.CategoryWithTransactionsEntity
 import com.example.simplemoneymanager.domain.category.usecases.GetCategoryWithTransactionsUseCase
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.domain.transaction.TransactionEntity
 import com.example.simplemoneymanager.domain.transaction.usecases.RemoveTransactionUseCase
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.time.LocalDate
+import javax.inject.Inject
 
-class StatisticViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val db = MoneyDataBase.getInstance(application)
-    private val categoryRepositoryImpl = CategoryRepositoryImpl(db.moneyDao())
-    private val transactionRepositoryImpl = TransactionRepositoryImpl(db.moneyDao())
-    private val accountRepositoryImpl = AccountRepositoryImpl(db.moneyDao())
-    private val getCategoryWithTransactionsUseCase =
-        GetCategoryWithTransactionsUseCase(categoryRepositoryImpl)
-    private val removeTransactionUseCase = RemoveTransactionUseCase(transactionRepositoryImpl)
-    private val subtractAccountBalanceUseCase = SubtractAccountBalanceUseCase(accountRepositoryImpl)
+class StatisticViewModel  @Inject constructor(
+    private val getCategoryWithTransactionsUseCase: GetCategoryWithTransactionsUseCase,
+    private val removeTransactionUseCase: RemoveTransactionUseCase,
+    private val subtractAccountBalanceUseCase: SubtractAccountBalanceUseCase
+) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
-    fun getCategoryWithTransactions(): LiveData<List<CategoryWithTransactions>> {
+    fun getCategoryWithTransactions(): LiveData<List<CategoryWithTransactionsEntity>> {
         return getCategoryWithTransactionsUseCase()
     }
 
     fun filterCategoryWithTransactionsByDate(
         startDay: LocalDate,
         endDay: LocalDate,
-        categoryWithTransactionsList: List<CategoryWithTransactions>
-    ): List<CategoryWithTransactions> {
-        val result = mutableListOf<CategoryWithTransactions>()
+        categoryWithTransactionsList: List<CategoryWithTransactionsEntity>
+    ): List<CategoryWithTransactionsEntity> {
+        val result = mutableListOf<CategoryWithTransactionsEntity>()
         categoryWithTransactionsList.forEach { categoryWithTransactions ->
-            val item = CategoryWithTransactions(
+            val item = CategoryWithTransactionsEntity(
                 categoryWithTransactions.category,
-                categoryWithTransactions.transactions.filter { it.date in startDay..endDay })
+                categoryWithTransactions.transactions.filter { LocalDate.parse(it.date) in startDay..endDay })
             result.add(item)
         }
         return result.filter { it.transactions.isNotEmpty() }
@@ -53,22 +43,18 @@ class StatisticViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun filterTransactionsByDate(
         startDay: LocalDate,
-        endDay: LocalDate, transactionList: List<Transaction>
-    ): List<Transaction> {
-        return transactionList.filter { it.date in startDay..endDay }
+        endDay: LocalDate, transactionList: List<TransactionEntity>
+    ): List<TransactionEntity> {
+        return transactionList.filter { LocalDate.parse(it.date) in startDay..endDay }
     }
 
-    fun removeTransaction(transaction: Transaction) {
+    fun removeTransaction(transaction: TransactionEntity) {
         val disposable =
             removeTransactionUseCase.invoke(transaction.transactionId).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                    Toast.makeText(getApplication(), "Transaction removed", Toast.LENGTH_SHORT)
-                        .show()
+                    Log.d("StatisticViewModel", "Transaction removed $transaction")
                 }, {
-                    Toast.makeText(
-                        getApplication(), "Cannot remove transaction, try again", Toast.LENGTH_LONG
-                    ).show()
-                    it.message?.let { it1 -> Log.d("VM remove transaction", it1) }
+                    it.message?.let { it1 -> Log.d("StatisticViewModel", it1) }
                 })
         compositeDisposable.add(disposable)
     }
@@ -77,9 +63,9 @@ class StatisticViewModel(application: Application) : AndroidViewModel(applicatio
         val disposable =
             subtractAccountBalanceUseCase(accountId, amount).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                    Log.d("VM subtractAccountBalance", "ID: $accountId.accountId, amount: $amount")
+                    Log.d("StatisticViewModel", "ID: $accountId.accountId, amount: $amount")
                 }, {
-                    Log.d("VM subtractAccountBalance", it.message.toString())
+                    Log.d("StatisticViewModel", it.message.toString())
                 })
         compositeDisposable.add(disposable)
     }

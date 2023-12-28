@@ -6,14 +6,16 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.simplemoneymanager.domain.account.Account
-import com.example.simplemoneymanager.domain.budget.Budget
-import com.example.simplemoneymanager.domain.category.Category
-import com.example.simplemoneymanager.domain.transaction.Transaction
+import com.example.simplemoneymanager.data.database.models.AccountDbModel
+import com.example.simplemoneymanager.data.database.models.BudgetDbModel
+import com.example.simplemoneymanager.data.database.models.CategoryDbModel
+import com.example.simplemoneymanager.data.database.models.TransactionDbModel
+import com.example.simplemoneymanager.di.AppScope
 
+@AppScope
 @TypeConverters(value = [MoneyTypeConverter::class])
 @Database(
-    entities = [Transaction::class, Category::class, Account::class, Budget::class],
+    entities = [TransactionDbModel::class, CategoryDbModel::class, AccountDbModel::class, BudgetDbModel::class],
     version = 1,
     exportSchema = false
 )

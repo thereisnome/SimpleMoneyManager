@@ -14,25 +14,41 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.simplemoneymanager.R
+import com.example.simplemoneymanager.data.database.models.CategoryDbModel
 import com.example.simplemoneymanager.databinding.FragmentAddBudgetBinding
-import com.example.simplemoneymanager.domain.budget.Budget
-import com.example.simplemoneymanager.domain.category.Category
+import com.example.simplemoneymanager.domain.budget.BudgetEntity
+import com.example.simplemoneymanager.domain.category.CategoryEntity
+import com.example.simplemoneymanager.presentation.SimpleMoneyManagerApp
 import com.example.simplemoneymanager.presentation.viewModels.AddBudgetViewModel
+import com.example.simplemoneymanager.presentation.viewModels.ViewModelFactory
+import javax.inject.Inject
 
 private const val UNDEFINED_TRANSACTION = -1L
 
 class AddBudgetFragment : Fragment(), CategoryBottomSheetDialogFragment.DataPassListener {
 
-    private val viewModel: AddBudgetViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<AddBudgetViewModel>{
+        viewModelFactory
+    }
 
     private val args by navArgs<AddBudgetFragmentArgs>()
 
-    private lateinit var category: Category
-    private lateinit var budget: Budget
+    private lateinit var category: CategoryEntity
+    private lateinit var budget: BudgetEntity
 
     private var _binding: FragmentAddBudgetBinding? = null
     private val binding: FragmentAddBudgetBinding
         get() = _binding ?: throw RuntimeException("FragmentAddTransactionBinding is null")
+
+    private val component by lazy { (requireActivity().application as SimpleMoneyManagerApp).component }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -135,7 +151,7 @@ class AddBudgetFragment : Fragment(), CategoryBottomSheetDialogFragment.DataPass
 
     private fun showCategoryBottomSheetDialog() {
         val bottomSheetDialogFragment =
-            CategoryBottomSheetDialogFragment.newInstance(Category.EXPENSE)
+            CategoryBottomSheetDialogFragment.newInstance(CategoryDbModel.EXPENSE)
         bottomSheetDialogFragment.setDataPassListener(this)
         bottomSheetDialogFragment.show(childFragmentManager, "TEST")
     }
@@ -164,7 +180,7 @@ class AddBudgetFragment : Fragment(), CategoryBottomSheetDialogFragment.DataPass
         return binding.etAmount.text.toString() != ""
     }
 
-    override fun onCategoryPassed(category: Category) {
+    override fun onCategoryPassed(category: CategoryEntity) {
         this.category = category
 
         val contrast = ColorUtils.calculateContrast(

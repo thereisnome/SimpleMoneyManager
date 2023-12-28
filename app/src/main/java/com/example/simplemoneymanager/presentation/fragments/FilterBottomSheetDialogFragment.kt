@@ -1,5 +1,6 @@
 package com.example.simplemoneymanager.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,9 @@ import androidx.fragment.app.viewModels
 import com.example.simplemoneymanager.R
 import com.example.simplemoneymanager.common.DateFilter
 import com.example.simplemoneymanager.databinding.FragmentFilterBottomSheetBinding
+import com.example.simplemoneymanager.presentation.SimpleMoneyManagerApp
 import com.example.simplemoneymanager.presentation.viewModels.FilterBottomSheetViewModel
+import com.example.simplemoneymanager.presentation.viewModels.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -18,6 +21,7 @@ import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters.firstDayOfMonth
 import java.time.temporal.TemporalAdjusters.lastDayOfMonth
 import java.util.Locale
+import javax.inject.Inject
 
 
 class FilterBottomSheetDialogFragment(private var dateFilter: DateFilter) :
@@ -25,12 +29,24 @@ class FilterBottomSheetDialogFragment(private var dateFilter: DateFilter) :
 
     private var dataPassListener: DataPassListener? = null
 
-    private val viewModel: FilterBottomSheetViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by viewModels<FilterBottomSheetViewModel>{
+        viewModelFactory
+    }
 
     private var _binding: FragmentFilterBottomSheetBinding? = null
 
     private val binding: FragmentFilterBottomSheetBinding
         get() = _binding ?: throw RuntimeException("FragmentFilterBottomSheetBinding is null")
+
+    private val component by lazy { (requireActivity().application as SimpleMoneyManagerApp).component }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

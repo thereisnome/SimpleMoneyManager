@@ -1,19 +1,19 @@
 package com.example.simplemoneymanager.domain.repository
 
 import androidx.lifecycle.LiveData
-import com.example.simplemoneymanager.domain.account.AccountWithTransactions
-import com.example.simplemoneymanager.domain.account.Account
+import com.example.simplemoneymanager.domain.account.AccountEntity
+import com.example.simplemoneymanager.domain.account.AccountWithTransactionsEntity
 import io.reactivex.rxjava3.core.Completable
 
 interface AccountRepository {
 
-    fun addAccount(account: Account): Completable
+    fun addAccount(account: AccountEntity): Completable
 
-    fun getAccountById(accountId: Long): LiveData<Account>
+    fun getAccountById(accountId: Long): LiveData<AccountEntity>
 
-    fun getAccountList(): LiveData<List<Account>>
+    fun getAccountList(): LiveData<List<AccountEntity>>
 
-    fun getAccountWithTransactions(): LiveData<List<AccountWithTransactions>>
+    fun getAccountWithTransactions(): LiveData<List<AccountWithTransactionsEntity>>
 
     fun removeAccount(accountId: Long): Completable
 
