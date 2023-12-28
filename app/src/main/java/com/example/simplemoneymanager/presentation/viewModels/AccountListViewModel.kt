@@ -18,7 +18,6 @@ class AccountListViewModel @Inject constructor(
     private val removeAccountUseCase: RemoveAccountUseCase
 ): ViewModel() {
 
-
     private val compositeDisposable = CompositeDisposable()
 
     fun getAccountWithTransactions(): LiveData<List<AccountWithTransactionsEntity>> {
